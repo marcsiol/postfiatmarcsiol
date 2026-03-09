@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hive Mind — Regime Detection Edge Case Manual v1.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #080C10;
+    --surface:   #0D1318;
+    --surface2:  #111820;
+    --border:    #1C2530;
+    --border2:   #243040;
+
+    --text:      #C8D8E8;
+    --text-dim:  #5A7080;
+    --text-faint:#2A3A48;
+
+    --green:     #1FD08A;
+    --green-dim: #0A4030;
+    --red:       #F05060;
+    --red-dim:   #3A1018;
+    --amber:     #E8A030;
+    --amber-dim: #382408;
+    --blue:      #58A8F0;
+    --blue-dim:  #0A2040;
+    --violet:    #A080F0;
+    --violet-dim:#1A0E38;
+    --white:     #E8F0F8;
+
+    --mono: 'IBM Plex Mono', monospace;
+    --serif: 'Fraunces', Georgia, serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── SCAN-LINE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* ── LAYOUT ── */
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 32px 120px; }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    padding: 64px 0 48px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .masthead::after {
+    content: '';
+    position: absolute;
+    top: -40px; right: -60px;
+    width: 320px; height: 320px;
+    background: radial-gradient(ellipse at center, rgba(31,208,138,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .doc-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .doc-label::before {
+    content: '';
+    display: inline-block;
+    width: 24px; height: 1px;
+    background: var(--green);
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: 42px;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+  }
+  h1 em { font-style: italic; color: var(--green); }
+  .masthead-sub {
+    color: var(--text-dim);
+    font-size: 12px;
+    max-width: 580px;
+    line-height: 1.8;
+    margin-bottom: 32px;
+  }
+  .meta-row {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 4px; }
+  .meta-label { font-size: 9px; letter-spacing: 0.18em; color: var(--text-faint); text-transform: uppercase; }
+  .meta-val { font-size: 11px; color: var(--text); font-weight: 600; }
+
+  /* ── SECTION HEADERS ── */
+  h2 {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--white);
+    margin: 56px 0 24px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  h2 .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--green);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+  h3 {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin: 32px 0 14px;
+  }
+
+  /* ── PROSE ── */
+  p { color: var(--text); margin-bottom: 14px; line-height: 1.8; font-size: 13px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── EDGE CASE CARDS ── */
+  .ec-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 40px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .ec-card:hover { border-color: var(--border2); }
+
+  .ec-header {
+    padding: 20px 24px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+  }
+  .ec-num {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--text-faint);
+    min-width: 32px;
+    padding-top: 3px;
+  }
+  .ec-title-block { flex: 1; }
+  .ec-name {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+  .ec-tagline { font-size: 11px; color: var(--text-dim); line-height: 1.6; }
+  .ec-severity {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    white-space: nowrap;
+    align-self: flex-start;
+    margin-top: 3px;
+  }
+  .sev-critical { background: var(--red-dim); color: var(--red); border: 1px solid rgba(240,80,96,0.3); }
+  .sev-high     { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(232,160,48,0.3); }
+  .sev-medium   { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(88,168,240,0.3); }
+
+  .ec-body { padding: 20px 24px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 640px) { .ec-body { grid-template-columns: 1fr; } }
+
+  .ec-section-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 10px;
+  }
+  .ec-body p { font-size: 12px; color: var(--text); margin-bottom: 0; }
+
+  /* ── CODE / PSEUDOCODE BLOCKS ── */
+  .code-block {
+    background: #060A0D;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--green);
+    border-radius: 2px;
+    padding: 16px 18px;
+    margin: 16px 0;
+    overflow-x: auto;
+    font-size: 11.5px;
+    line-height: 1.75;
+  }
+  .code-block.danger { border-left-color: var(--red); }
+  .code-block.warn   { border-left-color: var(--amber); }
+  .code-block.info   { border-left-color: var(--blue); }
+
+  .kw  { color: var(--violet); font-weight: 600; }
+  .fn  { color: var(--blue); }
+  .str { color: var(--green); }
+  .cmt { color: var(--text-dim); font-style: italic; }
+  .num { color: var(--amber); }
+  .var { color: var(--text); }
+  .op  { color: var(--text-dim); }
+  .err { color: var(--red); font-weight: 600; }
+  .ok  { color: var(--green); font-weight: 600; }
+
+  /* ── DECISION TREE ── */
+  .tree-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+  }
+  .tree-node {
+    position: relative;
+    padding: 10px 16px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-block;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+  }
+  .tn-entry  { background: var(--blue-dim);   color: var(--blue);   border: 1px solid rgba(88,168,240,0.4); }
+  .tn-check  { background: var(--surface2);   color: var(--text);   border: 1px solid var(--border2); }
+  .tn-halt   { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(240,80,96,0.4); }
+  .tn-exec   { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(31,208,138,0.4); }
+  .tn-reduce { background: var(--amber-dim);  color: var(--amber);  border: 1px solid rgba(232,160,48,0.4); }
+  .tn-pause  { background: var(--violet-dim); color: var(--violet); border: 1px solid rgba(160,128,240,0.4); }
+
+  .tree-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    margin-bottom: 2px;
+    position: relative;
+  }
+  .tree-indent { width: 32px; flex-shrink: 0; position: relative; }
+  .tree-indent::before {
+    content: '';
+    position: absolute;
+    left: 15px; top: 0; bottom: 0;
+    width: 1px;
+    background: var(--border2);
+  }
+  .tree-branch {
+    position: absolute;
+    left: 15px; top: 14px;
+    width: 16px; height: 1px;
+    background: var(--border2);
+  }
+  .tree-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-right: 8px;
+    align-self: center;
+    white-space: nowrap;
+  }
+  .lbl-y  { background: var(--green-dim); color: var(--green); }
+  .lbl-n  { background: var(--red-dim);   color: var(--red);   }
+  .lbl-r  { background: var(--amber-dim); color: var(--amber); }
+
+  /* ── CONDITION TABLE ── */
+  .cond-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 11.5px;
+  }
+  .cond-table th {
+    background: var(--surface2);
+    color: var(--text-dim);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 9px;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border2);
+  }
+  .cond-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text);
+  }
+  .cond-table tr:last-child td { border-bottom: none; }
+  .cond-table tr:hover td { background: rgba(255,255,255,0.015); }
+  .cond-table code {
+    background: #060A0D;
+    padding: 1px 5px;
+    border-radius: 2px;
+    font-size: 11px;
+    color: var(--amber);
+  }
+  .outcome-halt   { color: var(--red);    font-weight: 700; }
+  .outcome-reduce { color: var(--amber);  font-weight: 700; }
+  .outcome-exec   { color: var(--green);  font-weight: 700; }
+  .outcome-pause  { color: var(--violet); font-weight: 700; }
+
+  /* ── ALERT BOXES ── */
+  .alert {
+    padding: 14px 18px;
+    border-radius: 3px;
+    margin: 16px 0;
+    font-size: 12px;
+    line-height: 1.7;
+    display: flex;
+    gap: 12px;
+  }
+  .alert-icon { font-size: 14px; flex-shrink: 0; padding-top: 1px; }
+  .alert-critical { background: var(--red-dim);    border: 1px solid rgba(240,80,96,0.25); color: #E89090; }
+  .alert-warn     { background: var(--amber-dim);  border: 1px solid rgba(232,160,48,0.25); color: #D8B070; }
+  .alert-info     { background: var(--blue-dim);   border: 1px solid rgba(88,168,240,0.25); color: #90B8D8; }
+  .alert-ok       { background: var(--green-dim);  border: 1px solid rgba(31,208,138,0.25); color: #80C8A0; }
+
+  /* ── DIVIDER ── */
+  .rule {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin-bottom: 48px;
+  }
+  .toc-title {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .toc a {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 12px;
+    padding: 5px 0;
+    border-bottom: 1px solid transparent;
+    transition: color 0.15s;
+  }
+  .toc a:hover { color: var(--green); }
+  .toc a .toc-num { color: var(--text-faint); font-size: 10px; min-width: 28px; }
+  .toc a .toc-dots { flex: 1; border-bottom: 1px dotted var(--border2); height: 0; margin-bottom: 3px; }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  footer span { font-size: 10px; color: var(--text-faint); letter-spacing: 0.06em; }
+
+  /* ── INLINE CODE ── */
+  code {
+    background: #060A0D;
+    padding: 1px 6px;
+    border-radius: 2px;
+    font-size: 11.5px;
+    color: var(--amber);
+    font-family: var(--mono);
+  }
+
+  /* ── PRIORITY LADDER ── */
+  .priority-ladder { list-style: none; margin: 12px 0; }
+  .priority-ladder li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 14px;
+    border-left: 2px solid var(--border2);
+    margin-bottom: 4px;
+    font-size: 12px;
+  }
+  .priority-ladder li .rank {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-faint);
+    min-width: 20px;
+    padding-top: 2px;
+  }
+  .priority-ladder li.p1 { border-left-color: var(--red); }
+  .priority-ladder li.p2 { border-left-color: var(--amber); }
+  .priority-ladder li.p3 { border-left-color: var(--blue); }
+  .priority-ladder li.p4 { border-left-color: var(--violet); }
+  .priority-ladder li.p5 { border-left-color: var(--green); }
+
+  /* ── PULSE ANIMATION ── */
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .live-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse-dot 2s infinite;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══ MASTHEAD ══════════════════════════════════════════════════════════ -->
+  <header class="masthead">
+    <div class="doc-label">Post Fiat Node Research</div>
+    <h1>Regime Detection<br><em>Edge Case Manual</em></h1>
+    <p class="masthead-sub">Deterministic fallback logic and conflict resolution rules for the Hive Mind AI agent. Defines exact programmatic responses when standard 4H EMA/RSI momentum signals conflict, fail, or produce ambiguous regime classifications.</p>
+    <div class="meta-row">
+      <div class="meta-item"><span class="meta-label">Version</span><span class="meta-val">1.0</span></div>
+      <div class="meta-item"><span class="meta-label">Status</span><span class="meta-val"><span class="live-dot"></span>Draft — Tier 1 Review</span></div>
+      <div class="meta-item"><span class="meta-label">Applies To</span><span class="meta-val">BTC-PERP, SOL-PERP / 4H</span></div>
+      <div class="meta-item"><span class="meta-label">Depends On</span><span class="meta-val">Risk Routing Spec v1.0</span></div>
+      <div class="meta-item"><span class="meta-label">Date</span><span class="meta-val">March 2026</span></div>
+    </div>
+  </header>
+
+  <!-- ══ TABLE OF CONTENTS ════════════════════════════════════════════════ -->
+  <div class="toc">
+    <div class="toc-title">Contents</div>
+    <a href="#scope"><span class="toc-num">§1</span>Scope &amp; Design Principles<span class="toc-dots"></span></a>
+    <a href="#priority"><span class="toc-num">§2</span>Conflict Resolution Priority Ladder<span class="toc-dots"></span></a>
+    <a href="#ec1"><span class="toc-num">EC-01</span>RSI/EMA Signal Divergence<span class="toc-dots"></span></a>
+    <a href="#ec2"><span class="toc-num">EC-02</span>Missing or Stale Oracle Data<span class="toc-dots"></span></a>
+    <a href="#ec3"><span class="toc-num">EC-03</span>Flash Crash / Wick Spike<span class="toc-dots"></span></a>
+    <a href="#ec4"><span class="toc-num">EC-04</span>Funding Rate Regime Inversion<span class="toc-dots"></span></a>
+    <a href="#ec5"><span class="toc-num">EC-05</span>Multi-Asset Cascade Correlation<span class="toc-dots"></span></a>
+    <a href="#ec6"><span class="toc-num">EC-06</span>Post-R3 Clearance Race Condition<span class="toc-dots"></span></a>
+    <a href="#ec7"><span class="toc-num">EC-07</span>ATR Collapse / Dead Market<span class="toc-dots"></span></a>
+    <a href="#tree"><span class="toc-num">§3</span>Master Decision Tree<span class="toc-dots"></span></a>
+    <a href="#constants"><span class="toc-num">§4</span>Fail-Safe State Definitions<span class="toc-dots"></span></a>
+    <a href="#changelog"><span class="toc-num">§5</span>Changelog &amp; Known Gaps<span class="toc-dots"></span></a>
+  </div>
+
+  <!-- ══ §1 SCOPE ══════════════════════════════════════════════════════════ -->
+  <section id="scope">
+    <h2><span class="section-num">§1</span>Scope &amp; Design Principles</h2>
+
+    <p>This manual is a companion document to the Hive Mind Risk Routing Logic Specification v1.0. Where the spec defines expected-path behavior, this manual defines what the agent must do when inputs are contradictory, incomplete, or structurally outside the model's training envelope. Every edge case resolves to one of four deterministic outcomes — no ambiguous states are permitted.</p>
+
+    <h3>Governing Principles</h3>
+    <p>Three principles constrain all fallback logic in this document:</p>
+
+    <div class="code-block info">
+<span class="cmt">// PRINCIPLE 1: Conservative Dominance</span>
+<span class="kw">IF</span> <span class="var">any_input_is_ambiguous_or_missing</span><span class="op">:</span>
+    <span class="kw">ASSUME</span> <span class="str">worst_case_value_for_that_input</span>
+    <span class="cmt">// Missing OI data = assume OI is elevated</span>
+    <span class="cmt">// Missing liq data = assume liq >= CASCADE_THRESHOLD</span>
+
+<span class="cmt">// PRINCIPLE 2: Determinism Over Inference</span>
+<span class="kw">IF</span> <span class="var">two_signals_conflict</span><span class="op">:</span>
+    <span class="kw">DO NOT</span> <span class="fn">average_them</span>()
+    <span class="kw">DO NOT</span> <span class="fn">weight_them</span>()
+    <span class="kw">APPLY</span> <span class="fn">priority_ladder</span>() <span class="cmt">// deterministic hierarchy, see §2</span>
+
+<span class="cmt">// PRINCIPLE 3: Human Override Points Are Sacred</span>
+<span class="kw">IF</span> <span class="var">liq_4h_usd >= PAUSE_AGENT_THRESHOLD</span> <span class="op">(</span><span class="num">$500M</span><span class="op">)</span><span class="op">:</span>
+    <span class="fn">PAUSE_AGENT</span>()  <span class="cmt">// requires explicit human RESUME signal</span>
+    <span class="kw">NEVER</span> <span class="fn">auto_resume</span>()  <span class="cmt">// no timer, no condition-based resume</span>
+    </div>
+
+    <div class="alert alert-warn">
+      <span class="alert-icon">⚠</span>
+      <span>This manual does not override the base spec gate sequence (A1→A2→A3→B1→B2→C1→C2). Edge case logic fires <strong>before</strong> the gate sequence — it modifies input values or regime classification before gates are evaluated. Edge cases never bypass a gate; they set conditions that the gates then evaluate normally.</span>
+    </div>
+  </section>
+
+  <!-- ══ §2 PRIORITY LADDER ════════════════════════════════════════════════ -->
+  <section id="priority">
+    <h2><span class="section-num">§2</span>Conflict Resolution Priority Ladder</h2>
+    <p>When signals conflict, this ladder defines which signal class wins. Higher priority always overrides lower priority. No exceptions.</p>
+
+    <ul class="priority-ladder">
+      <li class="p1"><span class="rank">P1</span><strong style="color:var(--red)">Liquidation Volume (real-time)</strong> — Overrides all momentum signals. $150M+ halts regardless of EMA/RSI state.</li>
+      <li class="p2"><span class="rank">P2</span><strong style="color:var(--amber)">Regime Gate (OI + Funding concurrent)</strong> — Overrides signal quality. R3 via Filter A halts even if B-gates would pass.</li>
+      <li class="p3"><span class="rank">P3</span><strong style="color:var(--blue)">Data Integrity Checks</strong> — Stale or missing data defaults to conservative worst-case. Overrides any live signal derived from that source.</li>
+      <li class="p4"><span class="rank">P4</span><strong style="color:var(--violet)">ATR / Volatility Regime</strong> — Overrides EMA-derived trending classification when ATR ≥ 3× avg.</li>
+      <li class="p5"><span class="rank">P5</span><strong style="color:var(--green)">EMA / RSI Momentum</strong> — Standard signal quality gates. Evaluated only after P1–P4 pass.</li>
+    </ul>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ══ EC-01 ══════════════════════════════════════════════════════════════ -->
+  <section id="ec1">
+    <h2><span class="section-num">EC-01</span>RSI / EMA Signal Divergence</h2>
+
+    <div class="ec-card">
+      <div class="ec-header">
+        <div class="ec-num">EC-01</div>
+        <div class="ec-title-block">
+          <div class="ec-name">RSI / EMA Signal Divergence</div>
+          <div class="ec-tagline">EMA alignment suggests LONG while RSI is outside the valid long band, or vice versa. The momentum direction is internally inconsistent.</div>
+        </div>
+        <span class="ec-severity sev-high">High</span>
+      </div>
+      <div class="ec-body">
+        <div>
+          <div class="ec-section-label">Trigger Conditions</div>
+          <p>EMA(21) &gt; EMA(55) AND spread ≥ 1.2% (trending long signal) BUT RSI(14) is NOT in the 52–68 valid long band. OR: EMA bearish but RSI is 52–68 (momentum says long, trend says short).</p>
+        </div>
+        <div>
+          <div class="ec-section-label">Why It Happens</div>
+          <p>RSI mean-reverts faster than EMA crosses. During consolidation after a strong move, EMA spread remains wide while RSI compresses back to neutral. The two signals represent different time horizons of the same move.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Fallback Logic</h3>
+    <div class="code-block">
+<span class="cmt">// EC-01: RSI/EMA Divergence Resolution</span>
+<span class="kw">FUNCTION</span> <span class="fn">resolve_ema_rsi_divergence</span>(<span class="var">ema_signal</span>, <span class="var">rsi</span>, <span class="var">direction</span>):
+
+    <span class="var">ema_aligned</span>   = <span class="fn">check_ema_alignment</span>(<span class="var">direction</span>)   <span class="cmt">// Gate B1 result</span>
+    <span class="var">rsi_in_band</span>   = <span class="fn">check_rsi_band</span>(<span class="var">rsi</span>, <span class="var">direction</span>)  <span class="cmt">// Gate B2 result</span>
+
+    <span class="kw">IF</span> <span class="var">ema_aligned</span> <span class="op">AND NOT</span> <span class="var">rsi_in_band</span>:
+        <span class="cmt">// EMA says yes, RSI says no</span>
+        <span class="kw">IF</span> <span class="var">rsi</span> <span class="op">&gt;</span> <span class="num">75</span> <span class="op">OR</span> <span class="var">rsi</span> <span class="op">&lt;</span> <span class="num">25</span>:
+            <span class="kw">RETURN</span> <span class="err">HALT</span>  <span class="cmt">// hard RSI block overrides bullish EMA (P5 < P5 band rule)</span>
+        <span class="kw">ELSE</span>:
+            <span class="kw">RETURN</span> <span class="err">HALT</span>  <span class="cmt">// RSI out-of-band = no valid entry; wait for RSI to enter band</span>
+
+    <span class="kw">IF NOT</span> <span class="var">ema_aligned</span> <span class="op">AND</span> <span class="var">rsi_in_band</span>:
+        <span class="cmt">// RSI says yes, EMA says no</span>
+        <span class="kw">RETURN</span> <span class="err">HALT</span>  <span class="cmt">// EMA alignment required; RSI alone cannot open a position</span>
+        <span class="cmt">// Log: "EC-01 — EMA/RSI divergence, EMA not aligned"</span>
+
+    <span class="cmt">// Both agree → normal gate sequence applies, no edge case</span>
+    <span class="kw">RETURN</span> <span class="ok">CONTINUE_TO_GATE_C</span>
+    </div>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ</span>
+      <span><strong>Developer note:</strong> This rule means B1 AND B2 must both pass independently. There is no weighted combination. The logic gates are sequential AND conditions, not a scoring system. A single gate failure terminates the sequence.</span>
+    </div>
+  </section>
+
+  <!-- ══ EC-02 ══════════════════════════════════════════════════════════════ -->
+  <section id="ec2">
+    <h2><span class="section-num">EC-02</span>Missing or Stale Oracle Data</h2>
+
+    <div class="ec-card">
+      <div class="ec-header">
+        <div class="ec-num">EC-02</div>
+        <div class="ec-title-block">
+          <div class="ec-name">Missing or Stale Oracle Data</div>
+          <div class="ec-tagline">CoinGlass OI, funding rate, or liquidation data is unavailable, delayed beyond the staleness threshold, or returns a null/error response.</div>
+        </div>
+        <span class="ec-severity sev-critical">Critical</span>
+      </div>
+      <div class="ec-body">
+        <div>
+          <div class="ec-section-label">Trigger Conditions</div>
+          <p>Any CoinGlass data source returns null, timeout, or HTTP error. OR: Last valid reading is older than 1 full 4H candle from the current evaluation timestamp.</p>
+        </div>
+        <div>
+          <div class="ec-section-label">Why It's Critical</div>
+          <p>During actual cascade events, CoinGlass and aggregator APIs frequently rate-limit or lag. The scenario most likely to produce missing data is the same scenario where the data matters most. Missing data is not a neutral signal.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Fallback Logic</h3>
+    <div class="code-block danger">
+<span class="cmt">// EC-02: Stale / Missing Data Resolution</span>
+<span class="cmt">// Staleness threshold: last_reading_age > 4H (one full candle)</span>
+
+<span class="kw">FUNCTION</span> <span class="fn">check_data_freshness</span>(<span class="var">source</span>, <span class="var">last_ts</span>, <span class="var">current_ts</span>):
+
+    <span class="var">age_hours</span> = (<span class="var">current_ts</span> <span class="op">-</span> <span class="var">last_ts</span>) <span class="op">/</span> <span class="num">3600</span>
+
+    <span class="kw">IF</span> <span class="var">age_hours</span> <span class="op">&gt;</span> <span class="num">4.0</span>:
+        <span class="kw">RETURN</span> <span class="str">STALE</span>
+
+    <span class="kw">IF</span> <span class="var">source</span>.<span class="fn">response</span>() <span class="op">IN</span> [<span class="num">null</span>, <span class="num">timeout</span>, <span class="num">error</span>]:
+        <span class="kw">RETURN</span> <span class="str">MISSING</span>
+
+    <span class="kw">RETURN</span> <span class="str">FRESH</span>
+
+<span class="kw">FUNCTION</span> <span class="fn">apply_data_fallback</span>(<span class="var">source_name</span>, <span class="var">freshness</span>):
+
+    <span class="kw">IF</span> <span class="var">freshness</span> <span class="op">IN</span> [<span class="str">STALE</span>, <span class="str">MISSING</span>]:
+
+        <span class="kw">SWITCH</span> <span class="var">source_name</span>:
+            <span class="kw">CASE</span> <span class="str">"OI"</span>:
+                <span class="var">oi_vs_30d_ma_pct</span> = <span class="num">+20</span>  <span class="cmt">// assume elevated: triggers R2 minimum</span>
+                <span class="fn">LOG_WARN</span>(<span class="str">"EC-02: OI data stale — defaulting to elevated (+20%)"</span>)
+
+            <span class="kw">CASE</span> <span class="str">"FUNDING"</span>:
+                <span class="var">funding_8h_pct</span> = <span class="num">0.06</span>   <span class="cmt">// assume hot: triggers R2 minimum</span>
+                <span class="fn">LOG_WARN</span>(<span class="str">"EC-02: Funding data stale — defaulting to hot (0.06%)"</span>)
+
+            <span class="kw">CASE</span> <span class="str">"LIQUIDATIONS"</span>:
+                <span class="var">liq_4h_usd</span> = <span class="num">200_000_000</span>  <span class="cmt">// assume cascade: triggers R3 + Gate A1 FAIL</span>
+                <span class="fn">LOG_WARN</span>(<span class="str">"EC-02: Liq data missing — defaulting to $200M (R3)"</span>)
+
+            <span class="kw">CASE</span> <span class="str">"OHLCV"</span>:
+                <span class="kw">RETURN</span> <span class="err">HALT_ALL</span>  <span class="cmt">// cannot compute EMA/RSI — full execution halt</span>
+                <span class="fn">PAGE_HUMAN</span>(<span class="str">"EC-02: OHLCV feed unavailable — agent suspended"</span>)
+
+    <span class="kw">RETURN</span> <span class="fn">proceed_with_adjusted_inputs</span>()
+    </div>
+
+    <table class="cond-table">
+      <thead><tr><th>Missing Source</th><th>Assumed Fallback Value</th><th>Effect on Regime</th><th>Outcome</th></tr></thead>
+      <tbody>
+        <tr><td><code>OI</code></td><td><code>+20% vs 30d MA</code></td><td>R2 minimum (OI elevated)</td><td class="outcome-reduce">REDUCE (0.5× longs)</td></tr>
+        <tr><td><code>Funding Rate</code></td><td><code>0.06% per 8H</code></td><td>R2 minimum (funding hot)</td><td class="outcome-reduce">REDUCE (0.5× longs)</td></tr>
+        <tr><td><code>OI + Funding</code></td><td>Both elevated</td><td>R3 via Filter A</td><td class="outcome-halt">HALT (Gate A1)</td></tr>
+        <tr><td><code>Liquidations</code></td><td><code>$200M</code></td><td>R3 via Filter B</td><td class="outcome-halt">HALT (Gate A3)</td></tr>
+        <tr><td><code>OHLCV</code></td><td>N/A</td><td>Cannot compute EMA/RSI</td><td class="outcome-pause">FULL SUSPEND + PAGE</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ══ EC-03 ══════════════════════════════════════════════════════════════ -->
+  <section id="ec3">
+    <h2><span class="section-num">EC-03</span>Flash Crash / Wick Spike</h2>
+
+    <div class="ec-card">
+      <div class="ec-header">
+        <div class="ec-num">EC-03</div>
+        <div class="ec-title-block">
+          <div class="ec-name">Flash Crash / Wick Spike</div>
+          <div class="ec-tagline">A single 4H candle produces a price move exceeding ±8% from open to close, or a wick exceeding 12% of close price, that is not confirmed by the subsequent candle.</div>
+        </div>
+        <span class="ec-severity sev-critical">Critical</span>
+      </div>
+      <div class="ec-body">
+        <div>
+          <div class="ec-section-label">Trigger Conditions</div>
+          <p><code>abs(close - open) / open ≥ 0.08</code> in a single 4H bar. OR: <code>(high - low) / close ≥ 0.12</code>. These moves corrupt EMA and RSI for 1–3 subsequent candles even after price recovers.</div>
+        </div>
+        <div>
+          <div class="ec-section-label">Why It Corrupts Signals</div>
+          <p>EMA calculations incorporate the spike candle's close price, artificially inflating or deflating the spread for multiple bars forward. RSI overshoots into its hard block zones on the spike, then snaps back — creating a false signal inversion on recovery.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Fallback Logic</h3>
+    <div class="code-block danger">
+<span class="cmt">// EC-03: Flash Crash Detection + Signal Quarantine</span>
+
+<span class="kw">FUNCTION</span> <span class="fn">detect_flash_candle</span>(<span class="var">candle</span>):
+    <span class="var">body_pct</span> = <span class="fn">abs</span>(<span class="var">candle</span>.<span class="var">close</span> <span class="op">-</span> <span class="var">candle</span>.<span class="var">open</span>) <span class="op">/</span> <span class="var">candle</span>.<span class="var">open</span>
+    <span class="var">wick_pct</span> = (<span class="var">candle</span>.<span class="var">high</span> <span class="op">-</span> <span class="var">candle</span>.<span class="var">low</span>) <span class="op">/</span> <span class="var">candle</span>.<span class="var">close</span>
+
+    <span class="kw">IF</span> <span class="var">body_pct</span> <span class="op">&gt;=</span> <span class="num">0.08</span> <span class="op">OR</span> <span class="var">wick_pct</span> <span class="op">&gt;=</span> <span class="num">0.12</span>:
+        <span class="kw">RETURN</span> <span class="str">FLASH_DETECTED</span>
+    <span class="kw">RETURN</span> <span class="str">NORMAL</span>
+
+<span class="kw">FUNCTION</span> <span class="fn">apply_flash_quarantine</span>(<span class="var">candle_idx</span>):
+    <span class="cmt">// Tag the spike candle and the 2 following candles as QUARANTINED</span>
+    <span class="kw">FOR</span> <span class="var">i</span> <span class="op">IN</span> [<span class="var">candle_idx</span>, <span class="var">candle_idx</span><span class="op">+</span><span class="num">1</span>, <span class="var">candle_idx</span><span class="op">+</span><span class="num">2</span>]:
+        <span class="var">candle</span>[<span class="var">i</span>].<span class="var">signal_quarantine</span> = <span class="str">True</span>
+
+    <span class="cmt">// During quarantine: regime gates still evaluate (liq/OI/funding unaffected)</span>
+    <span class="cmt">// Only EMA/RSI-derived signals (Gates B1, B2) are suppressed</span>
+    <span class="fn">SET_GATE_B1</span>(<span class="str">FAIL</span>, <span class="var">reason</span>=<span class="str">"EC-03 flash quarantine"</span>)
+    <span class="fn">SET_GATE_B2</span>(<span class="str">FAIL</span>, <span class="var">reason</span>=<span class="str">"EC-03 flash quarantine"</span>)
+
+    <span class="cmt">// Existing positions: DO NOT close on flash alone</span>
+    <span class="cmt">// Maintain stops at pre-flash levels unless R3 independently triggered</span>
+    <span class="fn">LOG_EVENT</span>(<span class="str">"EC-03: Flash candle quarantine active — B-gates suppressed for 3 candles"</span>)
+
+<span class="cmt">// On candle_idx+3: quarantine lifts automatically, resume normal evaluation</span>
+    </div>
+
+    <div class="alert alert-warn">
+      <span class="alert-icon">⚠</span>
+      <span><strong>Quarantine does not cancel open positions.</strong> It only suppresses new entry signals. If a stop-loss level is hit organically during the quarantine window, normal exit logic applies. The quarantine is a new-entry gate, not a position management override.</span>
+    </div>
+  </section>
+
+  <!-- ══ EC-04 ══════════════════════════════════════════════════════════════ -->
+  <section id="ec4">
+    <h2><span class="section-num">EC-04</span>Funding Rate Regime Inversion</h2>
+
+    <div class="ec-card">
+      <div class="ec-header">
+        <div class="ec-num">EC-04</div>
+        <div class="ec-title-block">
+          <div class="ec-name">Funding Rate Regime Inversion</div>
+          <div class="ec-tagline">Funding rate crosses from strongly positive to strongly negative (or vice versa) within a single 8H window, while OI remains elevated. The prior regime classification is now directionally wrong.</div>
+        </div>
+        <span class="ec-severity sev-high">High</span>
+      </div>
+      <div class="ec-body">
+        <div>
+          <div class="ec-section-label">Trigger Conditions</div>
+          <p>Funding rate change within one 8H interval exceeds 0.08% absolute (e.g., +0.05% → -0.03%). This is a delta of 0.08% in 8H, equivalent to a structural long-to-short regime flip in the perpetual market.</p>
+        </div>
+        <div>
+          <div class="ec-section-label">Why It's Dangerous</div>
+          <p>The Sep 2025 cascade (documented in the liquidation analysis) was triggered by exactly this pattern. Funding inverts because leveraged longs are forcibly exited, which then triggers the cascade that was hidden by the prior positive funding reading.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Fallback Logic</h3>
+    <div class="code-block warn">
+<span class="cmt">// EC-04: Funding Rate Inversion Detection</span>
+
+<span class="kw">FUNCTION</span> <span class="fn">check_funding_inversion</span>(<span class="var">funding_current</span>, <span class="var">funding_prev_8h</span>):
+
+    <span class="var">delta</span> = <span class="fn">abs</span>(<span class="var">funding_current</span> <span class="op">-</span> <span class="var">funding_prev_8h</span>)
+
+    <span class="kw">IF</span> <span class="var">delta</span> <span class="op">&gt;=</span> <span class="num">0.0008</span>:  <span class="cmt">// 0.08% absolute change in 8H</span>
+        <span class="kw">RETURN</span> <span class="str">INVERSION_DETECTED</span>
+    <span class="kw">RETURN</span> <span class="str">STABLE</span>
+
+<span class="kw">FUNCTION</span> <span class="fn">resolve_funding_inversion</span>(<span class="var">inversion</span>, <span class="var">oi_elevated</span>, <span class="var">direction</span>):
+
+    <span class="kw">IF</span> <span class="var">inversion</span> <span class="op">==</span> <span class="str">INVERSION_DETECTED</span>:
+
+        <span class="kw">IF</span> <span class="var">oi_elevated</span>:
+            <span class="cmt">// Elevated OI + rapid funding inversion = pre-cascade signature</span>
+            <span class="fn">ESCALATE_TO_R3</span>()  <span class="cmt">// Force R3 regardless of current funding absolute value</span>
+            <span class="fn">LOG_ALERT</span>(<span class="str">"EC-04: Funding inversion + elevated OI — R3 forced"</span>)
+            <span class="kw">RETURN</span> <span class="err">HALT</span>
+
+        <span class="kw">IF NOT</span> <span class="var">oi_elevated</span>:
+            <span class="cmt">// Inversion without OI elevation = market repositioning, not cascade</span>
+            <span class="cmt">// Block new entries in prior regime direction for 2 candles</span>
+            <span class="fn">SET_DIRECTIONAL_BLOCK</span>(<span class="var">prior_regime_direction</span>, <span class="var">candles</span>=<span class="num">2</span>)
+            <span class="fn">LOG_WARN</span>(<span class="str">"EC-04: Funding inversion detected — blocking prior direction for 2 candles"</span>)
+            <span class="kw">RETURN</span> <span class="err">REDUCED_ENTRY</span>  <span class="cmt">// opposite direction still valid at 0.5× until regime restabilises</span>
+    </div>
+
+    <div class="alert alert-critical">
+      <span class="alert-icon">🔴</span>
+      <span><strong>Elevated OI + funding inversion is the specific pre-cascade signature of the Sep 2025 event.</strong> This combination must force R3 regardless of what the absolute funding value is at the moment of evaluation. The inversion velocity is the signal, not the endpoint value.</span>
+    </div>
+  </section>
+
+  <!-- ══ EC-05 ══════════════════════════════════════════════════════════════ -->
+  <section id="ec5">
+    <h2><span class="section-num">EC-05</span>Multi-Asset Cascade Correlation</h2>
+
+    <div class="ec-card">
+      <div class="ec-header">
+        <div class="ec-num">EC-05</div>
+        <div class="ec-title-block">
+          <div class="ec-name">Multi-Asset Cascade Correlation</div>
+          <div class="ec-tagline">Asset B (SOL) independently shows clean entry conditions, but Asset A (BTC) is in R3 cascade. The correlated nature of crypto perpetual markets means SOL's signal is unreliable during BTC cascades.</div>
+        </div>
+        <span class="ec-severity sev-high">High</span>
+      </div>
+      <div class="ec-body">
+        <div>
+          <div class="ec-section-label">Trigger Conditions</div>
+          <p>BTC-PERP is classified as R3 (via any filter) AND SOL-PERP evaluation is in progress. SOL's own OI/funding/liq data may appear normal — BTC cascade has not yet propagated.</p>
+        </div>
+        <div>
+          <div class="ec-section-label">Why It Fails Independently</div>
+          <p>BTC-SOL correlation on cascade days typically runs 0.85–0.95 within the same 4H candle. SOL liq data lags BTC liq data by 1–2 candles in most cascade events because the forced selling begins in BTC and rotates. Clean SOL data during a BTC cascade is an artifact of lag, not a genuine decorrelation.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Fallback Logic</h3>
+    <div class="code-block warn">
+<span class="cmt">// EC-05: Cross-Asset Cascade Propagation Guard</span>
+
+<span class="kw">GLOBAL</span> <span class="var">ASSET_REGIMES</span> = {<span class="str">"BTC"</span>: <span class="str">R0</span>, <span class="str">"SOL"</span>: <span class="str">R0</span>}
+
+<span class="kw">FUNCTION</span> <span class="fn">evaluate_with_cross_asset_check</span>(<span class="var">target_asset</span>, <span class="var">signal</span>):
+
+    <span class="kw">FOR</span> <span class="var">peer_asset</span> <span class="kw">IN</span> [<span class="str">"BTC"</span>, <span class="str">"ETH"</span>]:  <span class="cmt">// BTC checked first, highest market cap</span>
+
+        <span class="var">peer_regime</span> = <span class="var">ASSET_REGIMES</span>[<span class="var">peer_asset</span>]
+
+        <span class="kw">IF</span> <span class="var">peer_regime</span> <span class="op">==</span> <span class="str">R3_CASCADE_RISK</span> <span class="op">AND</span> <span class="var">peer_asset</span> <span class="op">!=</span> <span class="var">target_asset</span>:
+
+            <span class="cmt">// Force target asset to R3 regardless of its own readings</span>
+            <span class="fn">ESCALATE_TO_R3</span>(<span class="var">target_asset</span>)
+            <span class="fn">LOG_ALERT</span>(<span class="str">"EC-05: "</span> <span class="op">+</span> <span class="var">peer_asset</span> <span class="op">+</span> <span class="str">" in R3 — propagating cascade halt to "</span> <span class="op">+</span> <span class="var">target_asset</span>)
+            <span class="kw">RETURN</span> <span class="err">HALT</span>
+
+        <span class="kw">IF</span> <span class="var">peer_regime</span> <span class="op">IN</span> [<span class="str">R2_OVERHEATED</span>, <span class="str">R4_VOLATILE</span>] <span class="op">AND</span> <span class="var">peer_asset</span> <span class="op">!=</span> <span class="var">target_asset</span>:
+            <span class="cmt">// Downgrade target asset one regime step if own regime is R0 or R1</span>
+            <span class="kw">IF</span> <span class="var">ASSET_REGIMES</span>[<span class="var">target_asset</span>] <span class="op">IN</span> [<span class="str">R0_NEUTRAL</span>, <span class="str">R1_TRENDING</span>]:
+                <span class="fn">DOWNGRADE_REGIME</span>(<span class="var">target_asset</span>, <span class="str">R2_OVERHEATED</span>)
+                <span class="fn">LOG_WARN</span>(<span class="str">"EC-05: Peer asset in R2/R4 — target downgraded to R2"</span>)
+
+    <span class="kw">RETURN</span> <span class="fn">proceed_with_adjusted_regime</span>()
+    </div>
+  </section>
+
+  <!-- ══ EC-06 ══════════════════════════════════════════════════════════════ -->
+  <section id="ec6">
+    <h2><span class="section-num">EC-06</span>Post-R3 Clearance Race Condition</h2>
+
+    <div class="ec-card">
+      <div class="ec-header">
+        <div class="ec-num">EC-06</div>
+        <div class="ec-title-block">
+          <div class="ec-name">Post-R3 Clearance Race Condition</div>
+          <div class="ec-tagline">R3 clearance conditions are met (liq below $50M for 2 candles, OI/funding normalized) but a new entry signal fires before the clearance counter has completed its second confirmation candle.</div>
+        </div>
+        <span class="ec-severity sev-medium">Medium</span>
+      </div>
+      <div class="ec-body">
+        <div>
+          <div class="ec-section-label">Trigger Conditions</div>
+          <p>R3 was active. Liq dropped below $50M on candle N. A valid LONG/SHORT signal fires on candle N+1 — before the second candle (N+2) has confirmed the clearance condition is sustained.</p>
+        </div>
+        <div>
+          <div class="ec-section-label">The Race</div>
+          <p>The spec requires 2 consecutive candles below threshold to clear R3. The race condition is when the signal arrives after candle 1 but before candle 2 has closed. If allowed, the agent would be entering on an unconfirmed clearance.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Fallback Logic</h3>
+    <div class="code-block info">
+<span class="cmt">// EC-06: R3 Clearance Counter — Race Condition Prevention</span>
+
+<span class="kw">GLOBAL</span> <span class="var">r3_clearance_counter</span> = <span class="num">0</span>  <span class="cmt">// resets to 0 whenever any R3 condition re-triggers</span>
+<span class="kw">GLOBAL</span> <span class="var">r3_active</span> = <span class="str">False</span>
+
+<span class="kw">FUNCTION</span> <span class="fn">update_r3_clearance</span>(<span class="var">liq_usd</span>, <span class="var">oi_elevated</span>, <span class="var">funding_hot</span>):
+
+    <span class="var">r3_conditions_met</span> = (<span class="var">oi_elevated</span> <span class="op">AND</span> <span class="var">funding_hot</span>) <span class="op">OR</span> (<span class="var">liq_usd</span> <span class="op">&gt;=</span> <span class="num">150_000_000</span>)
+
+    <span class="kw">IF</span> <span class="var">r3_conditions_met</span>:
+        <span class="var">r3_active</span> = <span class="str">True</span>
+        <span class="var">r3_clearance_counter</span> = <span class="num">0</span>  <span class="cmt">// reset on any re-trigger</span>
+        <span class="kw">RETURN</span>
+
+    <span class="kw">IF</span> <span class="var">r3_active</span> <span class="op">AND NOT</span> <span class="var">r3_conditions_met</span>:
+        <span class="kw">IF</span> <span class="var">liq_usd</span> <span class="op">&lt;</span> <span class="num">50_000_000</span>:
+            <span class="var">r3_clearance_counter</span> <span class="op">+=</span> <span class="num">1</span>
+
+        <span class="kw">IF</span> <span class="var">r3_clearance_counter</span> <span class="op">&gt;=</span> <span class="num">2</span>:
+            <span class="var">r3_active</span> = <span class="str">False</span>
+            <span class="var">r3_clearance_counter</span> = <span class="num">0</span>
+            <span class="fn">LOG_INFO</span>(<span class="str">"EC-06: R3 cleared after 2-candle confirmation"</span>)
+
+<span class="cmt">// Entry gate check: block if clearance counter is 1 (first clear candle only)</span>
+<span class="kw">FUNCTION</span> <span class="fn">check_r3_clearance_gate</span>():
+    <span class="kw">IF</span> <span class="var">r3_active</span> <span class="op">OR</span> <span class="var">r3_clearance_counter</span> <span class="op">==</span> <span class="num">1</span>:
+        <span class="kw">RETURN</span> <span class="err">HALT</span>  <span class="cmt">// still clearing — wait for second confirmation candle</span>
+    <span class="kw">RETURN</span> <span class="ok">CLEARED</span>
+    </div>
+  </section>
+
+  <!-- ══ EC-07 ══════════════════════════════════════════════════════════════ -->
+  <section id="ec7">
+    <h2><span class="section-num">EC-07</span>ATR Collapse / Dead Market</h2>
+
+    <div class="ec-card">
+      <div class="ec-header">
+        <div class="ec-num">EC-07</div>
+        <div class="ec-title-block">
+          <div class="ec-name">ATR Collapse / Dead Market</div>
+          <div class="ec-tagline">ATR drops below 0.3× its 20-period average for 3+ consecutive candles. EMA spread may show a false trend because price is coiling without real momentum. RSI is stuck between 45–55.</div>
+        </div>
+        <span class="ec-severity sev-medium">Medium</span>
+      </div>
+      <div class="ec-body">
+        <div>
+          <div class="ec-section-label">Trigger Conditions</div>
+          <p><code>atr_vs_20avg_mult ≤ 0.3</code> for 3 or more consecutive 4H candles AND RSI is in the 45–55 range (neither long nor short band). The EMA spread may technically qualify for R1 but the price action is not directional.</p>
+        </div>
+        <div>
+          <div class="ec-section-label">Why It's an Edge Case</div>
+          <p>Low-ATR environments produce EMA spreads that look like trend but are noise. A position opened in this state will see its stop hit by normal bid/ask volatility before any directional move materialises. The spec's R1 classification depends on real trend energy, not stale EMA separation.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Fallback Logic</h3>
+    <div class="code-block">
+<span class="cmt">// EC-07: Dead Market / ATR Collapse</span>
+
+<span class="kw">FUNCTION</span> <span class="fn">check_atr_collapse</span>(<span class="var">atr_mult_series</span>):
+    <span class="cmt">// atr_mult_series: list of last N candle ATR/20avg values</span>
+
+    <span class="var">collapse_candles</span> = <span class="fn">count</span>([<span class="var">x</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">atr_mult_series</span>[<span class="op">-</span><span class="num">3</span>:] <span class="kw">if</span> <span class="var">x</span> <span class="op">&lt;=</span> <span class="num">0.3</span>])
+
+    <span class="kw">IF</span> <span class="var">collapse_candles</span> <span class="op">&gt;=</span> <span class="num">3</span>:
+        <span class="kw">RETURN</span> <span class="str">COLLAPSE_DETECTED</span>
+    <span class="kw">RETURN</span> <span class="str">NORMAL</span>
+
+<span class="kw">FUNCTION</span> <span class="fn">apply_dead_market_rule</span>(<span class="var">collapse</span>, <span class="var">rsi</span>, <span class="var">ema_spread_pct</span>):
+
+    <span class="kw">IF</span> <span class="var">collapse</span> <span class="op">==</span> <span class="str">COLLAPSE_DETECTED</span>:
+
+        <span class="kw">IF</span> <span class="num">45</span> <span class="op">&lt;=</span> <span class="var">rsi</span> <span class="op">&lt;=</span> <span class="num">55</span>:
+            <span class="cmt">// RSI stuck in neutral + low ATR = no real trend</span>
+            <span class="cmt">// Downgrade R1 to R0 regardless of EMA spread</span>
+            <span class="fn">OVERRIDE_REGIME</span>(<span class="str">R0_NEUTRAL</span>)
+            <span class="fn">SET_GATE_B1</span>(<span class="str">FAIL</span>, <span class="var">reason</span>=<span class="str">"EC-07: ATR collapse — EMA spread is noise, not trend"</span>)
+            <span class="fn">LOG_WARN</span>(<span class="str">"EC-07: Dead market detected — R1 downgraded to R0, no new entries"</span>)
+            <span class="kw">RETURN</span> <span class="err">HALT</span>
+
+        <span class="kw">IF</span> <span class="var">rsi</span> <span class="op">&lt;</span> <span class="num">45</span> <span class="op">OR</span> <span class="var">rsi</span> <span class="op">&gt;</span> <span class="num">55</span>:
+            <span class="cmt">// RSI has directionality even in low-ATR — allow but reduce size</span>
+            <span class="fn">SET_CAPITAL_MULT</span>(<span class="fn">min</span>(<span class="var">current_mult</span>, <span class="num">0.5</span>))
+            <span class="fn">LOG_WARN</span>(<span class="str">"EC-07: Low ATR, directional RSI — reducing to 0.5× pending breakout"</span>)
+            <span class="kw">RETURN</span> <span class="err">REDUCED_ENTRY</span>
+
+<span class="cmt">// Collapse clears when ATR returns above 0.5× 20-avg for 1 candle</span>
+    </div>
+
+  </section>
+
+  <hr class="rule">
+
+  <!-- ══ §3 MASTER DECISION TREE ════════════════════════════════════════════ -->
+  <section id="tree">
+    <h2><span class="section-num">§3</span>Master Decision Tree</h2>
+    <p>This tree shows the full evaluation sequence incorporating all edge case checks. Edge case logic (EC-01 through EC-07) fires in the PRE-GATE layer before the standard A/B/C gate sequence from the v1.0 spec.</p>
+
+    <div class="tree-container">
+      <p style="font-size:10px;color:var(--text-dim);margin-bottom:20px;letter-spacing:0.08em;">EVALUATION SEQUENCE — 4H CANDLE CLOSE</p>
+
+      <!-- L0 Entry -->
+      <div class="tree-row" style="margin-bottom:16px;">
+        <span class="tree-node tn-entry">NEW 4H CANDLE CLOSES</span>
+      </div>
+
+      <!-- PRE-GATE: Data checks -->
+      <div class="tree-row" style="margin-left:20px;">
+        <span class="tree-node tn-check">① DATA INTEGRITY — EC-02<br><span style="font-weight:400;font-size:10px;">All sources fresh? Age &lt; 4H?</span></span>
+      </div>
+      <div class="tree-row" style="margin-left:64px;margin-bottom:4px;">
+        <span class="tree-label lbl-n">STALE</span><span class="tree-node tn-reduce" style="font-size:10px;">Apply conservative fallback values → continue</span>
+      </div>
+      <div class="tree-row" style="margin-left:64px;margin-bottom:4px;">
+        <span class="tree-label lbl-n">OHLCV MISSING</span><span class="tree-node tn-pause">SUSPEND AGENT + PAGE HUMAN</span>
+      </div>
+
+      <!-- PRE-GATE: Flash check -->
+      <div class="tree-row" style="margin-left:20px;margin-top:8px;">
+        <span class="tree-node tn-check">② FLASH CANDLE CHECK — EC-03<br><span style="font-weight:400;font-size:10px;">Body ≥8% or wick ≥12%?</span></span>
+      </div>
+      <div class="tree-row" style="margin-left:64px;margin-bottom:4px;">
+        <span class="tree-label lbl-y">FLASH</span><span class="tree-node tn-reduce" style="font-size:10px;">Quarantine B-gates for 3 candles → no new entries</span>
+      </div>
+
+      <!-- PRE-GATE: ATR collapse -->
+      <div class="tree-row" style="margin-left:20px;margin-top:8px;">
+        <span class="tree-node tn-check">③ ATR COLLAPSE — EC-07<br><span style="font-weight:400;font-size:10px;">ATR ≤ 0.3× avg for 3 candles?</span></span>
+      </div>
+      <div class="tree-row" style="margin-left:64px;margin-bottom:4px;">
+        <span class="tree-label lbl-y">DEAD</span><span class="tree-node tn-reduce" style="font-size:10px;">Override R1→R0 or reduce 0.5×</span>
+      </div>
+
+      <!-- PRE-GATE: Funding inversion -->
+      <div class="tree-row" style="margin-left:20px;margin-top:8px;">
+        <span class="tree-node tn-check">④ FUNDING INVERSION — EC-04<br><span style="font-weight:400;font-size:10px;">Funding delta ≥ 0.08% in 8H?</span></span>
+      </div>
+      <div class="tree-row" style="margin-left:64px;margin-bottom:4px;">
+        <span class="tree-label lbl-y">+OI ELEVATED</span><span class="tree-node tn-halt" style="font-size:10px;">Force R3 → Gate A1 FAIL</span>
+      </div>
+      <div class="tree-row" style="margin-left:64px;margin-bottom:4px;">
+        <span class="tree-label lbl-y">NO OI</span><span class="tree-node tn-reduce" style="font-size:10px;">Block prior direction 2 candles</span>
+      </div>
+
+      <!-- PRE-GATE: Cross-asset -->
+      <div class="tree-row" style="margin-left:20px;margin-top:8px;">
+        <span class="tree-node tn-check">⑤ CROSS-ASSET CASCADE — EC-05<br><span style="font-weight:400;font-size:10px;">BTC peer in R3?</span></span>
+      </div>
+      <div class="tree-row" style="margin-left:64px;margin-bottom:4px;">
+        <span class="tree-label lbl-y">YES</span><span class="tree-node tn-halt" style="font-size:10px;">Propagate R3 to all assets → HALT</span>
+      </div>
+
+      <!-- PRE-GATE: R3 clearance -->
+      <div class="tree-row" style="margin-left:20px;margin-top:8px;">
+        <span class="tree-node tn-check">⑥ R3 CLEARANCE COUNTER — EC-06<br><span style="font-weight:400;font-size:10px;">clearance_counter == 1? (mid-clear)</span></span>
+      </div>
+      <div class="tree-row" style="margin-left:64px;margin-bottom:12px;">
+        <span class="tree-label lbl-y">MID-CLEAR</span><span class="tree-node tn-halt" style="font-size:10px;">Still in clearance window → HALT, wait candle N+2</span>
+      </div>
+
+      <!-- Standard gates -->
+      <div class="tree-row" style="margin-left:20px;margin-top:8px;">
+        <span class="tree-node tn-check">⑦ STANDARD GATE SEQUENCE (v1.0 SPEC)<br><span style="font-weight:400;font-size:10px;">A1 → A2 → A3 → B1+B2 check (EC-01 divergence rule) → C1 → C2</span></span>
+      </div>
+      <div class="tree-row" style="margin-left:64px;margin-bottom:4px;">
+        <span class="tree-label lbl-n">ANY FAIL</span><span class="tree-node tn-halt" style="font-size:10px;">NO TRADE — log blocking gate</span>
+      </div>
+      <div class="tree-row" style="margin-left:64px;margin-bottom:4px;">
+        <span class="tree-label lbl-y">ALL PASS</span><span class="tree-node tn-exec">EXECUTE — capital_mult × $570</span>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ══ §4 FAIL-SAFE STATE DEFINITIONS ════════════════════════════════════ -->
+  <section id="constants">
+    <h2><span class="section-num">§4</span>Fail-Safe State Definitions</h2>
+    <p>Every edge case resolves to one of these four named states. No other outcome codes are valid. Logging must record the state name, triggering EC code, and relevant input values.</p>
+
+    <table class="cond-table">
+      <thead><tr><th>State</th><th>Effect</th><th>Auto-Recovery</th><th>Human Required</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="outcome-halt">HALT</span></td>
+          <td>No new entries. Existing positions held with pre-event stops. Gate sequence exits immediately.</td>
+          <td>Yes — on regime reclassification at next candle close (after clearance counter if R3)</td>
+          <td>No (except PAUSE)</td>
+        </tr>
+        <tr>
+          <td><span class="outcome-reduce">REDUCED_ENTRY</span></td>
+          <td>Entry permitted at capital_mult capped at 0.5× or 0.25× as specified by the triggering EC rule. Gate sequence continues.</td>
+          <td>Yes — on condition clearance</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td><span class="outcome-pause">FULL SUSPEND</span></td>
+          <td>All new entries blocked. All automated monitoring paused. Human paged via alert channel. No agent actions until <code>RESUME</code> signal received.</td>
+          <td>No</td>
+          <td><strong>Yes — explicit RESUME required</strong></td>
+        </tr>
+        <tr>
+          <td><span class="outcome-exec">CONTINUE</span></td>
+          <td>Edge case check passed. Proceed to next evaluation step. No modification to inputs or multiplier.</td>
+          <td>N/A</td>
+          <td>No</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>PAUSE_AGENT Trigger Thresholds</h3>
+    <div class="code-block danger">
+<span class="cmt">// Conditions that trigger FULL SUSPEND (require human RESUME)</span>
+
+<span class="kw">IF</span> <span class="var">liq_4h_usd</span> <span class="op">&gt;=</span> <span class="num">500_000_000</span>:              <span class="cmt">// $500M in single 4H window</span>
+    <span class="fn">PAUSE_AGENT</span>()
+
+<span class="kw">IF</span> <span class="fn">check_data_freshness</span>(<span class="str">"OHLCV"</span>) <span class="op">==</span> <span class="str">MISSING</span>:  <span class="cmt">// exchange feed down</span>
+    <span class="fn">PAUSE_AGENT</span>()
+
+<span class="kw">IF</span> <span class="var">consecutive_halt_candles</span> <span class="op">&gt;=</span> <span class="num">12</span>:           <span class="cmt">// 48H of continuous halting</span>
+    <span class="fn">PAUSE_AGENT</span>()  <span class="cmt">// something structural has changed — needs review</span>
+
+<span class="cmt">// PAUSE_AGENT state persists until:</span>
+<span class="cmt">// human sends RESUME signal AND confirms conditions reviewed</span>
+<span class="cmt">// No timer-based auto-resume under any circumstances</span>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ══ §5 CHANGELOG ══════════════════════════════════════════════════════ -->
+  <section id="changelog">
+    <h2><span class="section-num">§5</span>Changelog &amp; Known Gaps</h2>
+
+    <h3>v1.0 — Initial Release</h3>
+    <p>Seven edge cases defined covering signal divergence, data integrity, flash events, funding inversion, cross-asset correlation, regime clearance race conditions, and dead markets. Priority ladder established. Four fail-safe states defined.</p>
+
+    <h3>Known Gaps (Queued for v1.1)</h3>
+
+    <div class="code-block info">
+<span class="cmt">// GAP-01: Partial data availability</span>
+<span class="cmt">// EC-02 handles null/stale data, but does not address partial responses</span>
+<span class="cmt">// (e.g., CoinGlass returns OI for Binance but not Bybit/OKX)</span>
+<span class="cmt">// Current behaviour: treats partial as fresh, which is optimistic</span>
+<span class="cmt">// Target: define minimum exchange coverage threshold (e.g., >60% of OI by exchange)</span>
+
+<span class="cmt">// GAP-02: Weekend / low-liquidity session detection</span>
+<span class="cmt">// ATR collapse rule (EC-07) may fire during Sat/Sun UTC low-liq windows</span>
+<span class="cmt">// inappropriately blocking otherwise valid setups</span>
+<span class="cmt">// Target: add session-aware ATR baseline (weekend avg vs weekday avg)</span>
+
+<span class="cmt">// GAP-03: Re-entry logic post-R3 clearance</span>
+<span class="cmt">// Spec defines R3 clearance but does not specify whether the first entry</span>
+<span class="cmt">// after clearance should be full-size or stepped in</span>
+<span class="cmt">// Recommendation: first entry post-clearance at 0.5× for 2 candles, then 1.0×</span>
+<span class="cmt">// Not yet formalised as a rule</span>
+
+<span class="cmt">// GAP-04: Position sizing interaction with EC-07 REDUCED_ENTRY</span>
+<span class="cmt">// If both EC-07 (dead market, 0.5×) and EC-04 (funding inversion, prior direction block)</span>
+<span class="cmt">// fire simultaneously, current spec takes the lower multiplier (0.5×)</span>
+<span class="cmt">// but does not explicitly state this. Needs formalisation.</span>
+    </div>
+
+    <div class="alert alert-ok">
+      <span class="alert-icon">✓</span>
+      <span>This document supersedes no existing spec sections. It is additive to Risk Routing Logic Specification v1.0. In any conflict between this manual and the v1.0 spec, the v1.0 spec governs unless the conflict is explicitly noted as a known gap above.</span>
+    </div>
+  </section>
+
+</div>
+
+<footer style="max-width:960px;margin:0 auto;padding:0 32px 48px;">
+  <span>Hive Mind — Regime Detection Edge Case Manual v1.0</span>
+  <span>Post Fiat Node Research · March 2026</span>
+  <span>Depends on: Risk Routing Spec v1.0</span>
+</footer>
+
+</body>
+</html>
