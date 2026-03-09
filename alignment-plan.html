@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>30-Day Post Fiat Alignment Score Improvement Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0e;
+    --surface: #111416;
+    --surface2: #181b1e;
+    --border: #1e2226;
+    --accent: #00e5a0;
+    --accent2: #0095ff;
+    --warn: #ff6b35;
+    --text: #d4dae0;
+    --text-dim: #6b7580;
+    --text-bright: #eef2f5;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,160,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,160,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    margin-bottom: 64px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header-tag::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: var(--mono);
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: 600;
+    color: var(--text-bright);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .header-meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  .header-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Sections */
+  section {
+    margin-bottom: 64px;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-bright);
+    letter-spacing: -0.01em;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  h3 {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin: 32px 0 16px;
+  }
+
+  p {
+    margin-bottom: 16px;
+    color: var(--text);
+    font-weight: 300;
+    line-height: 1.8;
+  }
+
+  /* Preamble block */
+  .preamble {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    padding: 32px;
+    margin-bottom: 0;
+  }
+
+  .preamble p:last-child { margin-bottom: 0; }
+
+  /* Audit table */
+  .audit-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  .audit-table th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--surface2);
+    color: var(--text-dim);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .audit-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  .audit-table tr:last-child td { border-bottom: none; }
+
+  .audit-table tr:hover td {
+    background: var(--surface2);
+  }
+
+  .weight-high { color: var(--warn); }
+  .weight-vhigh { color: #ff3b3b; }
+  .weight-med { color: #ffd060; }
+
+  .status-strong { color: var(--accent); }
+  .status-unknown { color: var(--text-dim); }
+  .status-active { color: var(--accent2); }
+
+  /* Day plan */
+  .week-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .week-header {
+    background: var(--surface2);
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .week-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-bright);
+    letter-spacing: 0.05em;
+  }
+
+  .week-range {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .day-row {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .day-row:last-child { border-bottom: none; }
+
+  .day-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-dim);
+    padding: 14px 16px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    background: rgba(0,0,0,0.2);
+  }
+
+  .day-content {
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  /* Checkpoint rows */
+  .checkpoint-row .day-num {
+    color: var(--accent);
+    border-right: 1px solid rgba(0,229,160,0.2);
+  }
+
+  .checkpoint-row .day-content {
+    background: rgba(0,229,160,0.04);
+  }
+
+  .checkpoint-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .checkpoint-targets {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .checkpoint-targets li {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    padding: 3px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .checkpoint-targets li::before {
+    content: '→';
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Summary table */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .summary-table th {
+    background: var(--surface2);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+
+  .summary-table td {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .summary-table tr td:first-child {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Commitment block */
+  .commitment {
+    background: linear-gradient(135deg, rgba(0,229,160,0.05) 0%, rgba(0,149,255,0.05) 100%);
+    border: 1px solid rgba(0,229,160,0.2);
+    padding: 32px;
+  }
+
+  .commitment p:last-child { margin-bottom: 0; }
+
+  /* Footer */
+  .footer {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+    gap: 12px;
+  }
+
+  .footer-text {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  /* Corrective actions */
+  .action-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    margin-bottom: 12px;
+  }
+
+  .action-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent2);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .action-text {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.65;
+    color: var(--text);
+    margin: 0;
+  }
+
+  /* Scroll reveal animation */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="header reveal">
+    <div class="header-tag">Post Fiat Network // Node Alignment</div>
+    <h1>30-Day Alignment Score<br>Improvement Plan</h1>
+    <div class="header-meta">
+      <span><span class="dot"></span> Published March 2026</span>
+      <span>// Review: April 2026</span>
+      <span>// Node: Marcus</span>
+    </div>
+  </header>
+
+  <!-- PREAMBLE -->
+  <section class="reveal">
+    <div class="section-label">01 / Preamble</div>
+    <h2>Diagnosis and Strategy</h2>
+    <div class="preamble">
+      <p>As of this writing, my Post Fiat alignment profile reflects a system that has achieved meaningful early traction but is entering a critical phase where the gap between infrastructure build-out and live operational consistency becomes the dominant constraint on score improvement. The raw numbers — 15 rewarded tasks, 1 refused task, 0 outstanding tasks, and a recently rewritten context document — tell a partial story. The acceptance rate of approximately 94% (15 accepted out of 16 total) is strong in absolute terms, but a single refusal carries disproportionate weight when the denominator is still small. More importantly, the true risk to alignment at this stage is not the historical refusal record but the forward-looking question of whether engagement remains consistent, task quality holds at a high verification standard, and the context document evolves in lockstep with operational reality.</p>
+      <p>My diagnosis identifies five dimensions where deliberate, measurable improvement is both possible and necessary. Task acceptance rate is the surface metric that feels most urgent, but it is largely a lagging indicator — the real leverage is in the upstream decision-making that determines which tasks get accepted, how quickly they get completed, and whether the work product clears verification. Completion velocity matters because outstanding tasks signal disengagement, and the current 0 outstanding is a baseline I need to protect, not take for granted. Verification quality is where alignment scores are actually differentiated at the top of the distribution — completing tasks is table stakes; completing them in ways that generate clean verification evidence is what separates good nodes from excellent ones. Context document accuracy is the dimension most directly within my control: every day the document drifts from operational reality is a day the network's model of my capabilities and constraints becomes slightly less useful. And engagement consistency — the simple question of whether I show up daily — is the compounding factor that either amplifies or erodes everything else.</p>
+      <p>The strategy for the next 30 days is structured around three principles. First, protect the baseline: accept and complete every suitable task without creating new outstanding debt. Second, invest in quality signals: focus not just on task completion but on the specificity and verifiability of work product. Third, maintain document accuracy as a living practice rather than a periodic cleanup exercise. Each week builds on the last, and the four checkpoint milestones at Days 7, 14, 21, and 30 are designed to create accountability against numeric targets rather than subjective impressions of progress.</p>
+    </div>
+  </section>
+
+  <!-- AUDIT -->
+  <section class="reveal">
+    <div class="section-label">02 / Factor Audit</div>
+    <h2>Current Standing Across All Dimensions</h2>
+    <table class="audit-table">
+      <thead>
+        <tr>
+          <th>Factor</th>
+          <th>Weight</th>
+          <th>Current Standing</th>
+          <th>Gap / Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Task Acceptance Rate</td>
+          <td class="weight-high">High</td>
+          <td class="status-active">~94% (15/16)</td>
+          <td>1 refusal dragging rate; protect with next 10 consecutive accepts</td>
+        </tr>
+        <tr>
+          <td>Completion Velocity</td>
+          <td class="weight-high">High</td>
+          <td class="status-strong">Strong — 0 outstanding</td>
+          <td>Maintain zero outstanding as a floor, not a ceiling</td>
+        </tr>
+        <tr>
+          <td>Verification Quality</td>
+          <td class="weight-vhigh">Very High</td>
+          <td class="status-unknown">Unknown — no explicit feedback</td>
+          <td>Prioritize specificity and evidence in all submissions</td>
+        </tr>
+        <tr>
+          <td>Context Doc Accuracy</td>
+          <td class="weight-high">Medium-High</td>
+          <td class="status-active">Recently rewritten; current</td>
+          <td>Implement weekly update cadence with logged dates</td>
+        </tr>
+        <tr>
+          <td>Engagement Consistency</td>
+          <td class="weight-high">Medium-High</td>
+          <td class="status-unknown">Active but not formalized</td>
+          <td>Commit to daily check-in at fixed time window</td>
+        </tr>
+        <tr>
+          <td>Refusal Pattern</td>
+          <td class="weight-med">Medium</td>
+          <td class="status-active">1 refusal in 16 tasks</td>
+          <td>Pre-acceptance evaluation protocol on every task</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- CORRECTIVE ACTIONS -->
+  <section class="reveal">
+    <div class="section-label">03 / Corrective Actions</div>
+    <h2>Interventions by Weak Dimension</h2>
+
+    <div class="action-card">
+      <div class="action-title">Acceptance Rate Recovery</div>
+      <p class="action-text">Accept and complete the next 10 tasks consecutively without refusal. Before declining any task, apply a two-question test: (1) Is the refusal grounded in a genuine constraint documented in the context doc? (2) Is partial completion possible? Default to partial completion over outright refusal.</p>
+    </div>
+
+    <div class="action-card">
+      <div class="action-title">Verification Quality Uplift</div>
+      <p class="action-text">For every task submitted, include at minimum: a link or artifact demonstrating the output, a one-sentence description of the verification method, and explicit mapping of the deliverable to the task prompt. Do not submit bare completions — the submission should be self-evident without additional explanation.</p>
+    </div>
+
+    <div class="action-card">
+      <div class="action-title">Context Document Cadence</div>
+      <p class="action-text">Review and update the context document every Sunday. The update should answer three questions: what changed this week, what was completed, and whether any constraints or capabilities need revision. Log the update date in the document itself so the cadence is auditable.</p>
+    </div>
+
+    <div class="action-card">
+      <div class="action-title">Engagement Consistency Protocol</div>
+      <p class="action-text">Establish a daily check-in window at the same time each day. Even on days with no active tasks, log into the network and confirm current status. Treat missed check-ins as a leading indicator requiring correction within 24 hours — not a minor lapse.</p>
+    </div>
+  </section>
+
+  <!-- DAY-BY-DAY PLAN -->
+  <section class="reveal">
+    <div class="section-label">04 / Day-by-Day Schedule</div>
+    <h2>30-Day Action Plan</h2>
+
+    <!-- Week 1 -->
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-title">Week 1 — Baseline Protection &amp; Habit Formation</span>
+        <span class="week-range">Days 1–7</span>
+      </div>
+      <div class="day-row"><div class="day-num">D01</div><div class="day-content">Audit current task queue. Accept any pending task meeting basic criteria. Review context document for accuracy. Confirm 0 outstanding tasks.</div></div>
+      <div class="day-row"><div class="day-num">D02</div><div class="day-content">Complete any accepted task from Day 1. Document completion with verification evidence. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D03</div><div class="day-content">Review the refusal incident: document what the task was, why it was refused, and what a better response might have looked like. Diagnostic, not punitive. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D04</div><div class="day-content">Accept next available task. Apply pre-acceptance evaluation: capability alignment check, partial-completion assessment. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D05</div><div class="day-content">Complete Day 4 task. Focus on verification quality: include artifact, verification method statement, and task-to-deliverable mapping. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D06</div><div class="day-content">Context document review. Update if anything changed. Add completion log entry for the week. Log check-in.</div></div>
+      <div class="day-row checkpoint-row">
+        <div class="day-num">D07</div>
+        <div class="day-content">
+          <span class="checkpoint-label">⬡ Checkpoint 1</span>
+          <ul class="checkpoint-targets">
+            <li>2+ tasks completed this week with full verification evidence</li>
+            <li>0 outstanding tasks</li>
+            <li>Context doc updated at least once</li>
+            <li>7 consecutive daily check-ins</li>
+            <li>Acceptance rate on new tasks this week = 100%</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Week 2 -->
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-title">Week 2 — Quality Ramp &amp; Consistency Embedding</span>
+        <span class="week-range">Days 8–14</span>
+      </div>
+      <div class="day-row"><div class="day-num">D08</div><div class="day-content">Accept next available task. Before accepting, explicitly note the verification strategy you will use. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D09</div><div class="day-content">Active task work. Draft verification evidence before task is complete — build it into the process, not as an afterthought. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D10</div><div class="day-content">Complete and submit task. Review submission against three-part verification standard (artifact + method + mapping). Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D11</div><div class="day-content">Accept next available task. If none available, use time to refine context document — add one concrete operational detail that was previously vague. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D12</div><div class="day-content">Active task work. Note any friction points or uncertainties encountered — these are signals for context document improvement. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D13</div><div class="day-content">Complete and submit. Context document review: update completion log, revise any section that feels stale. Log check-in.</div></div>
+      <div class="day-row checkpoint-row">
+        <div class="day-num">D14</div>
+        <div class="day-content">
+          <span class="checkpoint-label">⬡ Checkpoint 2</span>
+          <ul class="checkpoint-targets">
+            <li>4+ total tasks completed since Day 1 with verified submissions</li>
+            <li>0 outstanding tasks</li>
+            <li>Context doc updated twice (Days 6 and 13)</li>
+            <li>14 consecutive daily check-ins</li>
+            <li>Cumulative acceptance rate ≥ 95% across all tasks since plan start</li>
+            <li>At least 1 task with explicitly documented verification methodology</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Week 3 -->
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-title">Week 3 — Verification Standard Refinement &amp; Pacing</span>
+        <span class="week-range">Days 15–21</span>
+      </div>
+      <div class="day-row"><div class="day-num">D15</div><div class="day-content">Mid-plan self-assessment: which dimension has improved most? Which is still weakest? Adjust remaining plan emphasis accordingly. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D16</div><div class="day-content">Accept next available task. Raise verification bar: aim for the submission to be self-evident — the deliverable should speak for itself without additional explanation. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D17</div><div class="day-content">Active task work. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D18</div><div class="day-content">Complete and submit. Review against elevated verification standard. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D19</div><div class="day-content">Accept next task. Before accepting, estimate completion time and ensure it fits within a 48-hour window. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D20</div><div class="day-content">Active task work. Review any feedback received on prior submissions and incorporate into current approach. Log check-in.</div></div>
+      <div class="day-row checkpoint-row">
+        <div class="day-num">D21</div>
+        <div class="day-content">
+          <span class="checkpoint-label">⬡ Checkpoint 3</span>
+          <ul class="checkpoint-targets">
+            <li>6+ total tasks completed since Day 1</li>
+            <li>0 outstanding tasks</li>
+            <li>Context doc updated three times (Days 6, 13, 20)</li>
+            <li>21 consecutive daily check-ins</li>
+            <li>Cumulative acceptance rate ≥ 95%</li>
+            <li>Zero tasks submitted without explicit verification evidence</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Week 4 -->
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-title">Week 4 — Consolidation &amp; Forward-Looking Positioning</span>
+        <span class="week-range">Days 22–30</span>
+      </div>
+      <div class="day-row"><div class="day-num">D22</div><div class="day-content">Review full task history since Day 1. Identify patterns: which task types generated the cleanest verification evidence? Which took longest? Use this to refine forward acceptance criteria. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D23</div><div class="day-content">Accept next available task. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D24</div><div class="day-content">Active task work. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D25</div><div class="day-content">Complete and submit. Context document review: still an accurate reflection of current capabilities and constraints? Make any necessary updates. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D26</div><div class="day-content">Accept next task. Apply full pre-acceptance protocol: capability alignment check, partial-completion assessment, verification strategy sketch. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D27</div><div class="day-content">Active task work. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D28</div><div class="day-content">Complete and submit. Review cumulative metrics: tasks completed, acceptance rate, outstanding count, check-in streak. Log check-in.</div></div>
+      <div class="day-row"><div class="day-num">D29</div><div class="day-content">Final context document revision for plan period: add a summary paragraph describing what changed operationally over the 30 days and what the document now reflects that it didn't 30 days ago. Log check-in.</div></div>
+      <div class="day-row checkpoint-row">
+        <div class="day-num">D30</div>
+        <div class="day-content">
+          <span class="checkpoint-label">⬡ Checkpoint 4 — Final</span>
+          <ul class="checkpoint-targets">
+            <li>8+ tasks completed over the 30-day period with full verification evidence</li>
+            <li>0 outstanding tasks</li>
+            <li>Context doc updated at least 4 times (Days 6, 13, 20, 29)</li>
+            <li>30 consecutive daily check-ins</li>
+            <li>Cumulative acceptance rate ≥ 95% across all tasks during plan</li>
+            <li>Zero refusals during plan period</li>
+            <li>At least 3 tasks with explicitly documented verification methodology in submission</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHECKPOINT SUMMARY -->
+  <section class="reveal">
+    <div class="section-label">05 / Milestone Summary</div>
+    <h2>Four Checkpoint Targets</h2>
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Checkpoint</th>
+          <th>Day</th>
+          <th>Tasks Done</th>
+          <th>Accept Rate</th>
+          <th>Outstanding</th>
+          <th>Check-ins</th>
+          <th>Doc Updates</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>CP-1</td>
+          <td>7</td>
+          <td>2+</td>
+          <td>100% (week)</td>
+          <td>0</td>
+          <td>7</td>
+          <td>1</td>
+        </tr>
+        <tr>
+          <td>CP-2</td>
+          <td>14</td>
+          <td>4+</td>
+          <td>≥95% cumul.</td>
+          <td>0</td>
+          <td>14</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td>CP-3</td>
+          <td>21</td>
+          <td>6+</td>
+          <td>≥95% cumul.</td>
+          <td>0</td>
+          <td>21</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td>CP-4</td>
+          <td>30</td>
+          <td>8+</td>
+          <td>≥95% cumul.</td>
+          <td>0</td>
+          <td>30</td>
+          <td>4</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- COMMITMENT -->
+  <section class="reveal">
+    <div class="section-label">06 / Commitment</div>
+    <h2>Statement of Intent</h2>
+    <div class="commitment">
+      <p>This plan functions as both a diagnostic instrument and a public commitment device. The targets are calibrated to be achievable without being trivial — they require consistent daily engagement, deliberate attention to verification quality, and disciplined context document maintenance. The single refusal in the historical record is not a crisis, but it is a signal worth taking seriously when the total task count is still modest. Every task completed with clean verification evidence over the next 30 days shifts the statistical weight of that refusal toward negligibility.</p>
+      <p>The deeper purpose of this plan is not to game a score but to build the operational habits that produce high alignment scores as a byproduct: showing up every day, doing good work, being honest in the context document about what is actually true, and defaulting to completion rather than refusal when the path is uncertain. The score is a reflection. These 30 days are about shaping what it reflects.</p>
+    </div>
+  </section>
+
+  <footer class="footer reveal">
+    <span class="footer-text">Marcus // Post Fiat Node // March 2026</span>
+    <span class="footer-text">Review date: April 2026</span>
+  </footer>
+
+</div>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.05 });
+
+  reveals.forEach(el => observer.observe(el));
+
+  // Trigger visible for elements already in view
+  setTimeout(() => {
+    reveals.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight) {
+        el.classList.add('visible');
+      }
+    });
+  }, 100);
+</script>
+</body>
+</html>
