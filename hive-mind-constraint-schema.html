@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hive Mind · Real-World Constraint Extraction Schema v1.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0d0f;
+  --bg2: #0f1417;
+  --bg3: #141a1f;
+  --border: #1e2830;
+  --border2: #243040;
+  --text: #c8d8e8;
+  --text-dim: #5a7080;
+  --text-bright: #e8f4ff;
+  --accent: #00c8a0;
+  --accent2: #0090d0;
+  --accent3: #e06040;
+  --accent4: #c8a000;
+  --green: #40c880;
+  --red: #e05050;
+  --yellow: #d0a030;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* Scanline overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* HEADER */
+.site-header {
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.header-meta {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  display: flex;
+  gap: 28px;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 6px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* HERO */
+.hero {
+  padding: 64px 40px 48px;
+  border-bottom: 1px solid var(--border);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.hero-kicker {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero-kicker::before { content: '//'; color: var(--text-dim); }
+
+.hero h1 {
+  font-family: var(--mono);
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  font-weight: 600;
+  color: var(--text-bright);
+  line-height: 1.2;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+
+.hero h1 span { color: var(--accent); }
+
+.hero-sub {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-dim);
+  max-width: 680px;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.badge-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid;
+  font-weight: 500;
+}
+.badge-green { border-color: var(--green); color: var(--green); }
+.badge-blue  { border-color: var(--accent2); color: var(--accent2); }
+.badge-amber { border-color: var(--accent4); color: var(--accent4); }
+.badge-dim   { border-color: var(--border2); color: var(--text-dim); }
+
+/* LAYOUT */
+.page { max-width: 1100px; margin: 0 auto; padding: 0 40px 80px; }
+
+/* SECTION */
+.section {
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadein 0.5s forwards;
+}
+
+.section:nth-child(1) { animation-delay: 0.1s; }
+.section:nth-child(2) { animation-delay: 0.2s; }
+.section:nth-child(3) { animation-delay: 0.3s; }
+.section:nth-child(4) { animation-delay: 0.4s; }
+.section:nth-child(5) { animation-delay: 0.5s; }
+.section:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes fadein {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-label {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 20px;
+  letter-spacing: -0.01em;
+}
+
+.prose {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--text);
+  max-width: 780px;
+  margin-bottom: 24px;
+}
+
+.prose strong { color: var(--text-bright); font-weight: 600; }
+.prose code {
+  font-family: var(--mono);
+  font-size: 11px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+  color: var(--accent);
+}
+
+/* CODE BLOCK */
+.code-block {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--accent);
+  padding: 0;
+  margin: 24px 0;
+  overflow-x: auto;
+  position: relative;
+}
+
+.code-header {
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.code-lang {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.code-file {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.code-block pre {
+  padding: 20px 24px;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--text);
+  white-space: pre;
+  tab-size: 2;
+}
+
+/* JSON syntax colouring */
+.j-key    { color: #7ec8e3; }
+.j-str    { color: #a8d8a8; }
+.j-num    { color: #f0c060; }
+.j-bool   { color: #e08060; }
+.j-null   { color: #8080a0; }
+.j-com    { color: #4a6070; font-style: italic; }
+.j-brace  { color: #607880; }
+.j-accent { color: var(--accent); font-weight: 600; }
+
+/* TABLE */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 12px;
+}
+
+.data-table thead tr {
+  background: var(--bg3);
+  border-bottom: 1px solid var(--accent);
+}
+
+.data-table th {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.data-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.data-table tbody tr:hover { background: var(--bg2); }
+
+.data-table td {
+  padding: 10px 14px;
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+.data-table td:first-child { color: var(--text-bright); font-weight: 500; }
+
+.tag {
+  display: inline-block;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border: 1px solid;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.tag-high   { border-color: var(--red);    color: var(--red); }
+.tag-medium { border-color: var(--yellow); color: var(--yellow); }
+.tag-low    { border-color: var(--green);  color: var(--green); }
+.tag-alert  { border-color: var(--accent); color: var(--accent); }
+.tag-pass   { border-color: var(--green);  color: var(--green); }
+.tag-block  { border-color: var(--red);    color: var(--red); }
+
+/* EDGE CASE CARDS */
+.edge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.edge-card {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+.edge-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px;
+  height: 100%;
+}
+.edge-card.ec1::before { background: var(--red); }
+.edge-card.ec2::before { background: var(--yellow); }
+.edge-card.ec3::before { background: var(--accent2); }
+
+.edge-id {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.edge-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 12px;
+}
+
+.edge-field {
+  margin-bottom: 10px;
+}
+
+.edge-field-label {
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 3px;
+}
+
+.edge-field-val {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--text);
+  line-height: 1.55;
+}
+
+.edge-field-val code {
+  font-family: var(--mono);
+  font-size: 11px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+  color: var(--accent4);
+}
+
+/* ROUTING MATRIX */
+.matrix-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin: 24px 0;
+}
+
+.matrix-cell {
+  background: var(--bg2);
+  padding: 12px 16px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.matrix-header {
+  background: var(--bg3);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 500;
+  padding: 10px 16px;
+}
+
+/* FOOTER */
+.doc-footer {
+  margin-top: 72px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: gap;
+  gap: 16px;
+}
+
+.footer-meta {
+  font-size: 10px;
+  color: var(--text-dim);
+  line-height: 1.8;
+}
+
+.footer-meta span { color: var(--text); }
+
+/* RESPONSIVE */
+@media (max-width: 680px) {
+  .site-header { padding: 0 20px; }
+  .hero, .page { padding-left: 20px; padding-right: 20px; }
+  .matrix-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 1.4rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo"><span class="status-dot"></span>Hive Mind · Constraint Extraction</div>
+  <div class="header-meta">
+    <span>Schema v1.0</span>
+    <span>March 2026</span>
+    <span>Post Fiat Network</span>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-kicker">Real-World Constraint Intelligence</div>
+  <h1>Constraint Extraction<br><span>Schema v1.0</span></h1>
+  <p class="hero-sub">A structured JSON schema and routing logic matrix for the Hive Mind to extract, classify, and distribute real-world regulatory constraints. Baseline test vector: Japan minpaku 10-minute proximity rule.</p>
+  <div class="badge-row">
+    <span class="badge badge-green">Status: Active</span>
+    <span class="badge badge-blue">Type: Schema Definition</span>
+    <span class="badge badge-amber">Test Vector: Japan STR</span>
+    <span class="badge badge-dim">Integration: Hive Mind Core</span>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- SECTION 1: JSON SCHEMA -->
+  <div class="section">
+    <div class="section-label">§ 01</div>
+    <div class="section-title">Real-World Constraint JSON Schema</div>
+    <p class="prose">
+      The schema defines a <strong>RealWorldConstraint</strong> object. All fields marked <code>required: true</code>
+      must be present for a constraint record to be routable. Fields marked <code>required: false</code>
+      are enrichment fields — their absence triggers fallback logic defined in §04.
+      The <strong>opacity_level</strong> field (1–5) scores how discoverable the constraint is
+      to a standard analyst: 1 = publicly legislated and widely known, 5 = only discoverable
+      through ground-level operational experience or primary source fieldwork.
+    </p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">JSON Schema · Draft-07</span>
+        <span class="code-file">constraint.schema.json</span>
+      </div>
+      <pre><span class="j-brace">{</span>
+  <span class="j-key">"$schema"</span><span class="j-brace">:</span> <span class="j-str">"http://json-schema.org/draft-07/schema#"</span>,
+  <span class="j-key">"$id"</span><span class="j-brace">:</span> <span class="j-str">"https://postfiat.org/schemas/constraint/v1.0"</span>,
+  <span class="j-key">"title"</span><span class="j-brace">:</span> <span class="j-str">"RealWorldConstraint"</span>,
+  <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"object"</span>,
+
+  <span class="j-key">"required"</span><span class="j-brace">:</span> <span class="j-brace">[</span>
+    <span class="j-str">"constraint_id"</span>, <span class="j-str">"schema_version"</span>, <span class="j-str">"jurisdiction"</span>,
+    <span class="j-str">"sector"</span>, <span class="j-str">"constraint_type"</span>, <span class="j-str">"opacity_level"</span>,
+    <span class="j-str">"cost_floor_impact"</span>, <span class="j-str">"technology_substitution"</span>,
+    <span class="j-str">"routing"</span>, <span class="j-str">"extraction_metadata"</span>
+  <span class="j-brace">]</span>,
+
+  <span class="j-key">"properties"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+
+    <span class="j-com">// ── Identity ──────────────────────────────────────────────</span>
+    <span class="j-key">"constraint_id"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+      <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span>,
+      <span class="j-key">"pattern"</span><span class="j-brace">:</span> <span class="j-str">"^RWC-[A-Z]{2,3}-[0-9]{4}-[0-9]{3}$"</span>,
+      <span class="j-key">"description"</span><span class="j-brace">:</span> <span class="j-str">"Unique ID: RWC-{ISO_COUNTRY}-{YEAR}-{SEQ}"</span>
+    <span class="j-brace">}</span>,
+
+    <span class="j-key">"schema_version"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+      <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span>, <span class="j-key">"const"</span><span class="j-brace">:</span> <span class="j-str">"1.0"</span>
+    <span class="j-brace">}</span>,
+
+    <span class="j-com">// ── Jurisdiction ──────────────────────────────────────────</span>
+    <span class="j-key">"jurisdiction"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+      <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"object"</span>,
+      <span class="j-key">"required"</span><span class="j-brace">:</span> <span class="j-brace">[</span><span class="j-str">"country_iso"</span>, <span class="j-str">"scope"</span><span class="j-brace">]</span>,
+      <span class="j-key">"properties"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+        <span class="j-key">"country_iso"</span><span class="j-brace">:</span>  <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span>, <span class="j-key">"pattern"</span><span class="j-brace">:</span> <span class="j-str">"^[A-Z]{2}$"</span> <span class="j-brace">}</span>,
+        <span class="j-key">"region"</span><span class="j-brace">:</span>       <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span> <span class="j-brace">}</span>,
+        <span class="j-key">"municipality"</span><span class="j-brace">:</span> <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span> <span class="j-brace">}</span>,
+        <span class="j-key">"scope"</span><span class="j-brace">:</span>       <span class="j-brace">{</span>
+          <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span>,
+          <span class="j-key">"enum"</span><span class="j-brace">:</span> <span class="j-brace">[</span><span class="j-str">"national"</span>, <span class="j-str">"prefectural"</span>, <span class="j-str">"municipal"</span>, <span class="j-str">"ward"</span><span class="j-brace">]</span>
+        <span class="j-brace">}</span>
+      <span class="j-brace">}</span>
+    <span class="j-brace">}</span>,
+
+    <span class="j-com">// ── Classification ────────────────────────────────────────</span>
+    <span class="j-key">"sector"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+      <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span>,
+      <span class="j-key">"enum"</span><span class="j-brace">:</span> <span class="j-brace">[</span>
+        <span class="j-str">"short_term_rental"</span>, <span class="j-str">"elder_care"</span>, <span class="j-str">"food_service"</span>,
+        <span class="j-str">"financial_services"</span>, <span class="j-str">"real_estate"</span>, <span class="j-str">"logistics"</span>,
+        <span class="j-str">"healthcare"</span>, <span class="j-str">"energy"</span>, <span class="j-str">"other"</span>
+      <span class="j-brace">]</span>
+    <span class="j-brace">}</span>,
+
+    <span class="j-key">"constraint_type"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+      <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span>,
+      <span class="j-key">"enum"</span><span class="j-brace">:</span> <span class="j-brace">[</span>
+        <span class="j-str">"physical_presence"</span>,   <span class="j-com">// mandates human on-site</span>
+        <span class="j-str">"staffing_ratio"</span>,       <span class="j-com">// mandates headcount per unit</span>
+        <span class="j-str">"operating_hours"</span>,      <span class="j-com">// restricts when operations run</span>
+        <span class="j-str">"operating_days"</span>,       <span class="j-com">// restricts annual operating days</span>
+        <span class="j-str">"licensing_person"</span>,     <span class="j-com">// requires named qualified individual</span>
+        <span class="j-str">"licensing_premises"</span>,   <span class="j-com">// requires per-location permit</span>
+        <span class="j-str">"proximity_distance"</span>,   <span class="j-com">// requires physical reachability threshold</span>
+        <span class="j-str">"capital_minimum"</span>,      <span class="j-com">// mandates minimum capital floor</span>
+        <span class="j-str">"reporting_interval"</span>,   <span class="j-com">// mandatory data submission cadence</span>
+        <span class="j-str">"third_party_mandatory"</span> <span class="j-com">// forces captive vendor relationship</span>
+      <span class="j-brace">]</span>
+    <span class="j-brace">}</span>,
+
+    <span class="j-com">// ── Opacity & Cost Impact ─────────────────────────────────</span>
+    <span class="j-key">"opacity_level"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+      <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"integer"</span>,
+      <span class="j-key">"minimum"</span><span class="j-brace">:</span> <span class="j-num">1</span>, <span class="j-key">"maximum"</span><span class="j-brace">:</span> <span class="j-num">5</span>,
+      <span class="j-key">"description"</span><span class="j-brace">:</span> <span class="j-str">"1=public statute, 5=ground-level discovery only"</span>
+    <span class="j-brace">}</span>,
+
+    <span class="j-key">"cost_floor_impact"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+      <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"object"</span>,
+      <span class="j-key">"required"</span><span class="j-brace">:</span> <span class="j-brace">[</span><span class="j-str">"exists"</span>, <span class="j-str">"inelastic"</span>, <span class="j-str">"severity"</span><span class="j-brace">]</span>,
+      <span class="j-key">"properties"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+        <span class="j-key">"exists"</span><span class="j-brace">:</span>           <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"boolean"</span> <span class="j-brace">}</span>,
+        <span class="j-key">"inelastic"</span><span class="j-brace">:</span>        <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"boolean"</span>,
+          <span class="j-key">"description"</span><span class="j-brace">:</span> <span class="j-str">"True if cost cannot be reduced via tech or scale"</span> <span class="j-brace">}</span>,
+        <span class="j-key">"severity"</span><span class="j-brace">:</span>         <span class="j-brace">{</span>
+          <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span>,
+          <span class="j-key">"enum"</span><span class="j-brace">:</span> <span class="j-brace">[</span><span class="j-str">"low"</span>, <span class="j-str">"medium"</span>, <span class="j-str">"high"</span>, <span class="j-str">"critical"</span><span class="j-brace">]</span>
+        <span class="j-brace">}</span>,
+        <span class="j-key">"margin_impact_pct"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+          <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"number"</span>,
+          <span class="j-key">"description"</span><span class="j-brace">:</span> <span class="j-str">"Estimated NOI margin reduction in percentage points"</span>
+        <span class="j-brace">}</span>,
+        <span class="j-key">"cost_as_pct_gross"</span><span class="j-brace">:</span>  <span class="j-brace">{</span>
+          <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"number"</span>,
+          <span class="j-key">"description"</span><span class="j-brace">:</span> <span class="j-str">"Compliance cost as % of gross revenue"</span>
+        <span class="j-brace">}</span>,
+        <span class="j-key">"captive_vendor"</span><span class="j-brace">:</span>     <span class="j-brace">{</span>
+          <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"boolean"</span>,
+          <span class="j-key">"description"</span><span class="j-brace">:</span> <span class="j-str">"True if constraint forces use of licensed third party"</span>
+        <span class="j-brace">}</span>
+      <span class="j-brace">}</span>
+    <span class="j-brace">}</span>,
+
+    <span class="j-key">"technology_substitution"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+      <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"object"</span>,
+      <span class="j-key">"required"</span><span class="j-brace">:</span> <span class="j-brace">[</span><span class="j-str">"permitted"</span><span class="j-brace">]</span>,
+      <span class="j-key">"properties"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+        <span class="j-key">"permitted"</span><span class="j-brace">:</span>    <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"boolean"</span> <span class="j-brace">}</span>,
+        <span class="j-key">"partial"</span><span class="j-brace">:</span>      <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"boolean"</span> <span class="j-brace">}</span>,
+        <span class="j-key">"notes"</span><span class="j-brace">:</span>        <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span> <span class="j-brace">}</span>,
+        <span class="j-key">"precedent_set"</span><span class="j-brace">:</span> <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"boolean"</span>,
+          <span class="j-key">"description"</span><span class="j-brace">:</span> <span class="j-str">"True if any jurisdiction has accepted tech substitution"</span> <span class="j-brace">}</span>
+      <span class="j-brace">}</span>
+    <span class="j-brace">}</span>,
+
+    <span class="j-com">// ── Cross-Sector Propagation ──────────────────────────────</span>
+    <span class="j-key">"cross_sector_analogs"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+      <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"array"</span>,
+      <span class="j-key">"items"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+        <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"object"</span>,
+        <span class="j-key">"properties"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+          <span class="j-key">"sector"</span><span class="j-brace">:</span>        <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span> <span class="j-brace">}</span>,
+          <span class="j-key">"legal_basis"</span><span class="j-brace">:</span>   <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span> <span class="j-brace">}</span>,
+          <span class="j-key">"mechanism"</span><span class="j-brace">:</span>     <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span> <span class="j-brace">}</span>,
+          <span class="j-key">"confirmed"</span><span class="j-brace">:</span>     <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"boolean"</span> <span class="j-brace">}</span>
+        <span class="j-brace">}</span>
+      <span class="j-brace">}</span>
+    <span class="j-brace">}</span>,
+
+    <span class="j-com">// ── Routing ───────────────────────────────────────────────</span>
+    <span class="j-key">"routing"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+      <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"object"</span>,
+      <span class="j-key">"required"</span><span class="j-brace">:</span> <span class="j-brace">[</span><span class="j-str">"priority"</span>, <span class="j-str">"target_profiles"</span><span class="j-brace">]</span>,
+      <span class="j-key">"properties"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+        <span class="j-key">"priority"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+          <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span>,
+          <span class="j-key">"enum"</span><span class="j-brace">:</span> <span class="j-brace">[</span><span class="j-str">"P1_critical"</span>, <span class="j-str">"P2_high"</span>, <span class="j-str">"P3_medium"</span>, <span class="j-str">"P4_low"</span><span class="j-brace">]</span>
+        <span class="j-brace">}</span>,
+        <span class="j-key">"target_profiles"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+          <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"array"</span>,
+          <span class="j-key">"items"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+            <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span>,
+            <span class="j-key">"enum"</span><span class="j-brace">:</span> <span class="j-brace">[</span>
+              <span class="j-str">"real_estate_investor"</span>,
+              <span class="j-str">"hospitality_operator"</span>,
+              <span class="j-str">"macro_analyst"</span>,
+              <span class="j-str">"reit_analyst"</span>,
+              <span class="j-str">"labor_economist"</span>,
+              <span class="j-str">"policy_researcher"</span>,
+              <span class="j-str">"venture_investor"</span>,
+              <span class="j-str">"compliance_officer"</span>
+            <span class="j-brace">]</span>
+          <span class="j-brace">}</span>
+        <span class="j-brace">}</span>,
+        <span class="j-key">"alert_threshold"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+          <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span>,
+          <span class="j-key">"enum"</span><span class="j-brace">:</span> <span class="j-brace">[</span><span class="j-str">"immediate"</span>, <span class="j-str">"daily_digest"</span>, <span class="j-str">"weekly_digest"</span><span class="j-brace">]</span>
+        <span class="j-brace">}</span>,
+        <span class="j-key">"suppress_if_analog_exists"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+          <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"boolean"</span>,
+          <span class="j-key">"description"</span><span class="j-brace">:</span> <span class="j-str">"Suppress duplicate alert if same constraint_type already routed in same jurisdiction"</span>
+        <span class="j-brace">}</span>
+      <span class="j-brace">}</span>
+    <span class="j-brace">}</span>,
+
+    <span class="j-com">// ── Source & Extraction Metadata ──────────────────────────</span>
+    <span class="j-key">"extraction_metadata"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+      <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"object"</span>,
+      <span class="j-key">"required"</span><span class="j-brace">:</span> <span class="j-brace">[</span><span class="j-str">"source_type"</span>, <span class="j-str">"confidence"</span>, <span class="j-str">"extracted_by"</span>, <span class="j-str">"extracted_at"</span><span class="j-brace">]</span>,
+      <span class="j-key">"properties"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+        <span class="j-key">"source_type"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+          <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span>,
+          <span class="j-key">"enum"</span><span class="j-brace">:</span> <span class="j-brace">[</span>
+            <span class="j-str">"primary_legislation"</span>, <span class="j-str">"municipal_guidance"</span>,
+            <span class="j-str">"operator_interview"</span>,  <span class="j-str">"field_observation"</span>,
+            <span class="j-str">"secondary_research"</span>,  <span class="j-str">"unit_economics_model"</span>
+          <span class="j-brace">]</span>
+        <span class="j-brace">}</span>,
+        <span class="j-key">"confidence"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+          <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span>,
+          <span class="j-key">"enum"</span><span class="j-brace">:</span> <span class="j-brace">[</span><span class="j-str">"verified"</span>, <span class="j-str">"high"</span>, <span class="j-str">"medium"</span>, <span class="j-str">"low"</span>, <span class="j-str">"inferred"</span><span class="j-brace">]</span>
+        <span class="j-brace">}</span>,
+        <span class="j-key">"sources"</span><span class="j-brace">:</span>       <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"array"</span>, <span class="j-key">"items"</span><span class="j-brace">:</span> <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span> <span class="j-brace">}</span> <span class="j-brace">}</span>,
+        <span class="j-key">"extracted_by"</span><span class="j-brace">:</span>  <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span> <span class="j-brace">}</span>,
+        <span class="j-key">"extracted_at"</span><span class="j-brace">:</span>  <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span>, <span class="j-key">"format"</span><span class="j-brace">:</span> <span class="j-str">"date"</span> <span class="j-brace">}</span>,
+        <span class="j-key">"review_due"</span><span class="j-brace">:</span>    <span class="j-brace">{</span> <span class="j-key">"type"</span><span class="j-brace">:</span> <span class="j-str">"string"</span>, <span class="j-key">"format"</span><span class="j-brace">:</span> <span class="j-str">"date"</span> <span class="j-brace">}</span>
+      <span class="j-brace">}</span>
+    <span class="j-brace">}</span>
+
+  <span class="j-brace">}</span>
+<span class="j-brace">}</span></pre>
+    </div>
+  </div>
+
+  <!-- SECTION 2: TEST VECTOR -->
+  <div class="section">
+    <div class="section-label">§ 02</div>
+    <div class="section-title">Primary Test Vector — Japan Minpaku 10-Minute Proximity Rule</div>
+    <p class="prose">
+      The Japan proximity rule was selected as the baseline test vector because it scores high on
+      opacity (4/5), carries a quantified margin impact (−19.3 percentage points), has confirmed
+      cross-sector analogs, and admits no current technology substitution pathway — making it a
+      maximally informative constraint record for schema validation.
+    </p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">JSON · Test Vector</span>
+        <span class="code-file">RWC-JP-2018-001.json</span>
+      </div>
+      <pre><span class="j-brace">{</span>
+  <span class="j-key">"constraint_id"</span><span class="j-brace">:</span>   <span class="j-str">"RWC-JP-2018-001"</span>,
+  <span class="j-key">"schema_version"</span><span class="j-brace">:</span>  <span class="j-str">"1.0"</span>,
+
+  <span class="j-key">"jurisdiction"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+    <span class="j-key">"country_iso"</span><span class="j-brace">:</span>  <span class="j-str">"JP"</span>,
+    <span class="j-key">"region"</span><span class="j-brace">:</span>       <span class="j-str">"National — implemented at prefectural/ward level"</span>,
+    <span class="j-key">"municipality"</span><span class="j-brace">:</span> <span class="j-str">"Tokyo (23 wards), Kyoto, Osaka — primary enforcement zones"</span>,
+    <span class="j-key">"scope"</span><span class="j-brace">:</span>        <span class="j-str">"municipal"</span>
+  <span class="j-brace">}</span>,
+
+  <span class="j-key">"sector"</span><span class="j-brace">:</span>           <span class="j-str">"short_term_rental"</span>,
+  <span class="j-key">"constraint_type"</span><span class="j-brace">:</span>  <span class="j-str">"proximity_distance"</span>,
+
+  <span class="j-key">"human_description"</span><span class="j-brace">:</span> <span class="j-str">"Non-resident minpaku operators must contract a licensed administrator (kanrisha) who can physically reach the property within 10 minutes at all times a guest is present. No digital substitution is accepted. This requirement flows from the Private Lodging Business Act (2018) and is operationalised via prefectural and ward-level guidance documents."</span>,
+
+  <span class="j-key">"legal_basis"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+    <span class="j-key">"primary"</span><span class="j-brace">:</span>   <span class="j-str">"Private Lodging Business Act (住宅宿泊事業法), enacted June 2017, in force June 2018"</span>,
+    <span class="j-key">"secondary"</span><span class="j-brace">:</span> <span class="j-str">"Prefectural and ward-level implementation guidelines specifying 10-minute physical reachability standard"</span>,
+    <span class="j-key">"enforcer"</span><span class="j-brace">:</span>  <span class="j-str">"Japan Tourism Agency (national); ward public health centers (local)"</span>
+  <span class="j-brace">}</span>,
+
+  <span class="j-key">"opacity_level"</span><span class="j-brace">:</span> <span class="j-num">4</span>,
+  <span class="j-key">"opacity_rationale"</span><span class="j-brace">:</span> <span class="j-str">"The statute itself is public (opacity 2), but the 10-minute standard is not written into the national Act — it is specified in municipal guidance documents that are in Japanese and require active search of local health center documentation. The cost-floor consequence (management fee stickiness) is only discoverable through operator-level unit economics fieldwork. Score: 4."</span>,
+
+  <span class="j-key">"cost_floor_impact"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+    <span class="j-key">"exists"</span><span class="j-brace">:</span>            <span class="j-bool">true</span>,
+    <span class="j-key">"inelastic"</span><span class="j-brace">:</span>         <span class="j-bool">true</span>,
+    <span class="j-key">"severity"</span><span class="j-brace">:</span>          <span class="j-str">"critical"</span>,
+    <span class="j-key">"margin_impact_pct"</span><span class="j-brace">:</span>  <span class="j-num">19.3</span>,
+    <span class="j-key">"cost_as_pct_gross"</span><span class="j-brace">:</span>  <span class="j-num">17.5</span>,
+    <span class="j-key">"captive_vendor"</span><span class="j-brace">:</span>    <span class="j-bool">true</span>,
+    <span class="j-key">"fee_range_pct"</span><span class="j-brace">:</span>     <span class="j-brace">{</span> <span class="j-key">"min"</span><span class="j-brace">:</span> <span class="j-num">15</span>, <span class="j-key">"max"</span><span class="j-brace">:</span> <span class="j-num">20</span> <span class="j-brace">}</span>,
+    <span class="j-key">"fee_basis"</span><span class="j-brace">:</span>         <span class="j-str">"gross_revenue"</span>,
+    <span class="j-key">"compression_observed"</span><span class="j-brace">:</span> <span class="j-bool">false</span>,
+    <span class="j-key">"compression_note"</span><span class="j-brace">:</span>  <span class="j-str">"Fee range unchanged 2019–2025 despite digital adoption in adjacent workflow steps (check-in, guest comms). Proximity requirement absorbs all potential efficiency gains."</span>,
+    <span class="j-key">"model_basis"</span><span class="j-brace">:</span>       <span class="j-str">"Shinjuku 1BR unit economics model: ADR ¥22,000 × 87 permitted nights. Scenario A (kanrisha) NOI 37.4% vs Scenario B (no proximity rule) NOI 56.7%."</span>
+  <span class="j-brace">}</span>,
+
+  <span class="j-key">"technology_substitution"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+    <span class="j-key">"permitted"</span><span class="j-brace">:</span>    <span class="j-bool">false</span>,
+    <span class="j-key">"partial"</span><span class="j-brace">:</span>      <span class="j-bool">false</span>,
+    <span class="j-key">"notes"</span><span class="j-brace">:</span>        <span class="j-str">"Smart locks, automated check-in, and AI guest communication platforms are in widespread use but do not satisfy the proximity requirement. Physical licensed human presence is the only accepted compliance pathway as of March 2026."</span>,
+    <span class="j-key">"precedent_set"</span><span class="j-brace">:</span> <span class="j-bool">false</span>
+  <span class="j-brace">}</span>,
+
+  <span class="j-key">"cross_sector_analogs"</span><span class="j-brace">:</span> <span class="j-brace">[</span>
+    <span class="j-brace">{</span>
+      <span class="j-key">"sector"</span><span class="j-brace">:</span>       <span class="j-str">"elder_care"</span>,
+      <span class="j-key">"legal_basis"</span><span class="j-brace">:</span>  <span class="j-str">"Long-Term Care Insurance Act; MHLW licensing conditions"</span>,
+      <span class="j-key">"mechanism"</span><span class="j-brace">:</span>    <span class="j-str">"Mandatory 1:3 staffing ratio (one qualified worker per three residents). Non-negotiable licensing condition for all facility types."</span>,
+      <span class="j-key">"confirmed"</span><span class="j-brace">:</span>    <span class="j-bool">true</span>
+    <span class="j-brace">}</span>,
+    <span class="j-brace">{</span>
+      <span class="j-key">"sector"</span><span class="j-brace">:</span>       <span class="j-str">"food_service"</span>,
+      <span class="j-key">"legal_basis"</span><span class="j-brace">:</span>  <span class="j-str">"Food Hygiene Law, Article 51"</span>,
+      <span class="j-key">"mechanism"</span><span class="j-brace">:</span>    <span class="j-str">"On-site Food Sanitation Manager (食品衛生責任者) required per licensed establishment during all operations. Remote compliance services not accepted."</span>,
+      <span class="j-key">"confirmed"</span><span class="j-brace">:</span>    <span class="j-bool">true</span>
+    <span class="j-brace">}</span>
+  <span class="j-brace">]</span>,
+
+  <span class="j-key">"routing"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+    <span class="j-key">"priority"</span><span class="j-brace">:</span>                 <span class="j-str">"P2_high"</span>,
+    <span class="j-key">"target_profiles"</span><span class="j-brace">:</span>          <span class="j-brace">[</span>
+      <span class="j-str">"real_estate_investor"</span>,
+      <span class="j-str">"hospitality_operator"</span>,
+      <span class="j-str">"reit_analyst"</span>,
+      <span class="j-str">"macro_analyst"</span>,
+      <span class="j-str">"labor_economist"</span>
+    <span class="j-brace">]</span>,
+    <span class="j-key">"alert_threshold"</span><span class="j-brace">:</span>           <span class="j-str">"daily_digest"</span>,
+    <span class="j-key">"suppress_if_analog_exists"</span><span class="j-brace">:</span> <span class="j-bool">false</span>,
+    <span class="j-key">"routing_rationale"</span><span class="j-brace">:</span>         <span class="j-str">"Cross-sector analogs confirmed — do not suppress. Each sector instance (STR, elder care, food service) represents an independent investment-relevant signal even though root mechanism is identical."</span>
+  <span class="j-brace">}</span>,
+
+  <span class="j-key">"extraction_metadata"</span><span class="j-brace">:</span> <span class="j-brace">{</span>
+    <span class="j-key">"source_type"</span><span class="j-brace">:</span>   <span class="j-str">"unit_economics_model"</span>,
+    <span class="j-key">"confidence"</span><span class="j-brace">:</span>    <span class="j-str">"high"</span>,
+    <span class="j-key">"sources"</span><span class="j-brace">:</span> <span class="j-brace">[</span>
+      <span class="j-str">"Japan Tourism Agency — mlit.go.jp/kankocho/minpaku"</span>,
+      <span class="j-str">"Roomspilot — Airbnb Legal Requirements Tokyo 2026"</span>,
+      <span class="j-str">"Keycafe Blog — Japan Airbnb Regulations 2022"</span>,
+      <span class="j-str">"Colliers Japan Hospitality Insights Sep 2024"</span>,
+      <span class="j-str">"Airbtics/AirROI — Shinjuku 1BR benchmark data 2024-25"</span>,
+      <span class="j-str">"Oxford Academic / Age and Ageing — Japanese aged care staffing"</span>,
+      <span class="j-str">"Japan Health Policy NOW — LTCI staffing projections"</span>,
+      <span class="j-str">"RSM Shiodome — Food Hygiene Law Article 51 guide"</span>
+    <span class="j-brace">]</span>,
+    <span class="j-key">"extracted_by"</span><span class="j-brace">:</span>  <span class="j-str">"Marcus / Post Fiat Node"</span>,
+    <span class="j-key">"extracted_at"</span><span class="j-brace">:</span>  <span class="j-str">"2026-03-10"</span>,
+    <span class="j-key">"review_due"</span><span class="j-brace">:</span>    <span class="j-str">"2026-09-10"</span>
+  <span class="j-brace">}</span>
+<span class="j-brace">}</span></pre>
+    </div>
+  </div>
+
+  <!-- SECTION 3: ROUTING MATRIX -->
+  <div class="section">
+    <div class="section-label">§ 03</div>
+    <div class="section-title">Routing Logic Matrix</div>
+    <p class="prose">
+      Routing is determined by a two-axis decision: <strong>constraint_type</strong> × <strong>cost_floor_impact.severity</strong>.
+      The matrix below defines which operator profiles receive alerts and at what cadence.
+      A constraint must satisfy both axes to trigger routing — a low-severity physical_presence
+      constraint routes differently than a critical one even though the type is identical.
+    </p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Constraint Type</th>
+          <th>Severity</th>
+          <th>Inelastic?</th>
+          <th>Captive Vendor?</th>
+          <th>Target Profiles</th>
+          <th>Alert Cadence</th>
+          <th>Priority</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>proximity_distance</td>
+          <td><span class="tag tag-high">critical</span></td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>real_estate_investor, hospitality_operator, reit_analyst, macro_analyst, labor_economist</td>
+          <td>daily_digest</td>
+          <td><span class="tag tag-alert">P2</span></td>
+        </tr>
+        <tr>
+          <td>staffing_ratio</td>
+          <td><span class="tag tag-high">critical</span></td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>labor_economist, policy_researcher, reit_analyst, venture_investor</td>
+          <td>daily_digest</td>
+          <td><span class="tag tag-alert">P2</span></td>
+        </tr>
+        <tr>
+          <td>third_party_mandatory</td>
+          <td><span class="tag tag-high">critical</span></td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>real_estate_investor, reit_analyst, macro_analyst, compliance_officer</td>
+          <td>immediate</td>
+          <td><span class="tag tag-block">P1</span></td>
+        </tr>
+        <tr>
+          <td>physical_presence</td>
+          <td><span class="tag tag-medium">high</span></td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>hospitality_operator, compliance_officer, labor_economist</td>
+          <td>daily_digest</td>
+          <td><span class="tag tag-alert">P2</span></td>
+        </tr>
+        <tr>
+          <td>operating_days</td>
+          <td><span class="tag tag-medium">high</span></td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>real_estate_investor, hospitality_operator</td>
+          <td>weekly_digest</td>
+          <td><span class="tag tag-medium">P3</span></td>
+        </tr>
+        <tr>
+          <td>licensing_person</td>
+          <td><span class="tag tag-medium">medium</span></td>
+          <td>Partial</td>
+          <td>No</td>
+          <td>compliance_officer, hospitality_operator</td>
+          <td>weekly_digest</td>
+          <td><span class="tag tag-medium">P3</span></td>
+        </tr>
+        <tr>
+          <td>operating_hours</td>
+          <td><span class="tag tag-low">low</span></td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>hospitality_operator</td>
+          <td>weekly_digest</td>
+          <td><span class="tag tag-low">P4</span></td>
+        </tr>
+        <tr>
+          <td>reporting_interval</td>
+          <td><span class="tag tag-low">low</span></td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>compliance_officer</td>
+          <td>weekly_digest</td>
+          <td><span class="tag tag-low">P4</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="prose" style="margin-top:8px;">
+      <strong>Cross-sector suppression rule:</strong> When <code>suppress_if_analog_exists: false</code>
+      (as in the Japan test vector), each analog instance routes independently. When set to
+      <code>true</code>, the network suppresses duplicate alerts for the same constraint_type
+      already delivered in the same jurisdiction within the prior 30 days, and instead appends
+      to the existing constraint record's <code>cross_sector_analogs</code> array.
+    </p>
+  </div>
+
+  <!-- SECTION 4: EDGE CASES -->
+  <div class="section">
+    <div class="section-label">§ 04</div>
+    <div class="section-title">Edge Cases and Fallback Extraction Logic</div>
+
+    <div class="edge-grid">
+
+      <div class="edge-card ec1">
+        <div class="edge-id">EC-01 · Data Conflict</div>
+        <div class="edge-title">Conflicting Jurisdiction Scope Claims</div>
+        <div class="edge-field">
+          <div class="edge-field-label">Scenario</div>
+          <div class="edge-field-val">A constraint is documented at national level (e.g., Private Lodging Business Act specifies "administrator required") but the 10-minute proximity standard only exists in municipal guidance — not in the national Act. The two sources appear to conflict: national law says "administrator," municipal guidance operationalises "within 10 minutes." Naive extraction treats these as separate or contradictory constraints.</div>
+        </div>
+        <div class="edge-field">
+          <div class="edge-field-label">Fallback Logic</div>
+          <div class="edge-field-val">Set <code>scope: "municipal"</code> (most restrictive level wins). Set <code>confidence: "high"</code> if both sources are primary. Populate <code>legal_basis.secondary</code> with the municipal document. Do not create two records — the municipal operationalisation is the binding one for investment analysis. Flag with <code>opacity_level: 4</code> minimum when national and municipal specifications diverge.</div>
+        </div>
+        <div class="edge-field">
+          <div class="edge-field-label">Routing Impact</div>
+          <div class="edge-field-val">No routing change. Severity and type are determined by the binding (most restrictive) instrument.</div>
+        </div>
+      </div>
+
+      <div class="edge-card ec2">
+        <div class="edge-id">EC-02 · Incomplete Data</div>
+        <div class="edge-title">margin_impact_pct Not Quantifiable</div>
+        <div class="edge-field">
+          <div class="edge-field-label">Scenario</div>
+          <div class="edge-field-val">A physical_presence constraint is identified and confirmed (e.g., a proximity requirement in a new jurisdiction) but no unit economics model has been run. The <code>margin_impact_pct</code> and <code>cost_as_pct_gross</code> fields cannot be populated with confidence. Omitting them leaves an incomplete record; guessing them degrades the schema's reliability.</div>
+        </div>
+        <div class="edge-field">
+          <div class="edge-field-label">Fallback Logic</div>
+          <div class="edge-field-val">Omit <code>margin_impact_pct</code> and <code>cost_as_pct_gross</code> (both are non-required enrichment fields). Set <code>confidence: "medium"</code>. Set <code>cost_floor_impact.severity: "high"</code> as the conservative default when a captive vendor relationship is confirmed but cost is unquantified. Add to <code>extraction_metadata</code> a note: <code>"unit_economics_model: pending"</code>. Route at P3 until model is complete, then re-route at confirmed priority.</div>
+        </div>
+        <div class="edge-field">
+          <div class="edge-field-label">Routing Impact</div>
+          <div class="edge-field-val">Downgrade to P3 / weekly_digest until <code>margin_impact_pct</code> is populated. Prevents noise alerts on unquantified constraints.</div>
+        </div>
+      </div>
+
+      <div class="edge-card ec3">
+        <div class="edge-id">EC-03 · Stale Record</div>
+        <div class="edge-title">Regulatory Change After Extraction</div>
+        <div class="edge-field">
+          <div class="edge-field-label">Scenario</div>
+          <div class="edge-field-val">Japan's government signals it will accept robotic presence as partial substitution for the kaigo 1:3 staffing ratio — a precedent that, if formalised, would change <code>technology_substitution.permitted</code> from <code>false</code> to <code>true</code> and reduce <code>cost_floor_impact.severity</code> across the elder_care analog. The existing record <code>RWC-JP-2018-001</code> does not reflect this change because <code>review_due</code> has not yet been reached.</div>
+        </div>
+        <div class="edge-field">
+          <div class="edge-field-label">Fallback Logic</div>
+          <div class="edge-field-val">The <code>review_due</code> field (set to six months post-extraction by default) acts as the scheduled stale-check trigger. For out-of-cycle changes: any network node may submit a <code>constraint_amendment</code> event referencing the original <code>constraint_id</code>. Amendment events do not overwrite the original record — they append a versioned <code>amendments</code> array. The routing engine re-evaluates priority on each amendment. Set <code>confidence: "medium"</code> on the amendment until the regulatory change is confirmed in primary legislation.</div>
+        </div>
+        <div class="edge-field">
+          <div class="edge-field-label">Routing Impact</div>
+          <div class="edge-field-val">Amendment triggers an immediate re-route to all original <code>target_profiles</code> regardless of <code>alert_threshold</code> cadence. A relaxation of a critical constraint is investment-relevant at P1 immediacy.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 5: FIELD REFERENCE -->
+  <div class="section">
+    <div class="section-label">§ 05</div>
+    <div class="section-title">Field Reference Summary</div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Required</th>
+          <th>Type</th>
+          <th>Purpose</th>
+          <th>Test Vector Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>constraint_id</td>
+          <td><span class="tag tag-pass">Yes</span></td>
+          <td>string</td>
+          <td>Unique record identifier</td>
+          <td>RWC-JP-2018-001</td>
+        </tr>
+        <tr>
+          <td>jurisdiction.scope</td>
+          <td><span class="tag tag-pass">Yes</span></td>
+          <td>enum</td>
+          <td>Most restrictive binding level</td>
+          <td>municipal</td>
+        </tr>
+        <tr>
+          <td>constraint_type</td>
+          <td><span class="tag tag-pass">Yes</span></td>
+          <td>enum</td>
+          <td>Mechanism classification for routing</td>
+          <td>proximity_distance</td>
+        </tr>
+        <tr>
+          <td>opacity_level</td>
+          <td><span class="tag tag-pass">Yes</span></td>
+          <td>integer 1–5</td>
+          <td>Discoverability score for intelligence value</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td>cost_floor_impact.inelastic</td>
+          <td><span class="tag tag-pass">Yes</span></td>
+          <td>boolean</td>
+          <td>Flags whether cost can be reduced via tech/scale</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>cost_floor_impact.margin_impact_pct</td>
+          <td><span class="tag tag-medium">No</span></td>
+          <td>number</td>
+          <td>Quantified NOI margin reduction</td>
+          <td>19.3</td>
+        </tr>
+        <tr>
+          <td>cost_floor_impact.captive_vendor</td>
+          <td><span class="tag tag-pass">Yes</span></td>
+          <td>boolean</td>
+          <td>Flags forced third-party dependency</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>technology_substitution.permitted</td>
+          <td><span class="tag tag-pass">Yes</span></td>
+          <td>boolean</td>
+          <td>Current tech substitution status</td>
+          <td>false</td>
+        </tr>
+        <tr>
+          <td>cross_sector_analogs</td>
+          <td><span class="tag tag-medium">No</span></td>
+          <td>array</td>
+          <td>Confirmed same-mechanism instances in other sectors</td>
+          <td>elder_care, food_service</td>
+        </tr>
+        <tr>
+          <td>routing.priority</td>
+          <td><span class="tag tag-pass">Yes</span></td>
+          <td>enum</td>
+          <td>Alert priority tier</td>
+          <td>P2_high</td>
+        </tr>
+        <tr>
+          <td>extraction_metadata.confidence</td>
+          <td><span class="tag tag-pass">Yes</span></td>
+          <td>enum</td>
+          <td>Source reliability classification</td>
+          <td>high</td>
+        </tr>
+        <tr>
+          <td>extraction_metadata.review_due</td>
+          <td><span class="tag tag-medium">No</span></td>
+          <td>date</td>
+          <td>Scheduled stale-check trigger</td>
+          <td>2026-09-10</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-footer">
+    <div class="footer-meta">
+      <div>Schema <span>RealWorldConstraint v1.0</span></div>
+      <div>Test vector <span>RWC-JP-2018-001</span></div>
+      <div>Extracted by <span>Marcus · Post Fiat Node</span></div>
+      <div>Published <span>2026-03-10</span> · Review due <span>2026-09-10</span></div>
+    </div>
+    <div class="footer-meta" style="text-align:right;">
+      <div>Post Fiat Network · Hive Mind Core Integration</div>
+      <div>Dynamic Constraint-Based Extraction Refactor</div>
+      <div style="color: var(--accent); margin-top:4px;">Status: Active · v1.0</div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+</body>
+</html>
