@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japan Airbnb Feasibility Study — Shinjuku · Dotonbori · Kyoto Higashiyama</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper:   #F5F0E8;
+  --cream:   #EDE8DC;
+  --ink:     #1A1510;
+  --ink2:    #3A332A;
+  --dim:     #7A7060;
+  --rule:    #C8BEA8;
+  --rule2:   #DDD8CE;
+  --go:      #1A5C35;
+  --go-bg:   #EAF4ED;
+  --no:      #7A1A1A;
+  --no-bg:   #F8EDED;
+  --caution: #6B4A00;
+  --caut-bg: #FBF4E0;
+  --accent:  #8B3A0F;
+  --blue:    #1A3A6B;
+  --blue-bg: #EBF0F8;
+
+  --serif: 'Libre Baskerville', Georgia, serif;
+  --mono:  'DM Mono', 'Courier New', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── LAYOUT ── */
+.wrap { max-width: 860px; margin: 0 auto; padding: 0 40px 100px; }
+
+/* ── MASTHEAD ── */
+.masthead {
+  padding: 72px 0 48px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 48px;
+}
+.doc-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.doc-eyebrow::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+h1 {
+  font-family: var(--serif);
+  font-size: 46px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--ink);
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+h1 .sub { display: block; font-weight: 400; font-style: italic; font-size: 28px; color: var(--ink2); margin-top: 8px; }
+.masthead-dek {
+  font-size: 16px;
+  color: var(--ink2);
+  max-width: 640px;
+  margin: 24px 0 32px;
+  line-height: 1.7;
+}
+.meta-strip {
+  display: flex;
+  gap: 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 14px 0;
+  flex-wrap: wrap;
+}
+.meta-item {
+  padding-right: 28px;
+  margin-right: 28px;
+  border-right: 1px solid var(--rule2);
+}
+.meta-item:last-child { border-right: none; margin-right: 0; }
+.meta-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim); display: block; margin-bottom: 3px; }
+.meta-val { font-family: var(--mono); font-size: 12px; color: var(--ink); font-weight: 500; }
+
+/* ── DISCLAIMER ── */
+.disclaimer {
+  background: var(--caut-bg);
+  border-left: 3px solid var(--caution);
+  padding: 14px 18px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--caution);
+  margin-bottom: 48px;
+  line-height: 1.7;
+}
+
+/* ── SECTION HEADERS ── */
+h2 {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 56px 0 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule);
+}
+h2 .section-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 400;
+}
+h3 {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 32px 0 12px;
+}
+h4 {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin: 24px 0 10px;
+  font-weight: 500;
+}
+
+/* ── PROSE ── */
+p { margin-bottom: 16px; color: var(--ink2); }
+p:last-child { margin-bottom: 0; }
+strong { color: var(--ink); }
+
+/* ── TOC ── */
+.toc {
+  background: var(--cream);
+  border: 1px solid var(--rule);
+  padding: 24px 28px;
+  margin-bottom: 48px;
+}
+.toc-title { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); margin-bottom: 16px; }
+.toc a {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--ink2);
+  text-decoration: none;
+  font-size: 14px;
+  padding: 4px 0;
+  font-family: var(--serif);
+  border-bottom: 1px dotted transparent;
+  transition: color 0.15s;
+}
+.toc a:hover { color: var(--accent); }
+.toc a .toc-num { font-family: var(--mono); font-size: 10px; color: var(--dim); min-width: 30px; }
+.toc a .dots { flex: 1; border-bottom: 1px dotted var(--rule); height: 0; margin-bottom: 4px; }
+
+/* ── NEIGHBORHOOD HEADER ── */
+.nh-header {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 24px 28px;
+  margin-bottom: 0;
+}
+.nh-city { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--rule); margin-bottom: 6px; }
+.nh-name { font-family: var(--serif); font-size: 26px; font-weight: 700; color: #F5F0E8; }
+.nh-subtitle { font-family: var(--mono); font-size: 11px; color: #9A9080; margin-top: 4px; }
+
+/* ── STAT ROW ── */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--rule);
+  border-top: none;
+  margin-bottom: 24px;
+}
+.stat-cell {
+  padding: 16px 18px;
+  border-right: 1px solid var(--rule2);
+}
+.stat-cell:last-child { border-right: none; }
+.stat-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-bottom: 5px; }
+.stat-val { font-family: var(--mono); font-size: 20px; font-weight: 500; color: var(--ink); line-height: 1.2; }
+.stat-note { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-top: 3px; }
+
+/* ── LISTING TABLE ── */
+.listing-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  margin: 16px 0 24px;
+  font-family: var(--mono);
+}
+.listing-table th {
+  background: var(--cream);
+  text-align: left;
+  padding: 9px 12px;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  border-bottom: 2px solid var(--rule);
+  white-space: nowrap;
+}
+.listing-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule2);
+  color: var(--ink2);
+  vertical-align: top;
+}
+.listing-table tr:last-child td { border-bottom: none; }
+.listing-table tr:hover td { background: var(--cream); }
+.listing-table .type-airbnb { color: var(--accent); font-weight: 500; }
+.listing-table .type-hotel { color: var(--blue); font-weight: 500; }
+.listing-table .highlight { font-weight: 500; color: var(--ink); }
+
+/* ── REVENUE BOX ── */
+.revenue-box {
+  background: var(--cream);
+  border: 1px solid var(--rule);
+  padding: 20px 24px;
+  margin: 20px 0 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+.rev-item .rev-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-bottom: 5px; }
+.rev-item .rev-val { font-family: var(--mono); font-size: 18px; font-weight: 500; color: var(--ink); }
+.rev-item .rev-note { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-top: 3px; }
+
+/* ── SPACE ANALYSIS ── */
+.space-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 16px 0;
+}
+.space-card {
+  border: 1px solid var(--rule);
+  padding: 16px 18px;
+}
+.space-card .sc-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-bottom: 6px; }
+.space-card .sc-val { font-family: var(--mono); font-size: 22px; font-weight: 500; color: var(--ink); }
+.space-card .sc-note { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-top: 4px; }
+.space-card .sc-premium { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--go); margin-top: 8px; }
+
+/* ── REGULATORY NOTES ── */
+.reg-box {
+  border-left: 3px solid var(--blue);
+  background: var(--blue-bg);
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--blue);
+}
+.reg-box strong { color: var(--blue); }
+
+/* ── VERDICT ── */
+.verdict-box {
+  padding: 20px 24px;
+  margin: 20px 0 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+.verdict-box.go   { background: var(--go-bg);   border: 1px solid #A8D4B8; }
+.verdict-box.caut { background: var(--caut-bg);  border: 1px solid #D4B870; }
+.verdict-box.no   { background: var(--no-bg);    border: 1px solid #D4A8A8; }
+.verdict-badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 2px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.verdict-box.go   .verdict-badge { background: var(--go);   color: #F0FAF4; }
+.verdict-box.caut .verdict-badge { background: var(--caution); color: #FDFAF0; }
+.verdict-box.no   .verdict-badge { background: var(--no);   color: #FDF0F0; }
+.verdict-text { font-size: 14px; line-height: 1.7; color: var(--ink2); }
+.verdict-text strong { color: var(--ink); }
+
+/* ── RANKING TABLE ── */
+.rank-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 13.5px;
+}
+.rank-table th {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 11px 16px;
+  text-align: left;
+}
+.rank-table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--rule2);
+  vertical-align: top;
+}
+.rank-table tr:last-child td { border-bottom: none; }
+.rank-num { font-family: var(--mono); font-size: 22px; font-weight: 500; color: var(--rule); }
+.rank-go   { color: var(--go);   font-weight: 700; font-family: var(--mono); }
+.rank-caut { color: var(--caution); font-weight: 700; font-family: var(--mono); }
+.rank-no   { color: var(--no);   font-weight: 700; font-family: var(--mono); }
+
+/* ── STARTUP COSTS ── */
+.costs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  margin: 16px 0 24px;
+}
+.cost-cell {
+  background: var(--paper);
+  padding: 16px 18px;
+}
+.cost-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-bottom: 6px; }
+.cost-items { font-family: var(--mono); font-size: 11.5px; color: var(--ink2); line-height: 1.8; }
+.cost-total { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--ink); margin-top: 8px; border-top: 1px solid var(--rule2); padding-top: 6px; }
+
+/* ── HR ── */
+hr { border: none; border-top: 1px solid var(--rule); margin: 48px 0; }
+
+/* ── FOOTNOTE ── */
+.footnote { font-family: var(--mono); font-size: 10px; color: var(--dim); line-height: 1.7; margin-top: 8px; }
+
+/* ── FOOTER ── */
+footer {
+  margin-top: 64px;
+  padding-top: 20px;
+  border-top: 2px solid var(--ink);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+footer span { font-family: var(--mono); font-size: 10px; color: var(--dim); }
+
+/* ── PULLQUOTE ── */
+.pullquote {
+  border-left: 4px solid var(--accent);
+  padding: 4px 20px;
+  margin: 24px 0;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--ink);
+  line-height: 1.65;
+}
+
+@media (max-width: 640px) {
+  h1 { font-size: 30px; }
+  .stat-row { grid-template-columns: 1fr 1fr; }
+  .space-row { grid-template-columns: 1fr; }
+  .revenue-box { grid-template-columns: 1fr; }
+  .costs-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ══ MASTHEAD ══════════════════════════════════════════════════════════ -->
+<header class="masthead">
+  <div class="doc-eyebrow">Investment Research · Japan Short-Term Rental</div>
+  <h1>Japan Airbnb<br>Feasibility Study
+    <span class="sub">Shinjuku · Dotonbori · Kyoto Higashiyama</span>
+  </h1>
+  <p class="masthead-dek">A structured comparison of Airbnb versus hotel value propositions across three Japanese vacation destination neighbourhoods, covering ADR, space economics, occupancy, estimated monthly revenue, regulatory risk, and go/no-go investment rankings.</p>
+  <div class="meta-strip">
+    <div class="meta-item"><span class="meta-label">Published</span><span class="meta-val">March 2026</span></div>
+    <div class="meta-item"><span class="meta-label">Exchange Rate</span><span class="meta-val">¥155 / USD (2025 avg)</span></div>
+    <div class="meta-item"><span class="meta-label">Data Basis</span><span class="meta-val">Benchmark / Estimated</span></div>
+    <div class="meta-item"><span class="meta-label">Author</span><span class="meta-val">Marcus</span></div>
+  </div>
+</header>
+
+<div class="disclaimer">
+  ⚠ DATA NOTE — All ADR, occupancy, and revenue figures in this report are benchmark estimates derived from publicly available market research (AirROI, Airbtics, E-Housing Japan, and Japan Tourism Agency data, 2024–2025). They are not scraped live from individual listings. Figures represent representative ranges for each neighbourhood and should be independently verified against live Airbnb search results and AirDNA reports before any investment decision. USD figures use a ¥155/USD conversion rate.
+</div>
+
+<!-- ══ TOC ══════════════════════════════════════════════════════════════ -->
+<div class="toc">
+  <div class="toc-title">Contents</div>
+  <a href="#selection"><span class="toc-num">§1</span>Neighbourhood Selection Criteria<span class="dots"></span></a>
+  <a href="#shinjuku"><span class="toc-num">§2</span>Shinjuku, Tokyo<span class="dots"></span></a>
+  <a href="#dotonbori"><span class="toc-num">§3</span>Dotonbori / Namba, Osaka<span class="dots"></span></a>
+  <a href="#higashiyama"><span class="toc-num">§4</span>Higashiyama, Kyoto<span class="dots"></span></a>
+  <a href="#space"><span class="toc-num">§5</span>Cross-Neighbourhood Space Analysis<span class="dots"></span></a>
+  <a href="#startup"><span class="toc-num">§6</span>Estimated Startup Costs<span class="dots"></span></a>
+  <a href="#ranking"><span class="toc-num">§7</span>Go / No-Go Rankings<span class="dots"></span></a>
+</div>
+
+<!-- ══ §1 SELECTION ══════════════════════════════════════════════════════ -->
+<section id="selection">
+  <h2><span class="section-label">§1</span>Neighbourhood Selection Criteria</h2>
+
+  <p>Three neighbourhoods were selected to represent meaningfully distinct regulatory environments, tourist profiles, and Airbnb market maturities — rather than simply picking the three highest-ADR markets. The selection criteria weighed four factors equally: demonstrated inbound tourist volume, legal operating environment for minpaku, proximity to transit and primary attractions, and differentiation in the Airbnb-versus-hotel value proposition.</p>
+
+  <p><strong>Shinjuku (Tokyo)</strong> was selected as the high-volume, high-regulation baseline. With over 600,000 guest nights recorded in Tokyo in a two-month window in late 2024, the demand case is unambiguous. The regulatory case is more complex: Shinjuku ward restricts residential-zone Airbnb to weekends only (Friday noon to Monday noon), creating an effective annual ceiling of approximately 150 operating days. This makes Shinjuku the most instructive test of whether the regulatory cap kills the financial case.</p>
+
+  <p><strong>Dotonbori / Namba (Osaka)</strong> was selected as the regulatory counterpoint. Osaka City operates under the National Strategic Special Zone framework, meaning qualifying properties can operate year-round without the 180-day national cap, provided guests stay a minimum of two consecutive nights. Osaka drew the highest international guest concentration of the three cities, with 88.8% of Airbnb guests being non-Japanese as of 2024–2025. With new Special Zone applications suspended from late 2025, existing licensed properties become a constrained supply with rising scarcity value.</p>
+
+  <p><strong>Higashiyama (Kyoto)</strong> was selected as the high-ADR, low-volume, high-friction market. Kyoto's historic districts apply the most restrictive overlay rules of any major Japanese tourist city: residential-zone minpaku is restricted to January 15–March 15 only, an effective cap of just 59 operating days per year in much of the area. Hotels and ryokans dominate the accommodation market here. The Airbnb value proposition in Higashiyama is therefore based almost entirely on the space-per-dollar premium over comparable traditional lodging — not on revenue volume.</p>
+</section>
+
+<!-- ══ §2 SHINJUKU ════════════════════════════════════════════════════════ -->
+<section id="shinjuku">
+  <h2><span class="section-label">§2</span>Shinjuku, Tokyo</h2>
+
+  <div class="nh-header">
+    <div class="nh-city">Tokyo · Shinjuku Ward</div>
+    <div class="nh-name">Shinjuku</div>
+    <div class="nh-subtitle">Japan's highest-volume tourist ward · Weekend-only residential minpaku · ~150 permitted days/year</div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-cell">
+      <div class="stat-label">Airbnb ADR (1BR)</div>
+      <div class="stat-val">¥22,000</div>
+      <div class="stat-note">~$142 · Ward avg ¥27,100</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Airbnb ADR (2BR)</div>
+      <div class="stat-val">¥34,000</div>
+      <div class="stat-note">~$219 · group premium</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Effective Occ. Rate</div>
+      <div class="stat-val">55–62%</div>
+      <div class="stat-note">of available nights only</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Permitted Days/Year</div>
+      <div class="stat-val">~150</div>
+      <div class="stat-note">residential zone cap</div>
+    </div>
+  </div>
+
+  <h3>Airbnb Listing Comparables</h3>
+  <p>The following five benchmark listings represent the 1BR and 2BR Airbnb segments in Shinjuku ward. Figures are derived from ward-level AirROI and Airbtics data aggregated for 2024–2025 and reflect typical listed properties rather than top-decile outliers.</p>
+
+  <table class="listing-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Est. Size (m²)</th>
+        <th>ADR (¥)</th>
+        <th>ADR (USD)</th>
+        <th>Max Guests</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>A1</td>
+        <td class="type-airbnb">Airbnb 1BR</td>
+        <td>Studio/1LDK, 5-min walk Shinjuku-sanchome</td>
+        <td class="highlight">28</td>
+        <td class="highlight">¥18,000</td>
+        <td>$116</td>
+        <td>2–3</td>
+      </tr>
+      <tr>
+        <td>A2</td>
+        <td class="type-airbnb">Airbnb 1BR</td>
+        <td>1LDK, Kabukicho-adjacent, licensed minpaku</td>
+        <td class="highlight">32</td>
+        <td class="highlight">¥22,000</td>
+        <td>$142</td>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td>A3</td>
+        <td class="type-airbnb">Airbnb 1BR</td>
+        <td>Renovated 1BR, Nishi-Shinjuku, full kitchen</td>
+        <td class="highlight">35</td>
+        <td class="highlight">¥25,000</td>
+        <td>$161</td>
+        <td>4</td>
+      </tr>
+      <tr>
+        <td>A4</td>
+        <td class="type-airbnb">Airbnb 2BR</td>
+        <td>2LDK, Okubo area, group-oriented layout</td>
+        <td class="highlight">52</td>
+        <td class="highlight">¥32,000</td>
+        <td>$206</td>
+        <td>6</td>
+      </tr>
+      <tr>
+        <td>A5</td>
+        <td class="type-airbnb">Airbnb 2BR</td>
+        <td>2BR apartment, Shinjuku 3-chome, high-floor</td>
+        <td class="highlight">58</td>
+        <td class="highlight">¥38,000</td>
+        <td>$245</td>
+        <td>6–8</td>
+      </tr>
+      <tr>
+        <td>H1</td>
+        <td class="type-hotel">Hotel (Business)</td>
+        <td>Business hotel double, 5-min Shinjuku Stn</td>
+        <td class="highlight">16</td>
+        <td class="highlight">¥18,965</td>
+        <td>$122</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td>H2</td>
+        <td class="type-hotel">Hotel (Mid)</td>
+        <td>3-star superior twin, Shinjuku central</td>
+        <td class="highlight">22</td>
+        <td class="highlight">¥24,000</td>
+        <td>$155</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td>H3</td>
+        <td class="type-hotel">Hotel (Upper-Mid)</td>
+        <td>4-star deluxe double, Kabukicho-adjacent</td>
+        <td class="highlight">28</td>
+        <td class="highlight">¥38,000</td>
+        <td>$245</td>
+        <td>2</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="footnote">Sources: AirROI Tokyo ward-level data Oct 2024–Sep 2025; E-Housing Japan Shinjuku ADR analysis; Tokyo Hotel Association ADR data Oct 2024 (¥18,965 average). All figures benchmarked, not scraped live.</p>
+
+  <h3>Estimated Monthly Gross Revenue — Hypothetical 1BR Unit</h3>
+  <div class="revenue-box">
+    <div class="rev-item">
+      <div class="rev-label">Available Nights/Mo</div>
+      <div class="rev-val">12–13</div>
+      <div class="rev-note">Weekend-only (3 nights/wk × ~4.3 wks)</div>
+    </div>
+    <div class="rev-item">
+      <div class="rev-label">Effective Occupancy</div>
+      <div class="rev-val">58%</div>
+      <div class="rev-note">of available nights</div>
+    </div>
+    <div class="rev-item">
+      <div class="rev-label">Est. Monthly Revenue</div>
+      <div class="rev-val">¥156,000</div>
+      <div class="rev-note">~$1,006 · 7.5 nights × ¥22,000 ADR</div>
+    </div>
+  </div>
+  <p>Annual gross revenue on this model is approximately ¥1.87M (~$12,065). The 150-night annual cap is the binding constraint, not demand. A comparable unit in a hotel-licensed configuration could theoretically earn 2.4× this figure at the same ADR and 60% occupancy.</p>
+
+  <h3>Regulatory Environment</h3>
+  <div class="reg-box">
+    <strong>Licence required:</strong> Minpaku registration (届出番号) mandatory; must be displayed on listing. <strong>Operating days:</strong> Residential zones: Friday noon – Monday noon only (~150 days/year maximum). Some commercial zones qualify for broader hours. <strong>Management:</strong> Non-resident owners must appoint a licensed minpaku manager (管理業者). <strong>Accommodation tax:</strong> ¥100–¥200 per guest per night depending on rate. <strong>HOA risk:</strong> Many Shinjuku condominiums have bylaws prohibiting minpaku — verify before purchase.
+  </div>
+
+  <div class="verdict-box caut">
+    <span class="verdict-badge">Conditional</span>
+    <div class="verdict-text"><strong>Regulatory ceiling limits revenue potential.</strong> The demand fundamentals in Shinjuku are excellent — 57% of Tokyo Airbnb guests are international, ADRs are among the highest in Japan, and occupancy on permitted days is strong. However, the weekend-only restriction in residential zones caps annual gross revenue at roughly ¥1.87M for a standard 1BR, which is insufficient to justify purchase prices that commonly reach ¥60–90M for a Shinjuku apartment. The math works only if the property is in a commercial zone (full operating rights), already hotel-licensed, or acquired at a yield-justified price well below market average.</div>
+  </div>
+</section>
+
+<!-- ══ §3 DOTONBORI ════════════════════════════════════════════════════════ -->
+<section id="dotonbori">
+  <h2><span class="section-label">§3</span>Dotonbori / Namba, Osaka</h2>
+
+  <div class="nh-header">
+    <div class="nh-city">Osaka · Chuo Ward / Naniwa Ward</div>
+    <div class="nh-name">Dotonbori / Namba</div>
+    <div class="nh-subtitle">National Strategic Special Zone · Year-round operation possible · New permits suspended late 2025</div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-cell">
+      <div class="stat-label">Airbnb ADR (1BR)</div>
+      <div class="stat-val">¥14,000</div>
+      <div class="stat-note">~$90 · Naniwa ward median</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Airbnb ADR (2BR)</div>
+      <div class="stat-val">¥21,000</div>
+      <div class="stat-note">~$135 · group-oriented units</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Effective Occ. Rate</div>
+      <div class="stat-val">62–72%</div>
+      <div class="stat-note">peak Jul: 75.8%</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Permitted Days/Year</div>
+      <div class="stat-val">365</div>
+      <div class="stat-note">Special Zone (existing licenses)</div>
+    </div>
+  </div>
+
+  <h3>Airbnb Listing Comparables</h3>
+  <p>Dotonbori-adjacent listings cluster around the Chuo and Naniwa ward boundaries. Typical units are compact (25–65m²) and marketed heavily to group travellers eating their way through Namba. The 65m² 8-person listing format is a Dotonbori signature — a single 2BR unit priced for 6–8 guests generates strong per-night revenue while keeping per-person cost competitive with business hotels.</p>
+
+  <table class="listing-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Est. Size (m²)</th>
+        <th>ADR (¥)</th>
+        <th>ADR (USD)</th>
+        <th>Max Guests</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>A1</td>
+        <td class="type-airbnb">Airbnb 1BR</td>
+        <td>25m² studio, 1-min Dotonbori, licensed</td>
+        <td class="highlight">25</td>
+        <td class="highlight">¥11,000</td>
+        <td>$71</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td>A2</td>
+        <td class="type-airbnb">Airbnb 1BR</td>
+        <td>1LDK, Ebisucho 2-min walk, self check-in</td>
+        <td class="highlight">30</td>
+        <td class="highlight">¥14,000</td>
+        <td>$90</td>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td>A3</td>
+        <td class="type-airbnb">Airbnb 1BR</td>
+        <td>Renovated, Namba Station 8-min, 2024 refit</td>
+        <td class="highlight">38</td>
+        <td class="highlight">¥17,000</td>
+        <td>$110</td>
+        <td>4</td>
+      </tr>
+      <tr>
+        <td>A4</td>
+        <td class="type-airbnb">Airbnb 2BR</td>
+        <td>65m² 2BR, Dotonbori/Namba walkable, 8-person</td>
+        <td class="highlight">65</td>
+        <td class="highlight">¥28,000</td>
+        <td>$181</td>
+        <td>8</td>
+      </tr>
+      <tr>
+        <td>A5</td>
+        <td class="type-airbnb">Airbnb 2BR</td>
+        <td>New-build 2LDK, free parking, licensed 2024</td>
+        <td class="highlight">55</td>
+        <td class="highlight">¥24,000</td>
+        <td>$155</td>
+        <td>6</td>
+      </tr>
+      <tr>
+        <td>H1</td>
+        <td class="type-hotel">Hotel (Business)</td>
+        <td>Business hotel, Namba-sanchome, standard double</td>
+        <td class="highlight">15</td>
+        <td class="highlight">¥12,000</td>
+        <td>$77</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td>H2</td>
+        <td class="type-hotel">Hotel (Mid)</td>
+        <td>3-star, Shinsaibashi, superior twin</td>
+        <td class="highlight">20</td>
+        <td class="highlight">¥18,000</td>
+        <td>$116</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td>H3</td>
+        <td class="type-hotel">Hotel (Upper-Mid)</td>
+        <td>4-star, Dotonbori-adjacent, deluxe double</td>
+        <td class="highlight">26</td>
+        <td class="highlight">¥32,000</td>
+        <td>$206</td>
+        <td>2</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="footnote">Sources: AirROI Naniwa Ward Dec 2024–Nov 2025; Airbtics Osaka city-wide data Sep 2024–Aug 2025; live Airbnb Osaka listings March 2026 (25m², 65m² unit descriptions). All figures benchmarked.</p>
+
+  <h3>Estimated Monthly Gross Revenue — Hypothetical 1BR Unit</h3>
+  <div class="revenue-box">
+    <div class="rev-item">
+      <div class="rev-label">Available Nights/Mo</div>
+      <div class="rev-val">30</div>
+      <div class="rev-note">Year-round (Special Zone)</div>
+    </div>
+    <div class="rev-item">
+      <div class="rev-label">Effective Occupancy</div>
+      <div class="rev-val">65%</div>
+      <div class="rev-note">Annual average; peak 75.8%</div>
+    </div>
+    <div class="rev-item">
+      <div class="rev-label">Est. Monthly Revenue</div>
+      <div class="rev-val">¥273,000</div>
+      <div class="rev-note">~$1,761 · 19.5 nights × ¥14,000</div>
+    </div>
+  </div>
+  <p>Annual gross for this hypothetical 1BR sits at approximately ¥3.28M (~$21,160). The Airbtics city-wide Osaka average for 2024–2025 was ¥3M ($24K), aligning well with this model. The key variable is Special Zone licensing status: without it, a new operator falls under the 180-day national cap, cutting annual revenue to approximately ¥1.64M — a 50% haircut.</p>
+
+  <h3>Regulatory Environment</h3>
+  <div class="reg-box">
+    <strong>Special Zone status:</strong> Osaka City designated under National Strategic Special Zone — year-round operation possible but requires minimum 2-night stays and a separate permit application. <strong>New applications suspended:</strong> Osaka City announced suspension of new Special Zone minpaku applications circa October 2025, citing ~400 noise/garbage complaints in FY2024. Existing licensed properties face no operational change — supply is now artificially constrained. <strong>Fallback:</strong> New acquisitions default to 180-day Minpaku Law registration. <strong>Accommodation tax:</strong> ¥100–¥300 per guest per night. <strong>Management fee benchmark:</strong> 15–20% of gross for third-party managers.
+  </div>
+
+  <div class="verdict-box go">
+    <span class="verdict-badge">Go</span>
+    <div class="verdict-text"><strong>Strongest revenue-per-permitted-day of the three markets.</strong> Year-round operation rights, the highest international guest concentration (88.8%), and the most favourable acquisition-cost-to-revenue ratio in the three-market comparison. The suspension of new Special Zone applications is a near-term headwind for new entrants but a medium-term tailwind for existing licensed properties, which become scarcer and therefore more valuable on resale. The go verdict carries one firm condition: target only properties that already hold a valid Special Zone licence or a Hotel Business Act licence — new applications face an uncertain timeline. Minpaku-law-only properties in Osaka should be modelled at 180-day revenue, not 365-day.</div>
+  </div>
+</section>
+
+<!-- ══ §4 HIGASHIYAMA ═════════════════════════════════════════════════════ -->
+<section id="higashiyama">
+  <h2><span class="section-label">§4</span>Higashiyama, Kyoto</h2>
+
+  <div class="nh-header">
+    <div class="nh-city">Kyoto · Higashiyama Ward</div>
+    <div class="nh-name">Higashiyama / Gion</div>
+    <div class="nh-subtitle">Historic preservation zone · Residential minpaku: Jan 15–Mar 15 only · Machiya townhouse premium</div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-cell">
+      <div class="stat-label">Airbnb ADR (1BR)</div>
+      <div class="stat-val">¥21,000</div>
+      <div class="stat-note">~$135 · City avg ¥21,797</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Airbnb ADR (2BR machiya)</div>
+      <div class="stat-val">¥48,000</div>
+      <div class="stat-note">~$310 · Traditional townhouse</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Effective Occ. Rate</div>
+      <div class="stat-val">75–83%</div>
+      <div class="stat-note">When permitted; peak Nov</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Permitted Days/Year</div>
+      <div class="stat-val">~59</div>
+      <div class="stat-note">Residential zone: Jan 15–Mar 15</div>
+    </div>
+  </div>
+
+  <h3>Airbnb Listing Comparables</h3>
+  <p>Higashiyama's Airbnb market is defined by the machiya (町家) — traditional two-storey wooden townhouses that command a cultural premium far above comparable square footage elsewhere. The highest-value listings are entire machiya available for exclusive occupancy, with ADRs that reflect heritage architecture rather than floor area. Hotel comparables are drawn from the ryokan and boutique inn segment that dominates accommodation near Sannen-zaka and Ninenzaka.</p>
+
+  <table class="listing-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Est. Size (m²)</th>
+        <th>ADR (¥)</th>
+        <th>ADR (USD)</th>
+        <th>Max Guests</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>A1</td>
+        <td class="type-airbnb">Airbnb 1BR</td>
+        <td>Modern 1BR near Gion, licensed minpaku</td>
+        <td class="highlight">30</td>
+        <td class="highlight">¥18,000</td>
+        <td>$116</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td>A2</td>
+        <td class="type-airbnb">Airbnb 1BR</td>
+        <td>Renovated flat, Higashiyama Stn 5-min walk</td>
+        <td class="highlight">35</td>
+        <td class="highlight">¥22,000</td>
+        <td>$142</td>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td>A3</td>
+        <td class="type-airbnb">Airbnb 1BR</td>
+        <td>Machiya-style studio, Ninenzaka adjacent</td>
+        <td class="highlight">40</td>
+        <td class="highlight">¥28,000</td>
+        <td>$181</td>
+        <td>4</td>
+      </tr>
+      <tr>
+        <td>A4</td>
+        <td class="type-airbnb">Machiya 2BR</td>
+        <td>Entire traditional townhouse, Gion Shijo area</td>
+        <td class="highlight">80</td>
+        <td class="highlight">¥48,000</td>
+        <td>$310</td>
+        <td>4–6</td>
+      </tr>
+      <tr>
+        <td>A5</td>
+        <td class="type-airbnb">Machiya 2BR</td>
+        <td>Restored machiya, tatami rooms, private garden</td>
+        <td class="highlight">95</td>
+        <td class="highlight">¥65,000</td>
+        <td>$419</td>
+        <td>6</td>
+      </tr>
+      <tr>
+        <td>H1</td>
+        <td class="type-hotel">Ryokan (Entry)</td>
+        <td>Small ryokan, tatami room, Higashiyama</td>
+        <td class="highlight">18</td>
+        <td class="highlight">¥22,000</td>
+        <td>$142</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td>H2</td>
+        <td class="type-hotel">Boutique Hotel</td>
+        <td>Machiya-converted boutique, Sannen-zaka</td>
+        <td class="highlight">25</td>
+        <td class="highlight">¥38,000</td>
+        <td>$245</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td>H3</td>
+        <td class="type-hotel">Ryokan (Premium)</td>
+        <td>Traditional ryokan, kaiseki dinner, Gion</td>
+        <td class="highlight">30</td>
+        <td class="highlight">¥75,000</td>
+        <td>$484</td>
+        <td>2</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="footnote">Sources: Airbtics Kyoto city-wide Sep 2024–Aug 2025 (ADR ¥21,797, occ 82%); Japan-Property.jp machiya demand analysis; Kyoto accommodation tax schedule. Machiya ADR premiums estimated from published listing ranges; ryokan ADRs benchmarked against published rate cards.</p>
+
+  <h3>Estimated Monthly Gross Revenue — Hypothetical 1BR Unit</h3>
+  <div class="revenue-box">
+    <div class="rev-item">
+      <div class="rev-label">Permitted Days Total</div>
+      <div class="rev-val">~59</div>
+      <div class="rev-note">Jan 15–Mar 15 (residential zone)</div>
+    </div>
+    <div class="rev-item">
+      <div class="rev-label">Effective Occupancy</div>
+      <div class="rev-val">80%</div>
+      <div class="rev-note">High-demand window, plum season</div>
+    </div>
+    <div class="rev-item">
+      <div class="rev-label">Est. Annual Revenue</div>
+      <div class="rev-val">¥993,600</div>
+      <div class="rev-note">~$6,410 · 47 nights × ¥21,000</div>
+    </div>
+  </div>
+  <p>The residential-zone operating restriction reduces Higashiyama Airbnb investment to an income supplement rather than a standalone revenue asset. Monthly gross during the Jan–Mar window runs approximately ¥390,000 (~$2,516) — attractive on a per-night basis but confined to a 59-day annual window. The machiya segment is the exception: a well-restored entire-house listing can earn ¥2.3–3.1M in the permitted window at premium ADRs, but acquisition and restoration costs for authentic machiya routinely exceed ¥50–80M.</p>
+
+  <h3>Regulatory Environment</h3>
+  <div class="reg-box">
+    <strong>Residential districts:</strong> Minpaku permitted January 15–March 15 only (~59 days). Off-season letting via long-term or medium-term rental requires separate contracts. <strong>Commercial and hotel zones:</strong> Year-round operation possible under Hotel Business Act licence (kan-i shukusho 簡易宿所) — this is the correct path for machiya investment. <strong>Minimum stay:</strong> Kyoto initially required 2-night minimums; now eased in many zones but verify by specific parcel. <strong>Registration requirement:</strong> 100% of Kyoto Airbnb listings as of July 2025 carry a short-term rental licence number. <strong>Accommodation tax:</strong> ¥200–¥1,000 per guest per night — the highest in Japan, scaling with room rate. <strong>Management:</strong> Non-resident owners require 10-minute-proximity caretaker.
+  </div>
+
+  <div class="verdict-box no">
+    <span class="verdict-badge">No-Go</span>
+    <div class="verdict-text"><strong>Residential-zone operating restriction makes standard Airbnb investment unviable.</strong> At 59 permitted days per year and a 1BR ADR of ¥21,000, gross annual revenue is under ¥1M — insufficient to service acquisition debt on any central Higashiyama property. The space premium over hotels is real and meaningful, and demand is strong when permitted, but neither compensates for the structural operating constraint. The exception is a Hotel Business Act licensed machiya acquired below ¥60M in a commercial zone — this format generates viable year-round income and commands strong guest premiums. Residential-zone Airbnb in Kyoto should be modelled exclusively as a secondary income stream on a property acquired for other primary reasons, not as the investment thesis itself.</div>
+  </div>
+</section>
+
+<!-- ══ §5 SPACE ANALYSIS ══════════════════════════════════════════════════ -->
+<section id="space">
+  <h2><span class="section-label">§5</span>Cross-Neighbourhood Space Analysis</h2>
+
+  <p>The cost-per-square-metre-per-night metric measures the value each accommodation type delivers per unit of physical space. This is the primary dimension where Airbnb consistently outperforms hotels across all three markets — the space premium is the durable Airbnb value proposition for guests, independent of regulatory environment.</p>
+
+  <h3>Cost per m² per Night — Shinjuku</h3>
+  <div class="space-row">
+    <div class="space-card">
+      <div class="sc-label">Airbnb 1BR (avg A1–A3)</div>
+      <div class="sc-val">¥696/m²</div>
+      <div class="sc-note">32m² avg · ¥21,667 avg ADR</div>
+      <div class="sc-premium">vs. hotel median: ¥1,000/m² → 30% cheaper per m²</div>
+    </div>
+    <div class="space-card">
+      <div class="sc-label">Business / Mid Hotel (H1–H2)</div>
+      <div class="sc-val">¥1,039/m²</div>
+      <div class="sc-note">19m² avg · ¥21,483 avg ADR</div>
+      <div class="sc-premium" style="color:var(--no)">+49% cost per m² vs Airbnb</div>
+    </div>
+  </div>
+
+  <h3>Cost per m² per Night — Dotonbori / Namba</h3>
+  <div class="space-row">
+    <div class="space-card">
+      <div class="sc-label">Airbnb 1BR (avg A1–A3)</div>
+      <div class="sc-val">¥432/m²</div>
+      <div class="sc-note">31m² avg · ¥14,000 avg ADR</div>
+      <div class="sc-premium">vs. hotel median: ¥900/m² → 52% cheaper per m²</div>
+    </div>
+    <div class="space-card">
+      <div class="sc-label">Business / Mid Hotel (H1–H2)</div>
+      <div class="sc-val">¥857/m²</div>
+      <div class="sc-note">17.5m² avg · ¥15,000 avg ADR</div>
+      <div class="sc-premium" style="color:var(--no)">+98% cost per m² vs Airbnb</div>
+    </div>
+  </div>
+
+  <h3>Cost per m² per Night — Higashiyama</h3>
+  <div class="space-row">
+    <div class="space-card">
+      <div class="sc-label">Airbnb 1BR (avg A1–A3)</div>
+      <div class="sc-val">¥607/m²</div>
+      <div class="sc-note">35m² avg · ¥22,667 avg ADR</div>
+      <div class="sc-premium">vs. ryokan entry (H1): ¥1,222/m² → 50% cheaper per m²</div>
+    </div>
+    <div class="space-card">
+      <div class="sc-label">Ryokan / Boutique (H1–H2)</div>
+      <div class="sc-val">¥1,333/m²</div>
+      <div class="sc-note">21.5m² avg · ¥30,000 avg ADR</div>
+      <div class="sc-premium" style="color:var(--no)">+120% cost per m² vs Airbnb</div>
+    </div>
+  </div>
+
+  <div class="pullquote">
+    Dotonbori delivers the widest Airbnb-versus-hotel space premium — nearly double the floor area for the same nightly spend. Higashiyama's ryokans command the highest per-m² hotel rate in the comparison, making the Airbnb space advantage largest in absolute yen terms there, though the operating restriction neutralises it as an investment case.
+  </div>
+
+  <h3>Summary Space Premium Table</h3>
+  <table class="listing-table">
+    <thead>
+      <tr>
+        <th>Neighbourhood</th>
+        <th>Airbnb ¥/m²/night</th>
+        <th>Hotel ¥/m²/night</th>
+        <th>Space Premium (Airbnb advantage)</th>
+        <th>Avg Airbnb m² (1BR)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="highlight">Shinjuku</td>
+        <td>¥696</td>
+        <td>¥1,039</td>
+        <td class="highlight">+49%</td>
+        <td>32m²</td>
+      </tr>
+      <tr>
+        <td class="highlight">Dotonbori</td>
+        <td>¥432</td>
+        <td>¥857</td>
+        <td class="highlight">+98%</td>
+        <td>31m²</td>
+      </tr>
+      <tr>
+        <td class="highlight">Higashiyama</td>
+        <td>¥607</td>
+        <td>¥1,333</td>
+        <td class="highlight">+120%</td>
+        <td>35m²</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ══ §6 STARTUP COSTS ═══════════════════════════════════════════════════ -->
+<section id="startup">
+  <h2><span class="section-label">§6</span>Estimated Startup Costs</h2>
+  <p>The following costs represent a hypothetical 1BR unit (30–38m²) being configured for licensed Airbnb operation. Figures are Japan-market benchmarks and do not include property acquisition costs.</p>
+
+  <div class="costs-grid">
+    <div class="cost-cell">
+      <div class="cost-label">Furnishing &amp; Fit-Out</div>
+      <div class="cost-items">
+        Basic furniture &amp; appliances: ¥400,000–600,000<br>
+        Kitchen / laundry equipment: ¥80,000–150,000<br>
+        Linen &amp; guest supplies (×3 sets): ¥60,000–100,000<br>
+        Smart lock / keybox: ¥30,000–60,000<br>
+        Photography &amp; listing setup: ¥30,000–50,000
+      </div>
+      <div class="cost-total">Total: ¥600,000–960,000 (~$3,900–$6,200)</div>
+    </div>
+    <div class="cost-cell">
+      <div class="cost-label">Licensing &amp; Compliance</div>
+      <div class="cost-items">
+        Minpaku registration (filings): ¥50,000–100,000<br>
+        Fire safety inspection / certification: ¥30,000–80,000<br>
+        Building inspection (if required): ¥50,000–120,000<br>
+        HOA approval process (legal): ¥30,000–80,000<br>
+        Special Zone permit (Osaka only): ¥100,000–200,000
+      </div>
+      <div class="cost-total">Total: ¥160,000–580,000 (~$1,030–$3,740)</div>
+    </div>
+    <div class="cost-cell">
+      <div class="cost-label">Ongoing Annual Costs</div>
+      <div class="cost-items">
+        Management fee (15–20% of revenue)<br>
+        Airbnb platform fee: 3% of booking value<br>
+        Cleaning per turnover: ¥4,000–8,000<br>
+        Accommodation tax: ¥100–1,000/guest/night<br>
+        Insurance (minpaku): ¥50,000–120,000/yr<br>
+        Maintenance reserve: ¥100,000–200,000/yr
+      </div>
+      <div class="cost-total">Annual ops (excl. mgmt): ¥250,000–600,000</div>
+    </div>
+  </div>
+
+  <p>Total first-year setup cost (excluding property) typically falls in the ¥760,000–1,540,000 range (~$4,900–$9,900). Management fees of 15–20% of gross revenue are the largest ongoing variable cost for non-resident owners and should be factored into all revenue models. Net yield after all operating costs typically runs 60–72% of gross revenue.</p>
+</section>
+
+<!-- ══ §7 RANKING ═════════════════════════════════════════════════════════ -->
+<section id="ranking">
+  <h2><span class="section-label">§7</span>Go / No-Go Rankings</h2>
+
+  <p>The three neighbourhoods are ranked by investment attractiveness, defined as the combination of regulatory operating freedom, revenue potential per permitted operating day, space-premium value proposition to guests, and acquisition cost relative to projected income. Verdicts assume a non-resident individual investor without existing Japanese hotel licences.</p>
+
+  <table class="rank-table">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Neighbourhood</th>
+        <th>Verdict</th>
+        <th>Est. Annual Gross (1BR)</th>
+        <th>Key Constraint</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="rank-num">1</span></td>
+        <td><strong>Dotonbori / Namba, Osaka</strong></td>
+        <td><span class="rank-go">GO</span></td>
+        <td>¥3.28M (~$21,160)</td>
+        <td>Must acquire existing licensed property (new permits suspended)</td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">2</span></td>
+        <td><strong>Shinjuku, Tokyo</strong></td>
+        <td><span class="rank-caut">CONDITIONAL</span></td>
+        <td>¥1.87M (~$12,065)</td>
+        <td>Weekend-only restriction in residential zones; commercial zone or hotel licence required for full revenue</td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">3</span></td>
+        <td><strong>Higashiyama, Kyoto</strong></td>
+        <td><span class="rank-no">NO-GO</span></td>
+        <td>¥994K (~$6,410)</td>
+        <td>59-day residential operating window; investment case requires Hotel Business Act licence in commercial zone</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Ranking Rationale</h3>
+
+  <p><strong>Dotonbori / Namba is the clear first-ranked market</strong> on every dimension except current entry difficulty. Year-round operating rights, the widest space premium of the three markets (98% more floor area per yen versus business hotels), the highest international guest share (88.8%), and annual gross revenue that is 75% above Shinjuku's. The suspension of new Special Zone permits as of late 2025 is a structural constraint for new buyers, but it simultaneously increases the scarcity value of existing licensed inventory. An investor who identifies and acquires a properly licensed property in the Namba / Dotonbori corridor is buying into constrained supply with rising inbound demand — the Osaka Expo effect continues to drive forward tourism projections. The conditional risk is operational: at 15–20% management fees, the net yield on a standard 1BR at ¥30–45M acquisition cost is tight, and the 2-night minimum stay requirement under Special Zone rules can reduce booking conversion rates.</p>
+
+  <p><strong>Shinjuku is conditionally viable but only for a specific property type.</strong> The demand fundamentals are Japan's strongest — over half of all Japan guest nights flow through Tokyo, and Shinjuku's ADR leads all residential wards. The problem is purely regulatory: a residential-zone property is limited to approximately ¥1.87M annual gross, which generates a sub-2% gross yield on a ¥100M purchase price. The conditional go applies only to: (a) commercial-zone properties with full operating rights, (b) existing hotel-licensed units, or (c) properties acquired well below ¥60M. At current central Shinjuku acquisition prices, the Airbnb model requires hotel-licence-level operating freedom to pencil out. Without it, long-term letting or corporate housing produces a more stable yield profile.</p>
+
+  <p><strong>Higashiyama is a no-go for standard Airbnb investment.</strong> The 59-day residential-zone operating cap reduces annual gross to under ¥1M for a 1BR — a figure that cannot service acquisition debt or justify the complexity of licensing and management in Japan's most regulation-intensive tourist city. The space premium over ryokans is the highest of the three markets (120%), and demand during the permitted winter window is strong, but neither metric rescues the revenue arithmetic. The correct investment structure in Higashiyama for income-generating short-stay accommodation is a Hotel Business Act licensed machiya in a commercial or mixed-use zone, which requires specialist acquisition expertise, renovation budgets typically exceeding ¥20–30M on top of purchase price, and operator-level compliance knowledge. This is not a retail Airbnb investment — it is a hospitality business acquisition.</p>
+
+  <hr>
+
+  <p class="footnote">All data benchmarked from AirROI, Airbtics, E-Housing Japan, Japan-Property.jp, and published Japan Tourism Agency accommodation statistics. Market data period: September 2024 – November 2025. Exchange rate: ¥155/USD (2025 average). This report does not constitute financial or legal advice. Regulatory environments change frequently — verify current minpaku rules with local ward offices and a qualified Japanese real estate attorney before any acquisition.</p>
+</section>
+
+</div>
+
+<footer style="max-width:860px;margin:0 auto;padding:0 40px 48px;">
+  <span>Japan Airbnb Feasibility Study · March 2026</span>
+  <span>Benchmark data — not live scraped</span>
+  <span>Author: Marcus</span>
+</footer>
+
+</body>
+</html>
