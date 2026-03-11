@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J-REIT Red Flag Checklist: Proximity-Margin Framework for Japanese Hospitality REITs</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1208;
+    --ink-light: #3d2e1a;
+    --paper: #f7f3ec;
+    --paper-dark: #ede8df;
+    --rule: #c8b99a;
+    --accent: #8b1a1a;
+    --accent-light: #c0392b;
+    --gold: #b8860b;
+    --gold-light: #d4a017;
+    --green: #1a5c2a;
+    --green-light: #e8f4ea;
+    --red-light: #fdf0f0;
+    --amber: #7a4a00;
+    --amber-light: #fdf6e3;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Source Serif 4', Georgia, serif;
+    --display: 'Playfair Display', Georgia, serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.75;
+    font-weight: 300;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .masthead::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 60px,
+      rgba(255,255,255,0.02) 60px,
+      rgba(255,255,255,0.02) 61px
+    );
+  }
+  .masthead-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 40px 48px;
+    position: relative;
+  }
+  .memo-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .memo-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(212,160,23,0.3);
+  }
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: #fff;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+  .subtitle {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 18px;
+    color: rgba(247,243,236,0.65);
+    margin-bottom: 36px;
+    font-weight: 400;
+  }
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    border-top: 1px solid rgba(200,185,154,0.25);
+    padding-top: 20px;
+  }
+  .meta-item { font-family: var(--mono); font-size: 11px; color: rgba(247,243,236,0.55); }
+  .meta-item strong { color: rgba(247,243,236,0.85); display: block; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2px; }
+
+  /* ── LAYOUT ── */
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+  }
+
+  /* ── SOURCING BANNER ── */
+  .sourcing-banner {
+    background: var(--amber-light);
+    border-left: 3px solid var(--gold);
+    padding: 14px 20px;
+    margin: 32px 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--amber);
+    line-height: 1.6;
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 56px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+
+  h2 {
+    font-family: var(--display);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 20px;
+    line-height: 1.25;
+  }
+  h3 {
+    font-family: var(--display);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink-light);
+    margin: 28px 0 10px;
+  }
+
+  p { margin-bottom: 16px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    background: var(--paper-dark);
+    border-left: 3px solid var(--ink);
+    padding: 18px 22px;
+    margin: 24px 0;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--ink-light);
+  }
+  .callout strong { font-style: normal; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 6px; color: var(--ink); }
+
+  /* ── SENSITIVITY MATRIX ── */
+  .matrix-wrap { overflow-x: auto; margin: 24px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    font-family: var(--serif);
+  }
+  thead tr { background: var(--ink); color: var(--paper); }
+  thead th {
+    padding: 10px 14px;
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    border-right: 1px solid rgba(255,255,255,0.1);
+  }
+  thead th:last-child { border-right: none; }
+  tbody tr:nth-child(even) { background: var(--paper-dark); }
+  tbody tr:nth-child(odd) { background: var(--paper); }
+  tbody td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--rule);
+    border-right: 1px solid rgba(200,185,154,0.4);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  tbody td:last-child { border-right: none; }
+  .td-highlight { font-weight: 600; color: var(--accent); font-family: var(--mono); font-size: 13px; }
+  .td-green { color: var(--green); font-weight: 600; }
+  .td-red { color: var(--accent); font-weight: 600; }
+  .td-amber { color: var(--amber); font-weight: 600; }
+  .subrow { background: #f0ece3 !important; }
+  .subrow td { font-size: 12.5px; color: var(--ink-light); padding-left: 24px; }
+
+  /* ── RED FLAG CHECKLIST ── */
+  .flag-list { margin: 24px 0; display: flex; flex-direction: column; gap: 16px; }
+  .flag-item {
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    padding: 0;
+    overflow: hidden;
+  }
+  .flag-header {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+  .flag-number {
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+  }
+  .flag-title-block {
+    padding: 12px 16px;
+    flex: 1;
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper-dark);
+  }
+  .flag-name {
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    display: block;
+  }
+  .flag-metric {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .flag-body { padding: 14px 16px; font-size: 14px; line-height: 1.65; }
+  .flag-threshold {
+    display: inline-block;
+    background: #fdf0f0;
+    border: 1px solid #e8b4b4;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 10px;
+    margin-top: 8px;
+    letter-spacing: 0.05em;
+  }
+  .flag-threshold::before { content: '⚑ THRESHOLD: '; font-weight: 500; }
+
+  /* ── LOGIC FLOW ── */
+  .flow-wrap { margin: 24px 0; }
+  .flow-node {
+    border: 1px solid var(--rule);
+    padding: 14px 18px;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--paper);
+    position: relative;
+  }
+  .flow-node::after {
+    content: '↓';
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    color: var(--rule);
+    z-index: 1;
+    background: var(--paper);
+    padding: 0 4px;
+  }
+  .flow-node:last-child::after { display: none; }
+  .flow-step {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--paper);
+    background: var(--ink-light);
+    padding: 3px 7px;
+    min-width: 32px;
+    text-align: center;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .flow-content { flex: 1; font-size: 14px; line-height: 1.6; }
+  .flow-content strong { font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; display: block; margin-bottom: 4px; color: var(--ink); }
+  .flow-branch { display: flex; gap: 12px; margin: 12px 0 24px; }
+  .branch-buy { flex: 1; background: var(--green-light); border: 1px solid #b2d8b8; padding: 12px 14px; }
+  .branch-neutral { flex: 1; background: var(--amber-light); border: 1px solid #e6c97a; padding: 12px 14px; }
+  .branch-avoid { flex: 1; background: var(--red-light); border: 1px solid #e8b4b4; padding: 12px 14px; }
+  .branch-label { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 6px; }
+  .branch-buy .branch-label { color: var(--green); }
+  .branch-neutral .branch-label { color: var(--amber); }
+  .branch-avoid .branch-label { color: var(--accent); }
+  .branch-body { font-size: 13px; line-height: 1.55; }
+
+  /* ── WORKED EXAMPLE ── */
+  .example-box {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 28px 32px;
+    margin: 28px 0;
+  }
+  .example-box .ex-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; color: var(--gold-light); text-transform: uppercase; margin-bottom: 14px; }
+  .example-box h3 { color: #fff; font-family: var(--display); font-size: 20px; margin: 0 0 6px; }
+  .example-box .ex-ticker { font-family: var(--mono); font-size: 12px; color: rgba(247,243,236,0.5); margin-bottom: 18px; }
+  .ex-flags { display: flex; flex-direction: column; gap: 8px; margin: 18px 0; }
+  .ex-flag { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; line-height: 1.5; }
+  .ex-flag-pass { color: #7dcf8e; }
+  .ex-flag-pass::before { content: '✓'; font-family: var(--mono); font-weight: 500; color: #4caf6e; margin-right: 4px; }
+  .ex-flag-warn { color: #f5d078; }
+  .ex-flag-warn::before { content: '△'; font-family: var(--mono); font-weight: 500; color: #f5d078; margin-right: 4px; }
+  .ex-verdict {
+    background: var(--green);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 10px 16px;
+    letter-spacing: 0.08em;
+    margin-top: 16px;
+    display: inline-block;
+  }
+  .ex-verdict-neutral {
+    background: var(--amber);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 10px 16px;
+    letter-spacing: 0.08em;
+    margin-top: 16px;
+    display: inline-block;
+  }
+
+  /* ── INVALIDATION ── */
+  .invalidation-list { list-style: none; margin: 16px 0; display: flex; flex-direction: column; gap: 10px; }
+  .invalidation-list li {
+    padding: 12px 16px 12px 44px;
+    border: 1px solid var(--rule);
+    position: relative;
+    font-size: 14.5px;
+    line-height: 1.6;
+    background: var(--paper);
+  }
+  .invalidation-list li::before {
+    content: attr(data-n);
+    position: absolute;
+    left: 14px;
+    top: 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .inv-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 4px; }
+
+  /* ── SOURCES ── */
+  .sources-list { list-style: none; margin: 16px 0; counter-reset: src; }
+  .sources-list li {
+    counter-increment: src;
+    padding: 8px 0 8px 28px;
+    position: relative;
+    border-bottom: 1px solid rgba(200,185,154,0.4);
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .sources-list li::before {
+    content: counter(src);
+    position: absolute;
+    left: 0;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    top: 10px;
+    font-weight: 500;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    color: rgba(247,243,236,0.45);
+    padding: 28px 40px;
+    font-family: var(--mono);
+    font-size: 10px;
+    line-height: 1.7;
+    letter-spacing: 0.05em;
+    max-width: 100%;
+  }
+  footer a { color: rgba(247,243,236,0.45); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .masthead-inner, .content { padding-left: 20px; padding-right: 20px; }
+    .flow-branch { flex-direction: column; }
+    h1 { font-size: 26px; }
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { font-size: 12px; }
+    .masthead { background: #000 !important; -webkit-print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="memo-label">Investment Memo &nbsp;·&nbsp; Japan Hospitality Sector &nbsp;·&nbsp; Secondary Research Synthesis</div>
+    <h1>J-REIT Red Flag Checklist:<br>Proximity-Margin Framework for Japanese Hospitality REITs</h1>
+    <div class="subtitle">Converting the 10-Minute Proximity Rule into a Decision-Ready Audit Tool</div>
+    <div class="meta-row">
+      <div class="meta-item"><strong>Date</strong>March 2026</div>
+      <div class="meta-item"><strong>Framework Version</strong>v1.0</div>
+      <div class="meta-item"><strong>Sourcing</strong>Secondary Synthesis</div>
+      <div class="meta-item"><strong>Word Count</strong>~2,100 words</div>
+      <div class="meta-item"><strong>Asset Class</strong>J-REIT / STR Operators</div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="sourcing-banner">
+    SOURCING NOTICE: This memo is a secondary research synthesis derived from public regulatory filings, industry surveys, and REIT disclosures. No primary operator interviews or proprietary data were used. All quantitative ranges should be validated against current market conditions before operational or investment reliance. This document does not constitute investment advice.
+  </div>
+
+  <!-- EXECUTIVE SUMMARY -->
+  <div class="section-label">01 &nbsp; Executive Summary</div>
+  <h2>The Compliance Floor That Standard Analysis Misses</h2>
+
+  <p>Japan's Private Lodging Business Act (民泊新法, 2018) embeds a structural rent transfer into every short-term rental operation that lacks portfolio scale or institutional architecture. Article 11(1)(iii) mandates that a licensed kanrisha (住宅宿泊管理業者) be physically reachable within 10 minutes during all guest stays — a legal presence obligation that no hardware automation satisfies. Smart locks, remote check-in kiosks, and IoT monitoring have been widely adopted since 2019. Management fees have not moved.</p>
+
+  <p>For individual operators, this compliance architecture transfers 17–20% of gross revenue to a captive third-party vendor regardless of technology deployed. Combined with Airbnb's ~14% platform fee, 31–34 cents of every gross revenue yen is extracted before a single operating expense is counted. For J-REITs and institutional operators with sufficient portfolio density, the same rule creates an internalisation opportunity that eliminates the third-party fee entirely — producing a structural margin advantage that compounds over time as technology reduces in-house compliance labour costs.</p>
+
+  <p>This memo delivers three tools for evaluating Japanese hospitality REITs and STR operators through this lens: a Proximity-Margin Sensitivity Matrix modelling fee outcomes across portfolio density tiers and operator types; a 5-point Red Flag Checklist with named metrics and numeric thresholds; and a Buy/Avoid Logic Flow with a worked example using Japan Hotel REIT Investment Corporation (JHR, TSE: 8985).</p>
+
+  <!-- SENSITIVITY MATRIX -->
+  <div class="section-label">02 &nbsp; Proximity-Margin Sensitivity Matrix</div>
+  <h2>Fee Structure as a Function of Portfolio Density and Operator Scale</h2>
+
+  <p>The matrix below models third-party kanrisha fee rates, effective NOI margin, and compliance staffing cost across three portfolio density tiers and two operator types. Density is defined as units within a single 10-minute walking radius — the legally operative geographic unit. Benchmark figures are derived from Japan Tourism Agency operator survey data, Colliers International Japan (September 2024), and JREI Q3 2025 residential benchmarks.</p>
+
+  <div class="callout">
+    <strong>Model Assumptions</strong>
+    Shinjuku-equivalent 1BR unit, ¥22,000 ADR, 87 operating nights (180-day annual cap), platform fee 14%. Institutional staffing cost ¥5.0M fully loaded per kanrisha employee. All fee percentages represent % of gross annual revenue per unit.
+  </div>
+
+  <div class="matrix-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Density Tier</th>
+          <th>Units / Radius</th>
+          <th>Operator Type</th>
+          <th>Kanrisha Structure</th>
+          <th>Mgmt Fee % Gross</th>
+          <th>Platform Fee % Gross</th>
+          <th>Combined Fee Drag</th>
+          <th>Est. NOI Margin</th>
+          <th>Compliance Cost / Unit / Yr</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="2"><strong>Tier 1</strong><br><span style="font-size:12px;color:#7a5c3a">Low density</span></td>
+          <td rowspan="2">1–5</td>
+          <td>Individual</td>
+          <td>Third-party kanrisha (required)</td>
+          <td class="td-red">17–20%</td>
+          <td>~14%</td>
+          <td class="td-red">31–34%</td>
+          <td class="td-red">33–38%</td>
+          <td>¥325–383K</td>
+        </tr>
+        <tr class="subrow">
+          <td>Institutional</td>
+          <td>Cannot internalise at this density — third-party required</td>
+          <td class="td-amber">17–20%</td>
+          <td>~14%</td>
+          <td class="td-amber">31–34%</td>
+          <td class="td-amber">33–38%</td>
+          <td>¥325–383K</td>
+        </tr>
+        <tr>
+          <td rowspan="2"><strong>Tier 2</strong><br><span style="font-size:12px;color:#7a5c3a">Medium density</span></td>
+          <td rowspan="2">6–20</td>
+          <td>Individual</td>
+          <td>Third-party kanrisha (required)</td>
+          <td class="td-red">15–18%</td>
+          <td>~14%</td>
+          <td class="td-red">29–32%</td>
+          <td class="td-red">35–41%</td>
+          <td>¥288–345K</td>
+        </tr>
+        <tr class="subrow">
+          <td>Institutional</td>
+          <td>Internalisation viable from ~12 units; in-house cost ¥250K/unit at 20 units</td>
+          <td class="td-amber">13–15% (transitional)</td>
+          <td>~14%</td>
+          <td class="td-amber">27–29%</td>
+          <td class="td-amber">39–45%</td>
+          <td>¥250–290K</td>
+        </tr>
+        <tr>
+          <td rowspan="2"><strong>Tier 3</strong><br><span style="font-size:12px;color:#7a5c3a">High density</span></td>
+          <td rowspan="2">21–50+</td>
+          <td>Individual</td>
+          <td>Third-party kanrisha (required)</td>
+          <td class="td-red">15–18%</td>
+          <td>~14%</td>
+          <td class="td-red">29–32%</td>
+          <td class="td-red">35–41%</td>
+          <td>¥288–345K</td>
+        </tr>
+        <tr class="subrow">
+          <td>Institutional</td>
+          <td>Full internalisation; one employee covers 25+ units in cluster</td>
+          <td class="td-green">0% (internalised)</td>
+          <td>~14%</td>
+          <td class="td-green">~14%</td>
+          <td class="td-green">52–58%</td>
+          <td>¥200K at 25 units; ¥140K at 35 units</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The structural insight embedded in this matrix is that the 10-minute radius creates a geographic monopoly rent for management companies in low-density situations. At Tier 3 institutional density, the same regulatory architecture that imposes a 17–20% fee on individual operators becomes a source of competitive advantage — internalisation costs fall to ¥140–200K per unit per year versus ¥288–383K paid to third parties, a 40–60% reduction in compliance cost per unit.</p>
+
+  <!-- RED FLAG CHECKLIST -->
+  <div class="section-label">03 &nbsp; Red Flag Checklist</div>
+  <h2>5-Point Audit Framework for Operator and REIT Efficiency</h2>
+
+  <p>Each flag targets an observable metric that reveals whether an operator or REIT has structurally accommodated the proximity mandate or remains exposed to its full cost drag. Thresholds are derived from the unit economics model and secondary survey data.</p>
+
+  <div class="flag-list">
+
+    <div class="flag-item">
+      <div class="flag-header">
+        <div class="flag-number">RF1</div>
+        <div class="flag-title-block">
+          <span class="flag-name">Management Fee as % of RevPAR</span>
+          <div class="flag-metric">Metric: (Annual kanrisha fee ÷ Annual RevPAR) × 100</div>
+        </div>
+      </div>
+      <div class="flag-body">
+        This is the primary compliance cost ratio. RevPAR (Revenue Per Available Room) normalises for occupancy variation; expressing the management fee against RevPAR rather than gross revenue isolates the compliance drag from seasonal volatility. Individual operators in central Tokyo consistently land above 17% on this metric; institutional operators with internalised compliance functions land at 0%. Any third-party managed operator or REIT reporting this ratio above 15% without a credible internalisation roadmap should be flagged.
+        <div class="flag-threshold">RF1 &gt; 15% of RevPAR → FLAG</div>
+      </div>
+    </div>
+
+    <div class="flag-item">
+      <div class="flag-header">
+        <div class="flag-number">RF2</div>
+        <div class="flag-title-block">
+          <span class="flag-name">Geographic Concentration Index (GCI)</span>
+          <div class="flag-metric">Metric: % of portfolio within single 10-minute radius clusters</div>
+        </div>
+      </div>
+      <div class="flag-body">
+        The GCI measures the proportion of an operator's portfolio that falls within walkable 10-minute clusters — the density unit that enables kanrisha internalisation. Operators with high GCI have optionality to internalise; operators with dispersed portfolios do not. A GCI below 40% (less than 40% of units clustered into internalisation-viable density) at an institutional operator signals that portfolio construction has not been optimised for compliance cost reduction, and third-party fee drag will persist.
+        <div class="flag-threshold">Institutional operator GCI &lt; 40% → FLAG (internalisation opportunity foregone)</div>
+      </div>
+    </div>
+
+    <div class="flag-item">
+      <div class="flag-header">
+        <div class="flag-number">RF3</div>
+        <div class="flag-title-block">
+          <span class="flag-name">Staff-to-Unit Ratio (Compliance Staff)</span>
+          <div class="flag-metric">Metric: Licensed kanrisha employees ÷ Total portfolio units (institutional only)</div>
+        </div>
+      </div>
+      <div class="flag-body">
+        For institutional operators claiming internalised compliance, this ratio verifies that the staffing structure is consistent with genuine coverage. A single kanrisha employee can credibly cover 20–30 units within a tight geographic cluster with smart lock assistance; beyond 35 units per employee, coverage credibility is questionable and legal exposure increases. A ratio above 35 units per licensed staff member at a self-described internalised operator suggests either regulatory risk or phantom internalisation — compliance nominally in-house but practically unserviceable.
+        <div class="flag-threshold">Units per licensed kanrisha staff &gt; 35 → FLAG (coverage credibility risk)</div>
+      </div>
+    </div>
+
+    <div class="flag-item">
+      <div class="flag-header">
+        <div class="flag-number">RF4</div>
+        <div class="flag-title-block">
+          <span class="flag-name">Osaka / Tightened-Jurisdiction Exposure Ratio</span>
+          <div class="flag-metric">Metric: % of portfolio units in municipalities with sub-180-day caps or enhanced proximity requirements</div>
+        </div>
+      </div>
+      <div class="flag-body">
+        Osaka City has implemented a near-total STR ban outside designated zones under its municipal ordinance, with operating day restrictions that fall well below the national 180-day cap in most residential areas. Kyoto has implemented similar ward-level restrictions. Operators with more than 20% of their portfolio in such jurisdictions face an effective RevPAR ceiling that makes the national-level compliance cost model more punishing — the same management fee is applied against a structurally lower revenue base. Any J-REIT or operator with significant Osaka residential STR exposure requires a downward RevPAR adjustment before applying the standard margin model.
+        <div class="flag-threshold">Tightened-jurisdiction exposure &gt; 20% of portfolio → FLAG (RevPAR ceiling adjustment required)</div>
+      </div>
+    </div>
+
+    <div class="flag-item">
+      <div class="flag-header">
+        <div class="flag-number">RF5</div>
+        <div class="flag-title-block">
+          <span class="flag-name">Lease Structure: Variable-Rent vs. Direct-Operation Ratio</span>
+          <div class="flag-metric">Metric: % of assets under variable-rent operator lease vs. direct hotel/STR operation</div>
+        </div>
+      </div>
+      <div class="flag-body">
+        For J-REITs with hotel and STR exposure, the lease structure determines where compliance labour sits in the P&amp;L. Variable-rent leases (operator-tenant pays fixed base + variable rent to REIT) push compliance cost below the REIT's EBITDA line; direct-operation assets embed it within the REIT's own cost structure. A J-REIT with more than 30% of assets in direct operation faces EBITDA multiple comparisons with variable-rent peers that are not like-for-like. Standard cap rate analysis will overstate earnings quality for direct-operation heavy portfolios by failing to adjust for the compliance cost floor's inelasticity.
+        <div class="flag-threshold">Direct-operation assets &gt; 30% of portfolio → FLAG (EBITDA quality adjustment required)</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LOGIC FLOW -->
+  <div class="section-label">04 &nbsp; Buy / Avoid Logic Flow</div>
+  <h2>Decision Framework with Osaka Tightening Integration</h2>
+
+  <div class="flow-wrap">
+    <div class="flow-node">
+      <div class="flow-step">S1</div>
+      <div class="flow-content">
+        <strong>Input: Operator or J-REIT under evaluation</strong>
+        Classify as: (a) individual STR operator, (b) institutional STR operator / management company, (c) J-REIT with hospitality/STR exposure
+      </div>
+    </div>
+    <div class="flow-node" style="margin-top:14px;">
+      <div class="flow-step">S2</div>
+      <div class="flow-content">
+        <strong>RF4 Screen: Tightened-jurisdiction exposure</strong>
+        Calculate % of portfolio in Osaka residential zones, Kyoto restricted wards, or other municipalities with sub-180-day caps. If &gt;20% → apply RevPAR haircut (est. 25–40% revenue reduction vs. national benchmark) before proceeding. If exposure &gt;40%, threshold for Buy moves up by one tier on all subsequent screens.
+      </div>
+    </div>
+    <div class="flow-node" style="margin-top:14px;">
+      <div class="flow-step">S3</div>
+      <div class="flow-content">
+        <strong>RF5 Screen: Lease structure quality</strong>
+        For J-REITs: score variable-rent ratio. &gt;70% variable-rent → clean EBITDA; 40–70% → adjustment required; &lt;40% → flag, apply compliance cost floor to direct-operation assets before EBITDA comparison.
+      </div>
+    </div>
+    <div class="flow-node" style="margin-top:14px;">
+      <div class="flow-step">S4</div>
+      <div class="flow-content">
+        <strong>RF1 + RF2 Screen: Fee drag and portfolio density</strong>
+        Institutional: calculate GCI and management fee % of RevPAR. Individual: calculate management fee % of RevPAR directly. Apply thresholds from checklist.
+      </div>
+    </div>
+    <div class="flow-node" style="margin-top:14px;">
+      <div class="flow-step">S5</div>
+      <div class="flow-content">
+        <strong>RF3 Screen (institutional only): Staffing ratio credibility</strong>
+        Verify units-per-licensed-kanrisha. Flag if &gt;35.
+      </div>
+    </div>
+    <div class="flow-node" style="margin-top:14px;">
+      <div class="flow-step">S6</div>
+      <div class="flow-content">
+        <strong>Score and route</strong>
+        Tally red flags triggered (0–5). Apply verdict below.
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-branch">
+    <div class="branch-buy">
+      <span class="branch-label">Buy / Overweight</span>
+      <div class="branch-body">0–1 flags triggered. Institutional operator with GCI &gt;60%, internalised kanrisha, variable-rent REIT structure, minimal tightened-jurisdiction exposure. Compliance architecture is a competitive moat, not a cost drag.</div>
+    </div>
+    <div class="branch-neutral">
+      <span class="branch-label">Neutral / Hold</span>
+      <div class="branch-body">2 flags triggered. Internalisation partially complete or in-progress; Osaka exposure manageable but present; lease structure mixed. Monitor internalisation timeline and jurisdiction mix trend.</div>
+    </div>
+    <div class="branch-avoid">
+      <span class="branch-label">Avoid / Underweight</span>
+      <div class="branch-body">3+ flags triggered. Individual operators at full compliance cost exposure; J-REITs with high direct-operation ratio and tightened-jurisdiction concentration; operators with phantom internalisation (RF3 &gt;35). Structural margin compression is baked in.</div>
+    </div>
+  </div>
+
+  <!-- WORKED EXAMPLE -->
+  <div class="section-label">04a &nbsp; Worked Example</div>
+  <h2>Japan Hotel REIT Investment Corporation (JHR, TSE: 8985)</h2>
+
+  <div class="example-box">
+    <div class="ex-label">Worked Example — Secondary Research Basis — JHR FY2024 Disclosures</div>
+    <h3>Japan Hotel REIT Investment Corporation</h3>
+    <div class="ex-ticker">TSE: 8985 &nbsp;·&nbsp; 28-hotel portfolio &nbsp;·&nbsp; ¥290B+ AUM (approximate)</div>
+
+    <p style="color:rgba(247,243,236,0.75);font-size:14px;margin-bottom:16px;">JHR operates as a hotel-focused J-REIT with a predominantly variable-rent lease structure across its managed portfolio. Key characteristics drawn from FY2024 annual report and investor disclosures:</p>
+
+    <div class="ex-flags">
+      <div class="ex-flag ex-flag-pass">RF1 (Management fee % RevPAR): JHR's compliance labour is borne by operator-tenants under variable-rent leases — not reflected in the REIT's own RevPAR drag. PASS.</div>
+      <div class="ex-flag ex-flag-pass">RF2 (Geographic Concentration Index): Portfolio concentrated in major urban hotel nodes (Tokyo, Osaka, Kyoto) under hotel licensing, not minpaku framework. Proximity rule not the operative constraint. PASS (framework note applies).</div>
+      <div class="ex-flag ex-flag-pass">RF3 (Staff-to-unit ratio): Compliance staffing sits with operator-tenants; REIT does not bear direct staffing ratio risk. PASS.</div>
+      <div class="ex-flag ex-flag-warn">RF4 (Tightened-jurisdiction exposure): Osaka and Kyoto properties represent material portfolio exposure. Municipal STR restrictions tighten RevPAR ceiling for any future residential STR expansion in these cities — relevant as a strategic constraint on portfolio evolution, not current hotel operations. MONITOR.</div>
+      <div class="ex-flag ex-flag-pass">RF5 (Lease structure): Variable-rent structure dominant across the portfolio per FY2024 disclosures — compliance cost sits below the REIT's EBITDA line. PASS.</div>
+    </div>
+
+    <p style="color:rgba(247,243,236,0.75);font-size:13.5px;margin-bottom:0;">Total flags: 0 triggered, 1 monitor. JHR's variable-rent operating structure is the correct institutional architecture for navigating Japan's compliance-heavy hospitality environment — compliance cost sits with operator-tenants, not the REIT. The Osaka/Kyoto exposure is a strategic watch item for any portfolio expansion into STR-adjacent residential formats, not a current earnings risk.</p>
+
+    <div class="ex-verdict">VERDICT: BUY / OVERWEIGHT — Structure-adjusted. Monitor RF4 for portfolio evolution.</div>
+  </div>
+
+  <!-- THESIS INVALIDATION -->
+  <div class="section-label">05 &nbsp; Thesis Invalidation</div>
+  <h2>Where This Framework Breaks</h2>
+
+  <p>A rigorous investment framework must specify the conditions under which its core thesis fails. The Proximity-Margin Framework rests on the structural permanence of Article 11's physical presence requirement. Five scenarios would materially invalidate it:</p>
+
+  <ul class="invalidation-list">
+    <li data-n="I1">
+      <span class="inv-label">Primary Invalidation Risk — Kaigo Precedent</span>
+      If Japan's Ministry of Health, Labour and Welfare relaxes the Long-Term Care Insurance Act's 1:3 staffing ratio by permitting technology to substitute at the legal compliance threshold — not merely to assist present carers — this establishes the first Japanese policy precedent for a physical presence mandate yielding to technological capability. The STR sector would be the immediate next candidate for the same logic. This is the highest-probability invalidation pathway and should be monitored through MHLW press releases and Diet committee proceedings.
+    </li>
+    <li data-n="I2">
+      <span class="inv-label">Article 11 Revision — MLIT Rule Change</span>
+      A direct amendment to Article 11(1)(iii) permitting remote or technology-mediated kanrisha certification would eliminate the captive vendor relationship entirely. MLIT has shown no indication of reviewing this provision, but a revision could move quickly once proposed given the low political salience of the STR sector relative to kaigo. A formal MLIT review announcement would invalidate the fee-stickiness thesis prospectively even before any rule change took effect.
+    </li>
+    <li data-n="I3">
+      <span class="inv-label">Management Company Competition Shock</span>
+      The current fee floor assumes a non-competitive kanrisha market anchored by legal liability pricing. If a well-capitalised entrant (e.g., a real estate platform or insurance company) enters the kanrisha market with technology-subsidised pricing, using low fees as a customer acquisition cost, fee compression could occur without any regulatory change. This would be visible in JNTO annual operator survey data before it affected REIT earnings.
+    </li>
+    <li data-n="I4">
+      <span class="inv-label">Macro RevPAR Compression</span>
+      The framework assumes management fees remain fixed as a percentage of gross while RevPAR holds. A sustained decline in Tokyo/Osaka inbound tourism RevPAR (e.g., from a strong yen shock, demand disruption, or competing Southeast Asian destination growth) would compress gross revenue across the board, making the fixed-percentage fee drag proportionally more punishing and accelerating individual operator attrition faster than modelled.
+    </li>
+    <li data-n="I5">
+      <span class="inv-label">Institutional Internalisation Ceiling</span>
+      The internalisation advantage assumes that institutional operators can cluster sufficient units within single 10-minute radii to justify in-house kanrisha employment. In secondary cities or lower-density outer wards, this clustering may not be achievable, capping the internalisation advantage below the levels modelled in Tier 3. If the addressable market for institutional internalisation proves smaller than assumed, the bifurcation thesis remains valid but the TAM for the institutional advantage is more limited.
+    </li>
+  </ul>
+
+  <!-- SOURCES -->
+  <div class="section-label">06 &nbsp; Sources</div>
+  <h2>Data Sources</h2>
+
+  <ul class="sources-list">
+    <li><strong>Japan Tourism Agency (観光庁):</strong> Private Lodging Business Act text (Law No. 65 of 2017); Article 11 physical presence provisions; annual operator registration statistics and survey data (2019–2023). <em>minpaku.mlit.go.jp</em></li>
+    <li><strong>Colliers International Japan:</strong> Japanese Hospitality and Short-Term Rental Market Report, September 2024. Operator fee survey data and market structure analysis.</li>
+    <li><strong>Japan Hotel REIT Investment Corporation (JHR, TSE: 8985):</strong> FY2024 Annual Report; FY2024 Investor Presentation. Variable-rent lease structure disclosures; portfolio composition and geographic distribution.</li>
+    <li><strong>Ministry of Health, Labour and Welfare (厚生労働省):</strong> Long-Term Care Insurance Act staffing ratio provisions (1:3 requirement); Kaigo workforce shortage projection reports (2023–2025); robotics approval documentation for care-assist technologies.</li>
+    <li><strong>Japan Real Estate Institute (JREI):</strong> Residential rental benchmark data, central Tokyo wards, Q3 2025. ADR reference ranges for Shinjuku, Shibuya, Minato-ku.</li>
+    <li><strong>Osaka City Municipal Government:</strong> Minpaku ordinance implementing restrictions beyond national framework; designated zone provisions; operating day limitations in residential areas.</li>
+    <li><strong>Food Hygiene Law (食品衛生法), Article 51:</strong> On-site Food Sanitation Manager requirement provisions. Cross-sector analog for physical presence mandates.</li>
+    <li><strong>Japan Times / National Confederation of Citizens' Unions (NCCU):</strong> STR operator survey coverage; workforce and labour market reporting for hospitality compliance roles (2022–2024).</li>
+  </ul>
+
+  <div class="sourcing-banner" style="margin-top:40px;">
+    DISCLAIMER: This document is a secondary research synthesis prepared for informational and analytical purposes only. It does not constitute investment advice, a recommendation to buy or sell any security, or legal advice. All figures are illustrative and derived from public secondary sources. Independent due diligence and qualified professional advice should be sought before any investment or operational reliance on this analysis.
+  </div>
+
+</div>
+
+<footer>
+  J-REIT Red Flag Checklist: Proximity-Margin Framework &nbsp;·&nbsp; Secondary Research Synthesis &nbsp;·&nbsp; March 2026 &nbsp;·&nbsp; v1.0<br>
+  Sourcing: Japan Tourism Agency · Colliers International Japan · JHR FY2024 · MHLW · JREI · Osaka Municipal Government<br>
+  Not investment advice. Not for distribution without sourcing attribution.
+</footer>
+
+</body>
+</html>
