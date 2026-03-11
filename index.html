@@ -3,776 +3,499 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>J-REIT Red Flag Checklist: Proximity-Margin Framework for Japanese Hospitality REITs</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Osaka STR Regulatory Tightening: Research Dossier | Secondary Research Synthesis</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink: #1a1208;
-    --ink-light: #3d2e1a;
-    --paper: #f7f3ec;
-    --paper-dark: #ede8df;
-    --rule: #c8b99a;
-    --accent: #8b1a1a;
-    --accent-light: #c0392b;
-    --gold: #b8860b;
-    --gold-light: #d4a017;
-    --green: #1a5c2a;
-    --green-light: #e8f4ea;
-    --red-light: #fdf0f0;
-    --amber: #7a4a00;
-    --amber-light: #fdf6e3;
-    --mono: 'JetBrains Mono', monospace;
-    --serif: 'Source Serif 4', Georgia, serif;
-    --display: 'Playfair Display', Georgia, serif;
-  }
+:root {
+  --ink: #111827;
+  --ink2: #374151;
+  --ink3: #6B7280;
+  --bg: #FAFAF8;
+  --bg2: #F3F2EE;
+  --bg3: #E9E8E3;
+  --accent: #9B1C1C;
+  --accent2: #DC2626;
+  --gold: #92400E;
+  --gold2: #D97706;
+  --teal: #0F4C5C;
+  --teal2: #E0F2F1;
+  --green: #14532D;
+  --green2: #DCFCE7;
+  --rule: #D1CEC5;
+  --serif: 'Libre Baskerville', Georgia, serif;
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--ink);font-family:var(--serif);font-size:16px;line-height:1.8;}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+/* TOPBAR */
+.topbar{background:var(--ink);padding:10px 40px;display:flex;align-items:center;gap:16px;justify-content:space-between;}
+.topbar-left{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:0.15em;}
+.topbar-badge{font-family:var(--mono);font-size:10px;color:var(--gold2);background:rgba(146,64,14,0.25);padding:3px 10px;letter-spacing:0.1em;}
 
-  body {
-    background: var(--paper);
-    color: var(--ink);
-    font-family: var(--serif);
-    font-size: 16px;
-    line-height: 1.75;
-    font-weight: 300;
-  }
+/* HERO */
+.hero{background:var(--ink);padding:60px 40px 52px;position:relative;overflow:hidden;}
+.hero::after{content:'';position:absolute;right:-60px;top:-60px;width:320px;height:320px;border-radius:50%;background:rgba(155,28,28,0.06);pointer-events:none;}
+.hero-inner{max-width:880px;margin:0 auto;position:relative;}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:0.2em;color:var(--gold2);text-transform:uppercase;margin-bottom:20px;}
+.hero h1{font-family:var(--serif);font-size:clamp(26px,3.5vw,42px);font-weight:700;color:#fff;line-height:1.18;margin-bottom:14px;}
+.hero-sub{font-family:var(--sans);font-size:17px;color:rgba(255,255,255,0.6);font-weight:300;margin-bottom:40px;line-height:1.6;max-width:640px;}
+.hero-meta{display:flex;flex-wrap:wrap;gap:0;border-top:1px solid rgba(255,255,255,0.1);padding-top:20px;}
+.hero-meta-item{font-family:var(--mono);font-size:11px;padding:6px 24px 6px 0;margin-right:24px;border-right:1px solid rgba(255,255,255,0.1);}
+.hero-meta-item:last-child{border-right:none;}
+.hero-meta-item strong{display:block;color:rgba(255,255,255,0.4);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:3px;font-weight:500;}
+.hero-meta-item span{color:rgba(255,255,255,0.8);}
 
-  /* ── MASTHEAD ── */
-  .masthead {
-    background: var(--ink);
-    color: var(--paper);
-    padding: 0;
-    position: relative;
-    overflow: hidden;
-  }
-  .masthead::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 60px,
-      rgba(255,255,255,0.02) 60px,
-      rgba(255,255,255,0.02) 61px
-    );
-  }
-  .masthead-inner {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 56px 40px 48px;
-    position: relative;
-  }
-  .memo-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    color: var(--gold-light);
-    text-transform: uppercase;
-    margin-bottom: 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .memo-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: rgba(212,160,23,0.3);
-  }
-  h1 {
-    font-family: var(--display);
-    font-size: clamp(28px, 4vw, 44px);
-    font-weight: 700;
-    line-height: 1.15;
-    color: #fff;
-    margin-bottom: 16px;
-    letter-spacing: -0.01em;
-  }
-  .subtitle {
-    font-family: var(--display);
-    font-style: italic;
-    font-size: 18px;
-    color: rgba(247,243,236,0.65);
-    margin-bottom: 36px;
-    font-weight: 400;
-  }
-  .meta-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    border-top: 1px solid rgba(200,185,154,0.25);
-    padding-top: 20px;
-  }
-  .meta-item { font-family: var(--mono); font-size: 11px; color: rgba(247,243,236,0.55); }
-  .meta-item strong { color: rgba(247,243,236,0.85); display: block; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2px; }
+/* NAV */
+.toc-bar{background:var(--bg2);border-bottom:1px solid var(--rule);padding:0 40px;overflow-x:auto;white-space:nowrap;}
+.toc-bar-inner{max-width:880px;margin:0 auto;display:flex;gap:0;}
+.toc-bar a{font-family:var(--mono);font-size:11px;color:var(--ink3);text-decoration:none;padding:12px 18px 11px;display:inline-block;border-bottom:2px solid transparent;transition:color 0.2s,border-color 0.2s;letter-spacing:0.05em;}
+.toc-bar a:hover{color:var(--accent);border-bottom-color:var(--accent);}
 
-  /* ── LAYOUT ── */
-  .content {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 0 40px 80px;
-  }
+/* LAYOUT */
+.body-wrap{max-width:880px;margin:0 auto;padding:0 40px 80px;}
 
-  /* ── SOURCING BANNER ── */
-  .sourcing-banner {
-    background: var(--amber-light);
-    border-left: 3px solid var(--gold);
-    padding: 14px 20px;
-    margin: 32px 0;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--amber);
-    line-height: 1.6;
-  }
+/* NOTICE */
+.notice{background:var(--bg2);border-left:3px solid var(--gold2);padding:14px 18px;margin:32px 0;font-family:var(--sans);font-size:13px;color:var(--gold);line-height:1.6;}
+.notice strong{font-weight:600;}
 
-  /* ── SECTION HEADERS ── */
-  .section-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-top: 56px;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+/* SECTION */
+.sec-label{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-top:56px;margin-bottom:6px;display:flex;align-items:center;gap:12px;}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--rule);}
+h2{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:18px;line-height:1.3;color:var(--ink);}
+h3{font-family:var(--sans);font-size:16px;font-weight:600;color:var(--teal);margin:28px 0 10px;letter-spacing:0.02em;}
+p{margin-bottom:16px;font-size:15.5px;}
 
-  h2 {
-    font-family: var(--display);
-    font-size: 26px;
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 20px;
-    line-height: 1.25;
-  }
-  h3 {
-    font-family: var(--display);
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--ink-light);
-    margin: 28px 0 10px;
-  }
+/* CALLOUT */
+.callout{background:var(--bg2);border-left:3px solid var(--ink);padding:16px 20px;margin:20px 0;font-style:italic;font-size:15px;color:var(--ink2);line-height:1.7;}
+.callout-label{font-style:normal;font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:var(--ink3);display:block;margin-bottom:6px;text-transform:uppercase;}
 
-  p { margin-bottom: 16px; }
-  p:last-child { margin-bottom: 0; }
+/* SOURCE CARDS */
+.source-grid{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+.source-card{border:1px solid var(--rule);border-top:none;padding:0;background:var(--bg);}
+.source-card:first-child{border-top:1px solid var(--rule);}
+.source-header{display:flex;align-items:stretch;gap:0;}
+.source-num{background:var(--teal);color:#fff;font-family:var(--mono);font-size:12px;font-weight:500;padding:12px 14px;min-width:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.source-title-block{padding:10px 16px;background:var(--bg2);flex:1;border-bottom:1px solid var(--rule);}
+.source-name{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ink);display:block;margin-bottom:2px;}
+.source-meta{font-family:var(--mono);font-size:10px;color:var(--ink3);letter-spacing:0.05em;}
+.source-meta a{color:var(--teal);text-decoration:none;}
+.source-meta a:hover{text-decoration:underline;}
+.source-body{padding:12px 16px;font-family:var(--sans);font-size:13.5px;line-height:1.65;color:var(--ink2);}
+.source-relevance{background:var(--teal2);padding:8px 12px;margin-top:8px;border-left:2px solid var(--teal);font-size:13px;line-height:1.6;}
+.source-relevance strong{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:3px;}
 
-  /* ── CALLOUT ── */
-  .callout {
-    background: var(--paper-dark);
-    border-left: 3px solid var(--ink);
-    padding: 18px 22px;
-    margin: 24px 0;
-    font-style: italic;
-    font-size: 15px;
-    color: var(--ink-light);
-  }
-  .callout strong { font-style: normal; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 6px; color: var(--ink); }
+/* DATA TABLE */
+.table-wrap{overflow-x:auto;margin:20px 0;}
+table{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:13px;}
+thead tr{background:var(--ink);}
+thead th{padding:9px 12px;text-align:left;color:#fff;font-weight:500;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;border-right:1px solid rgba(255,255,255,0.1);}
+thead th:last-child{border-right:none;}
+tbody tr:nth-child(even){background:var(--bg2);}
+tbody tr:nth-child(odd){background:var(--bg);}
+tbody td{padding:9px 12px;border-bottom:1px solid var(--rule);border-right:1px solid rgba(209,206,197,0.5);vertical-align:top;line-height:1.5;}
+tbody td:last-child{border-right:none;}
+.td-red{color:var(--accent);font-weight:600;}
+.td-amber{color:var(--gold);font-weight:600;}
+.td-green{color:var(--green);font-weight:600;}
 
-  /* ── SENSITIVITY MATRIX ── */
-  .matrix-wrap { overflow-x: auto; margin: 24px 0; }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13.5px;
-    font-family: var(--serif);
-  }
-  thead tr { background: var(--ink); color: var(--paper); }
-  thead th {
-    padding: 10px 14px;
-    text-align: left;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-weight: 500;
-    border-right: 1px solid rgba(255,255,255,0.1);
-  }
-  thead th:last-child { border-right: none; }
-  tbody tr:nth-child(even) { background: var(--paper-dark); }
-  tbody tr:nth-child(odd) { background: var(--paper); }
-  tbody td {
-    padding: 9px 14px;
-    border-bottom: 1px solid var(--rule);
-    border-right: 1px solid rgba(200,185,154,0.4);
-    vertical-align: top;
-    line-height: 1.5;
-  }
-  tbody td:last-child { border-right: none; }
-  .td-highlight { font-weight: 600; color: var(--accent); font-family: var(--mono); font-size: 13px; }
-  .td-green { color: var(--green); font-weight: 600; }
-  .td-red { color: var(--accent); font-weight: 600; }
-  .td-amber { color: var(--amber); font-weight: 600; }
-  .subrow { background: #f0ece3 !important; }
-  .subrow td { font-size: 12.5px; color: var(--ink-light); padding-left: 24px; }
+/* TIMELINE */
+.timeline{margin:20px 0;position:relative;padding-left:28px;}
+.timeline::before{content:'';position:absolute;left:6px;top:6px;bottom:6px;width:1px;background:var(--rule);}
+.tl-item{position:relative;margin-bottom:20px;}
+.tl-dot{position:absolute;left:-25px;top:5px;width:11px;height:11px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);}
+.tl-date{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-bottom:4px;letter-spacing:0.05em;}
+.tl-content{font-family:var(--sans);font-size:14px;line-height:1.6;color:var(--ink2);}
+.tl-content strong{color:var(--ink);font-weight:600;}
 
-  /* ── RED FLAG CHECKLIST ── */
-  .flag-list { margin: 24px 0; display: flex; flex-direction: column; gap: 16px; }
-  .flag-item {
-    border: 1px solid var(--rule);
-    background: var(--paper);
-    padding: 0;
-    overflow: hidden;
-  }
-  .flag-header {
-    display: flex;
-    align-items: stretch;
-    gap: 0;
-  }
-  .flag-number {
-    background: var(--accent);
-    color: #fff;
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 500;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 48px;
-  }
-  .flag-title-block {
-    padding: 12px 16px;
-    flex: 1;
-    border-bottom: 1px solid var(--rule);
-    background: var(--paper-dark);
-  }
-  .flag-name {
-    font-family: var(--display);
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--ink);
-    display: block;
-  }
-  .flag-metric {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--accent);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-top: 2px;
-  }
-  .flag-body { padding: 14px 16px; font-size: 14px; line-height: 1.65; }
-  .flag-threshold {
-    display: inline-block;
-    background: #fdf0f0;
-    border: 1px solid #e8b4b4;
-    color: var(--accent);
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 3px 10px;
-    margin-top: 8px;
-    letter-spacing: 0.05em;
-  }
-  .flag-threshold::before { content: '⚑ THRESHOLD: '; font-weight: 500; }
+/* SYNTHESIS */
+.synthesis-cards{display:flex;flex-direction:column;gap:16px;margin:20px 0;}
+.synth-card{border:1px solid var(--rule);overflow:hidden;}
+.synth-header{display:flex;align-items:stretch;}
+.synth-rank{background:var(--accent);color:#fff;font-family:var(--mono);font-size:11px;font-weight:500;padding:14px 12px;min-width:48px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;text-align:center;}
+.synth-rank span{font-size:9px;opacity:0.75;letter-spacing:0.05em;}
+.synth-title-block{background:var(--bg2);padding:12px 16px;flex:1;border-bottom:1px solid var(--rule);}
+.synth-title{font-family:var(--sans);font-size:15px;font-weight:600;color:var(--ink);display:block;}
+.synth-tag{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;margin-top:2px;}
+.synth-body{padding:14px 16px;font-family:var(--sans);font-size:14px;line-height:1.7;color:var(--ink2);}
+.synth-why{background:var(--bg2);padding:10px 14px;margin-top:10px;border-left:2px solid var(--gold2);font-size:13.5px;}
+.synth-why strong{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:4px;}
 
-  /* ── LOGIC FLOW ── */
-  .flow-wrap { margin: 24px 0; }
-  .flow-node {
-    border: 1px solid var(--rule);
-    padding: 14px 18px;
-    margin-bottom: 2px;
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    background: var(--paper);
-    position: relative;
-  }
-  .flow-node::after {
-    content: '↓';
-    position: absolute;
-    bottom: -14px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 14px;
-    color: var(--rule);
-    z-index: 1;
-    background: var(--paper);
-    padding: 0 4px;
-  }
-  .flow-node:last-child::after { display: none; }
-  .flow-step {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--paper);
-    background: var(--ink-light);
-    padding: 3px 7px;
-    min-width: 32px;
-    text-align: center;
-    margin-top: 2px;
-    flex-shrink: 0;
-  }
-  .flow-content { flex: 1; font-size: 14px; line-height: 1.6; }
-  .flow-content strong { font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; display: block; margin-bottom: 4px; color: var(--ink); }
-  .flow-branch { display: flex; gap: 12px; margin: 12px 0 24px; }
-  .branch-buy { flex: 1; background: var(--green-light); border: 1px solid #b2d8b8; padding: 12px 14px; }
-  .branch-neutral { flex: 1; background: var(--amber-light); border: 1px solid #e6c97a; padding: 12px 14px; }
-  .branch-avoid { flex: 1; background: var(--red-light); border: 1px solid #e8b4b4; padding: 12px 14px; }
-  .branch-label { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 6px; }
-  .branch-buy .branch-label { color: var(--green); }
-  .branch-neutral .branch-label { color: var(--amber); }
-  .branch-avoid .branch-label { color: var(--accent); }
-  .branch-body { font-size: 13px; line-height: 1.55; }
+/* FOOTER */
+footer{background:var(--ink);color:rgba(255,255,255,0.35);padding:28px 40px;font-family:var(--mono);font-size:10px;line-height:1.8;letter-spacing:0.04em;}
 
-  /* ── WORKED EXAMPLE ── */
-  .example-box {
-    background: var(--ink);
-    color: var(--paper);
-    padding: 28px 32px;
-    margin: 28px 0;
-  }
-  .example-box .ex-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; color: var(--gold-light); text-transform: uppercase; margin-bottom: 14px; }
-  .example-box h3 { color: #fff; font-family: var(--display); font-size: 20px; margin: 0 0 6px; }
-  .example-box .ex-ticker { font-family: var(--mono); font-size: 12px; color: rgba(247,243,236,0.5); margin-bottom: 18px; }
-  .ex-flags { display: flex; flex-direction: column; gap: 8px; margin: 18px 0; }
-  .ex-flag { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; line-height: 1.5; }
-  .ex-flag-pass { color: #7dcf8e; }
-  .ex-flag-pass::before { content: '✓'; font-family: var(--mono); font-weight: 500; color: #4caf6e; margin-right: 4px; }
-  .ex-flag-warn { color: #f5d078; }
-  .ex-flag-warn::before { content: '△'; font-family: var(--mono); font-weight: 500; color: #f5d078; margin-right: 4px; }
-  .ex-verdict {
-    background: var(--green);
-    color: #fff;
-    font-family: var(--mono);
-    font-size: 13px;
-    padding: 10px 16px;
-    letter-spacing: 0.08em;
-    margin-top: 16px;
-    display: inline-block;
-  }
-  .ex-verdict-neutral {
-    background: var(--amber);
-    color: #fff;
-    font-family: var(--mono);
-    font-size: 13px;
-    padding: 10px 16px;
-    letter-spacing: 0.08em;
-    margin-top: 16px;
-    display: inline-block;
-  }
-
-  /* ── INVALIDATION ── */
-  .invalidation-list { list-style: none; margin: 16px 0; display: flex; flex-direction: column; gap: 10px; }
-  .invalidation-list li {
-    padding: 12px 16px 12px 44px;
-    border: 1px solid var(--rule);
-    position: relative;
-    font-size: 14.5px;
-    line-height: 1.6;
-    background: var(--paper);
-  }
-  .invalidation-list li::before {
-    content: attr(data-n);
-    position: absolute;
-    left: 14px;
-    top: 12px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--accent);
-    font-weight: 500;
-  }
-  .inv-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 4px; }
-
-  /* ── SOURCES ── */
-  .sources-list { list-style: none; margin: 16px 0; counter-reset: src; }
-  .sources-list li {
-    counter-increment: src;
-    padding: 8px 0 8px 28px;
-    position: relative;
-    border-bottom: 1px solid rgba(200,185,154,0.4);
-    font-size: 13.5px;
-    line-height: 1.55;
-  }
-  .sources-list li::before {
-    content: counter(src);
-    position: absolute;
-    left: 0;
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--accent);
-    top: 10px;
-    font-weight: 500;
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    background: var(--ink);
-    color: rgba(247,243,236,0.45);
-    padding: 28px 40px;
-    font-family: var(--mono);
-    font-size: 10px;
-    line-height: 1.7;
-    letter-spacing: 0.05em;
-    max-width: 100%;
-  }
-  footer a { color: rgba(247,243,236,0.45); }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 640px) {
-    .masthead-inner, .content { padding-left: 20px; padding-right: 20px; }
-    .flow-branch { flex-direction: column; }
-    h1 { font-size: 26px; }
-  }
-
-  /* ── PRINT ── */
-  @media print {
-    body { font-size: 12px; }
-    .masthead { background: #000 !important; -webkit-print-color-adjust: exact; }
-  }
+@media(max-width:640px){
+  .hero,.body-wrap,footer{padding-left:20px;padding-right:20px;}
+  .toc-bar{padding:0 20px;}
+  h2{font-size:20px;}
+}
 </style>
 </head>
 <body>
 
-<!-- MASTHEAD -->
-<div class="masthead">
-  <div class="masthead-inner">
-    <div class="memo-label">Investment Memo &nbsp;·&nbsp; Japan Hospitality Sector &nbsp;·&nbsp; Secondary Research Synthesis</div>
-    <h1>J-REIT Red Flag Checklist:<br>Proximity-Margin Framework for Japanese Hospitality REITs</h1>
-    <div class="subtitle">Converting the 10-Minute Proximity Rule into a Decision-Ready Audit Tool</div>
-    <div class="meta-row">
-      <div class="meta-item"><strong>Date</strong>March 2026</div>
-      <div class="meta-item"><strong>Framework Version</strong>v1.0</div>
-      <div class="meta-item"><strong>Sourcing</strong>Secondary Synthesis</div>
-      <div class="meta-item"><strong>Word Count</strong>~2,100 words</div>
-      <div class="meta-item"><strong>Asset Class</strong>J-REIT / STR Operators</div>
+<div class="topbar">
+  <div class="topbar-left">OSAKA STR REGULATORY TIGHTENING &nbsp;·&nbsp; RESEARCH DOSSIER &nbsp;·&nbsp; MARCH 2026</div>
+  <div class="topbar-badge">SECONDARY SYNTHESIS</div>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Research Dossier &nbsp;·&nbsp; Japan Hospitality Sector &nbsp;·&nbsp; Regulatory Intelligence</div>
+    <h1>Osaka STR Regulatory Tightening:<br>An Annotated Research Dossier</h1>
+    <div class="hero-sub">Ward-level ordinance variations, enforcement actions, complaint data, and pending changes — compiled as an evidentiary backbone for investment memo and operator evaluation work.</div>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><strong>Date</strong><span>March 2026</span></div>
+      <div class="hero-meta-item"><strong>Sources</strong><span>8 cited</span></div>
+      <div class="hero-meta-item"><strong>Sections</strong><span>4 + Synthesis</span></div>
+      <div class="hero-meta-item"><strong>Sourcing Type</strong><span>Secondary Research</span></div>
+      <div class="hero-meta-item"><strong>Word Count</strong><span>~1,600</span></div>
     </div>
   </div>
 </div>
 
-<div class="content">
+<nav class="toc-bar">
+  <div class="toc-bar-inner">
+    <a href="#sec1">I. National Law</a>
+    <a href="#sec2">II. Osaka Ward Variations</a>
+    <a href="#sec3">III. Enforcement & Complaints</a>
+    <a href="#sec4">IV. Pending Changes</a>
+    <a href="#sec5">Synthesis</a>
+  </div>
+</nav>
 
-  <div class="sourcing-banner">
-    SOURCING NOTICE: This memo is a secondary research synthesis derived from public regulatory filings, industry surveys, and REIT disclosures. No primary operator interviews or proprietary data were used. All quantitative ranges should be validated against current market conditions before operational or investment reliance. This document does not constitute investment advice.
+<div class="body-wrap">
+
+  <div class="notice">
+    <strong>Sourcing Notice:</strong> This dossier is a secondary research synthesis compiled from publicly accessible sources including government announcements, news reports, and industry analyses. No primary interviews, confidential data, or non-public regulatory documents were used. All figures and dates reflect secondary reporting and should be cross-checked against primary government sources before operational or investment reliance. This document does not constitute investment advice.
   </div>
 
-  <!-- EXECUTIVE SUMMARY -->
-  <div class="section-label">01 &nbsp; Executive Summary</div>
-  <h2>The Compliance Floor That Standard Analysis Misses</h2>
+  <!-- ══ SECTION 1 ══ -->
+  <div id="sec1" class="sec-label">Section I &nbsp; National-Level Framework</div>
+  <h2>The Private Lodging Business Act and Special Zone Architecture</h2>
 
-  <p>Japan's Private Lodging Business Act (民泊新法, 2018) embeds a structural rent transfer into every short-term rental operation that lacks portfolio scale or institutional architecture. Article 11(1)(iii) mandates that a licensed kanrisha (住宅宿泊管理業者) be physically reachable within 10 minutes during all guest stays — a legal presence obligation that no hardware automation satisfies. Smart locks, remote check-in kiosks, and IoT monitoring have been widely adopted since 2019. Management fees have not moved.</p>
+  <p>Japan's short-term rental market operates under two overlapping legal frameworks. The <strong>Private Lodging Business Act</strong> (住宅宿泊事業法, Minpaku-ho, Law No. 65 of 2017, effective June 2018) established the primary national framework: operators may rent residential properties for up to 180 nights per year without a hotel license, subject to municipal registration, a licensed kanrisha (management company) for absentee owners, and Article 11's 10-minute physical proximity requirement. Separately, the <strong>National Strategic Special Zone Act</strong> (国家戦略特別区域法) created a parallel pathway — Special Zone Minpaku (特区民泊) — permitting year-round operation in designated municipalities, subject to a minimum stay of two consecutive nights and a 25㎡ minimum room size. Osaka City was among the first municipalities designated under this special zone framework in 2014, predating the 2018 national law.</p>
 
-  <p>For individual operators, this compliance architecture transfers 17–20% of gross revenue to a captive third-party vendor regardless of technology deployed. Combined with Airbnb's ~14% platform fee, 31–34 cents of every gross revenue yen is extracted before a single operating expense is counted. For J-REITs and institutional operators with sufficient portfolio density, the same rule creates an internalisation opportunity that eliminates the third-party fee entirely — producing a structural margin advantage that compounds over time as technology reduces in-house compliance labour costs.</p>
+  <p>The national law explicitly delegates supplementary rule-making authority to local governments through Article 18, allowing municipalities to impose operating day restrictions, area bans, and enhanced conditions beyond the national floor. This delegation is the legal basis for all ward-level and city-level tightening documented in this dossier.</p>
 
-  <p>This memo delivers three tools for evaluating Japanese hospitality REITs and STR operators through this lens: a Proximity-Margin Sensitivity Matrix modelling fee outcomes across portfolio density tiers and operator types; a 5-point Red Flag Checklist with named metrics and numeric thresholds; and a Buy/Avoid Logic Flow with a worked example using Japan Hotel REIT Investment Corporation (JHR, TSE: 8985).</p>
+  <div class="source-grid">
+    <div class="source-card">
+      <div class="source-header">
+        <div class="source-num">S1</div>
+        <div class="source-title-block">
+          <span class="source-name">Private Lodging Business Act — Overview and Legal Analysis</span>
+          <div class="source-meta">Nagashima Ohno &amp; Tsunematsu (law firm publication) &nbsp;·&nbsp; <a href="https://www.nagashima.com/en/publications/publication18166/" target="_blank">nagashima.com</a> &nbsp;·&nbsp; 2018</div>
+        </div>
+      </div>
+      <div class="source-body">
+        Provides legal analysis of the Private Lodging Business Act's structure, including the Article 11 kanrisha requirement, the 180-day operating cap, and the Article 18 local delegation mechanism. Distinguishes the national minpaku framework from the National Strategic Special Zone system under which Osaka operates its year-round STR permissions.
+        <div class="source-relevance">
+          <strong>Relevance to Margin Analysis</strong>
+          Article 11's physical presence requirement is the primary structural cost driver for individual operators — this source provides the authoritative legal basis for the kanrisha fee floor that underpins all unit economics modelling.
+        </div>
+      </div>
+    </div>
 
-  <!-- SENSITIVITY MATRIX -->
-  <div class="section-label">02 &nbsp; Proximity-Margin Sensitivity Matrix</div>
-  <h2>Fee Structure as a Function of Portfolio Density and Operator Scale</h2>
-
-  <p>The matrix below models third-party kanrisha fee rates, effective NOI margin, and compliance staffing cost across three portfolio density tiers and two operator types. Density is defined as units within a single 10-minute walking radius — the legally operative geographic unit. Benchmark figures are derived from Japan Tourism Agency operator survey data, Colliers International Japan (September 2024), and JREI Q3 2025 residential benchmarks.</p>
-
-  <div class="callout">
-    <strong>Model Assumptions</strong>
-    Shinjuku-equivalent 1BR unit, ¥22,000 ADR, 87 operating nights (180-day annual cap), platform fee 14%. Institutional staffing cost ¥5.0M fully loaded per kanrisha employee. All fee percentages represent % of gross annual revenue per unit.
+    <div class="source-card">
+      <div class="source-header">
+        <div class="source-num">S2</div>
+        <div class="source-title-block">
+          <span class="source-name">Japan Tourism Agency — National Minpaku Registration Statistics</span>
+          <div class="source-meta">Japan Tourism Agency (観光庁) &nbsp;·&nbsp; minpaku.mlit.go.jp &nbsp;·&nbsp; 2023–2025 (annual surveys)</div>
+        </div>
+      </div>
+      <div class="source-body">
+        Official registration data showing national active minpaku growth from approximately 18,670 properties in early 2023 to 30,318 by early 2025. Osaka City hosts more than 90% of Japan's Special Zone Minpaku under the National Strategic Special Zone system — approximately 5,800 special zone properties as of late 2025 — concentrated in a small number of wards. Also provides the baseline operator survey data underpinning management fee range estimates.
+        <div class="source-relevance">
+          <strong>Relevance to J-REIT Evaluation</strong>
+          The 90% Osaka concentration of Japan's special zone minpaku is the key fact explaining why Osaka's regulatory pivot has outsized national significance. Any J-REIT or operator with special zone minpaku exposure is predominantly an Osaka exposure.
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="matrix-wrap">
+  <!-- ══ SECTION 2 ══ -->
+  <div id="sec2" class="sec-label">Section II &nbsp; Osaka Ward-Level Variations</div>
+  <h2>Geographic Regulatory Map: Three Named Wards</h2>
+
+  <p>Osaka City's regulatory environment differs from the national baseline across several dimensions. Under the Special Zone designation, Osaka had historically permitted year-round operation — making it structurally more permissive than Tokyo (where most wards impose weekday bans or seasonal caps) and Kyoto (where residential zone minpaku is restricted to a roughly two-month winter window, January 16 to March 15). However, the ward-level picture within Osaka is not uniform, and the September–November 2025 regulatory pivot has altered the operative framework significantly.</p>
+
+  <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th>Density Tier</th>
-          <th>Units / Radius</th>
-          <th>Operator Type</th>
-          <th>Kanrisha Structure</th>
-          <th>Mgmt Fee % Gross</th>
-          <th>Platform Fee % Gross</th>
-          <th>Combined Fee Drag</th>
-          <th>Est. NOI Margin</th>
-          <th>Compliance Cost / Unit / Yr</th>
+          <th>Ward</th>
+          <th>Special Zone Status</th>
+          <th>Operating Day Limit</th>
+          <th>Key Regulatory Feature</th>
+          <th>Margin Implication</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td rowspan="2"><strong>Tier 1</strong><br><span style="font-size:12px;color:#7a5c3a">Low density</span></td>
-          <td rowspan="2">1–5</td>
-          <td>Individual</td>
-          <td>Third-party kanrisha (required)</td>
-          <td class="td-red">17–20%</td>
-          <td>~14%</td>
-          <td class="td-red">31–34%</td>
-          <td class="td-red">33–38%</td>
-          <td>¥325–383K</td>
-        </tr>
-        <tr class="subrow">
-          <td>Institutional</td>
-          <td>Cannot internalise at this density — third-party required</td>
-          <td class="td-amber">17–20%</td>
-          <td>~14%</td>
-          <td class="td-amber">31–34%</td>
-          <td class="td-amber">33–38%</td>
-          <td>¥325–383K</td>
+          <td><strong>Naniwa Ward</strong><br><span style="font-size:11px;color:#6B7280">浪速区</span></td>
+          <td class="td-red">New apps suspended (May 2026)</td>
+          <td>Existing: 365 days<br>New: Not available</td>
+          <td>Epicentre of complaints; 17 special zone properties packed into a 500㎡ area; benchmark case driving city-wide suspension</td>
+          <td class="td-red">High: Existing licence premium, but no new entry; complaint-driven enforcement risk elevated</td>
         </tr>
         <tr>
-          <td rowspan="2"><strong>Tier 2</strong><br><span style="font-size:12px;color:#7a5c3a">Medium density</span></td>
-          <td rowspan="2">6–20</td>
-          <td>Individual</td>
-          <td>Third-party kanrisha (required)</td>
-          <td class="td-red">15–18%</td>
-          <td>~14%</td>
-          <td class="td-red">29–32%</td>
-          <td class="td-red">35–41%</td>
-          <td>¥288–345K</td>
-        </tr>
-        <tr class="subrow">
-          <td>Institutional</td>
-          <td>Internalisation viable from ~12 units; in-house cost ¥250K/unit at 20 units</td>
-          <td class="td-amber">13–15% (transitional)</td>
-          <td>~14%</td>
-          <td class="td-amber">27–29%</td>
-          <td class="td-amber">39–45%</td>
-          <td>¥250–290K</td>
+          <td><strong>Tennoji Ward</strong><br><span style="font-size:11px;color:#6B7280">天王寺区</span></td>
+          <td class="td-amber">New apps suspended (May 2026)</td>
+          <td>Existing: 365 days (special zone)</td>
+          <td>Transit hub, high tourist density; previously one of the most active special zone zones; grandfathered operators continue under stricter monitoring</td>
+          <td class="td-amber">Medium: Existing operators insulated short-term; cannot expand; monitoring intensity increasing</td>
         </tr>
         <tr>
-          <td rowspan="2"><strong>Tier 3</strong><br><span style="font-size:12px;color:#7a5c3a">High density</span></td>
-          <td rowspan="2">21–50+</td>
-          <td>Individual</td>
-          <td>Third-party kanrisha (required)</td>
-          <td class="td-red">15–18%</td>
-          <td>~14%</td>
-          <td class="td-red">29–32%</td>
-          <td class="td-red">35–41%</td>
-          <td>¥288–345K</td>
+          <td><strong>Chuo Ward</strong><br><span style="font-size:11px;color:#6B7280">中央区</span></td>
+          <td class="td-amber">New apps suspended (May 2026)</td>
+          <td>Existing: 365 days; Standard minpaku: 180 days</td>
+          <td>Commercial/mixed-use core; historically more tolerance for short-term hospitality; neighbour complaint rate lower than Naniwa; still subject to city-wide suspension of new special zone applications</td>
+          <td class="td-amber">Medium: More stable operational environment for existing operators; conversion to hotel licensing more viable given commercial zoning</td>
         </tr>
-        <tr class="subrow">
-          <td>Institutional</td>
-          <td>Full internalisation; one employee covers 25+ units in cluster</td>
-          <td class="td-green">0% (internalised)</td>
-          <td>~14%</td>
-          <td class="td-green">~14%</td>
-          <td class="td-green">52–58%</td>
-          <td>¥200K at 25 units; ¥140K at 35 units</td>
+        <tr>
+          <td><strong>Remainder of Osaka Prefecture</strong><br><span style="font-size:11px;color:#6B7280">府内 27 municipalities</span></td>
+          <td class="td-red">27 of 34 municipalities opted out</td>
+          <td>Varies; standard minpaku 180-day cap applies</td>
+          <td>27 municipalities expressed desire to exit special zones system entirely as of November 2025, up from 7 on September 1 — rapid acceleration</td>
+          <td class="td-red">High: Standard minpaku cap severely reduces revenue relative to year-round special zone model</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <p>The structural insight embedded in this matrix is that the 10-minute radius creates a geographic monopoly rent for management companies in low-density situations. At Tier 3 institutional density, the same regulatory architecture that imposes a 17–20% fee on individual operators becomes a source of competitive advantage — internalisation costs fall to ¥140–200K per unit per year versus ¥288–383K paid to third parties, a 40–60% reduction in compliance cost per unit.</p>
-
-  <!-- RED FLAG CHECKLIST -->
-  <div class="section-label">03 &nbsp; Red Flag Checklist</div>
-  <h2>5-Point Audit Framework for Operator and REIT Efficiency</h2>
-
-  <p>Each flag targets an observable metric that reveals whether an operator or REIT has structurally accommodated the proximity mandate or remains exposed to its full cost drag. Thresholds are derived from the unit economics model and secondary survey data.</p>
-
-  <div class="flag-list">
-
-    <div class="flag-item">
-      <div class="flag-header">
-        <div class="flag-number">RF1</div>
-        <div class="flag-title-block">
-          <span class="flag-name">Management Fee as % of RevPAR</span>
-          <div class="flag-metric">Metric: (Annual kanrisha fee ÷ Annual RevPAR) × 100</div>
+  <div class="source-grid">
+    <div class="source-card">
+      <div class="source-header">
+        <div class="source-num">S3</div>
+        <div class="source-title-block">
+          <span class="source-name">Osaka's Boom of Airbnb-Like Short-Term Rentals Meets Backlash</span>
+          <div class="source-meta">Real Gaijin (Substack) &nbsp;·&nbsp; <a href="https://realgaijin.substack.com/p/osakas-boom-of-airbnb-like-short" target="_blank">realgaijin.substack.com</a> &nbsp;·&nbsp; September 21, 2025</div>
         </div>
       </div>
-      <div class="flag-body">
-        This is the primary compliance cost ratio. RevPAR (Revenue Per Available Room) normalises for occupancy variation; expressing the management fee against RevPAR rather than gross revenue isolates the compliance drag from seasonal volatility. Individual operators in central Tokyo consistently land above 17% on this metric; institutional operators with internalised compliance functions land at 0%. Any third-party managed operator or REIT reporting this ratio above 15% without a credible internalisation roadmap should be flagged.
-        <div class="flag-threshold">RF1 &gt; 15% of RevPAR → FLAG</div>
+      <div class="source-body">
+        Provides ward-level granularity on the Naniwa Ward concentration (17 special zone properties in a 500㎡ area), the investor profile (estimated 40% managed by Chinese nationals or companies), and Governor Yoshimura's stated intention to end the Special Zone program entirely. Reports that applications had exceeded 200 per month for five consecutive months before suspension, with appointment slots booked through mid-November 2025.
+        <div class="source-relevance">
+          <strong>Relevance to J-REIT Evaluation</strong>
+          The Naniwa Ward saturation data explains the political economy of the suspension — density created externalities that triggered a city-wide response. Useful for understanding which ward-level concentrations are most exposed to progressive enforcement tightening.
+        </div>
       </div>
     </div>
 
-    <div class="flag-item">
-      <div class="flag-header">
-        <div class="flag-number">RF2</div>
-        <div class="flag-title-block">
-          <span class="flag-name">Geographic Concentration Index (GCI)</span>
-          <div class="flag-metric">Metric: % of portfolio within single 10-minute radius clusters</div>
+    <div class="source-card">
+      <div class="source-header">
+        <div class="source-num">S4</div>
+        <div class="source-title-block">
+          <span class="source-name">Minpaku Airbnb Japan 2026–2027: Regulations &amp; Licensing Guide</span>
+          <div class="source-meta">Osaka Language Solutions &nbsp;·&nbsp; <a href="https://osakalanguagesolutions.com/minpaku-airbnb-japan-2026-2027-regulations-licensing-guide/" target="_blank">osakalanguagesolutions.com</a> &nbsp;·&nbsp; January 25, 2026</div>
         </div>
       </div>
-      <div class="flag-body">
-        The GCI measures the proportion of an operator's portfolio that falls within walkable 10-minute clusters — the density unit that enables kanrisha internalisation. Operators with high GCI have optionality to internalise; operators with dispersed portfolios do not. A GCI below 40% (less than 40% of units clustered into internalisation-viable density) at an institutional operator signals that portfolio construction has not been optimised for compliance cost reduction, and third-party fee drag will persist.
-        <div class="flag-threshold">Institutional operator GCI &lt; 40% → FLAG (internalisation opportunity foregone)</div>
+      <div class="source-body">
+        Practitioner-level guide documenting the operative regulatory framework as of early 2026, including the May 30, 2026 formal suspension date for new Osaka City and Prefecture special zone applications, the "Nuisance Minpaku Eradication Team" creation, and ward-specific compliance requirements. Notes that grandfathered special zone properties are now the primary enforcement targets, with one-night stay violations (minimum two nights required) triggering immediate administrative action.
+        <div class="source-relevance">
+          <strong>Relevance to Operator Margin Analysis</strong>
+          Confirms that existing licensed properties face higher ongoing compliance costs post-suspension: stricter monitoring, faster license revocation for violations, and mandatory platform reporting of one-night stay infractions — all of which increase management company liability exposure and may eventually transmit into fee pressure.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3 ══ -->
+  <div id="sec3" class="sec-label">Section III &nbsp; Enforcement Actions &amp; Compliance Data</div>
+  <h2>Complaint Trajectory, Enforcement Architecture, and Penalty Structure</h2>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">2019</div>
+      <div class="tl-content"><strong>First Ordinance Amendment:</strong> Osaka City amended its special zone minpaku ordinance, establishing resident consultation desks, strengthening on-site inspection authority, and increasing penalties for illegal operations. Described as insufficient by city officials — did not provide a "fundamental solution."</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">FY2023 (reported mid-2024)</div>
+      <div class="tl-content"><strong>Complaint Surge:</strong> Osaka City received <strong>399 official complaints</strong> about minpaku in FY2023 — more than double the prior year. Issues: late-night noise, garbage disposal, fire safety, one-night stay violations. By end of August 2025, complaints in the current fiscal year had already reached 250, tracking for another doubling.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">July 2025</div>
+      <div class="tl-content"><strong>Task Force Established:</strong> Osaka City convened an internal task force to study countermeasures for the special zone minpaku complaint escalation. Marked formal recognition that the 2019 ordinance amendment was structurally insufficient.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">September 30, 2025</div>
+      <div class="tl-content"><strong>Suspension Announced:</strong> Mayor Yokoyama announced suspension of new special zone minpaku applications. City stated intent to: (1) establish a dedicated enforcement team, (2) investigate all existing minpaku within city limits, (3) prepare license revocation manuals for violating operators, (4) publish new cancellation guidelines by November 2025. City confirmed 27 of 34 Osaka Prefecture municipalities had expressed intent to opt out of the special zones system — up from 7 on September 1, a rapid acceleration over 29 days.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">November 18, 2025</div>
+      <div class="tl-content"><strong>National Proposal Filed:</strong> Osaka Prefectural Government and participating municipalities formally submitted the suspension proposal at the Cabinet Office National Strategic Special Zones area meeting, with a formal effective date of May 30, 2026 for cessation of new applications.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">May 30, 2026 (effective)</div>
+      <div class="tl-content"><strong>Formal Suspension Takes Effect:</strong> New special zone minpaku applications cease across Osaka City and 28 other municipalities in Osaka Prefecture. Existing licensed properties grandfathered — but designated primary targets of "Nuisance Minpaku Eradication Team." Unlicensed operations: fines up to ¥1 million. License revocation threshold lowered for operators with repeated disturbance complaints.</div>
+    </div>
+  </div>
+
+  <div class="source-grid">
+    <div class="source-card">
+      <div class="source-header">
+        <div class="source-num">S5</div>
+        <div class="source-title-block">
+          <span class="source-name">Osaka Proposes to Halt Applications for Minpaku Private Lodgings</span>
+          <div class="source-meta">The Japan Times &nbsp;·&nbsp; <a href="https://www.japantimes.co.jp/news/2025/11/18/japan/osaka-halt-minpaku-applications/" target="_blank">japantimes.co.jp</a> &nbsp;·&nbsp; November 18, 2025</div>
+        </div>
+      </div>
+      <div class="source-body">
+        Reports the formal proposal submission to the Cabinet Office on November 18, 2025, with a start date of May 30, 2026. Confirms Governor Yoshimura's framing ("temporarily pause and strengthen guidance and supervision") and notes that over 90% of Japan's special zone minpaku are concentrated in Osaka City. Provides the official government justification language.
+        <div class="source-relevance">
+          <strong>Relevance to J-REIT Evaluation</strong>
+          The Japan Times report is the primary English-language record of the formal proposal submission — essential for verifying that the suspension is a government action at the national special zones level, not merely a city-level ordinance, which has different legal standing and reversal complexity.
+        </div>
       </div>
     </div>
 
-    <div class="flag-item">
-      <div class="flag-header">
-        <div class="flag-number">RF3</div>
-        <div class="flag-title-block">
-          <span class="flag-name">Staff-to-Unit Ratio (Compliance Staff)</span>
-          <div class="flag-metric">Metric: Licensed kanrisha employees ÷ Total portfolio units (institutional only)</div>
+    <div class="source-card">
+      <div class="source-header">
+        <div class="source-num">S6</div>
+        <div class="source-title-block">
+          <span class="source-name">Osaka Suspends New Minpaku Registrations</span>
+          <div class="source-meta">News On Japan &nbsp;·&nbsp; <a href="https://www.newsonjapan.com/article/147078.php" target="_blank">newsonjapan.com</a> &nbsp;·&nbsp; September 30, 2025</div>
         </div>
       </div>
-      <div class="flag-body">
-        For institutional operators claiming internalised compliance, this ratio verifies that the staffing structure is consistent with genuine coverage. A single kanrisha employee can credibly cover 20–30 units within a tight geographic cluster with smart lock assistance; beyond 35 units per employee, coverage credibility is questionable and legal exposure increases. A ratio above 35 units per licensed staff member at a self-described internalised operator suggests either regulatory risk or phantom internalisation — compliance nominally in-house but practically unserviceable.
-        <div class="flag-threshold">Units per licensed kanrisha staff &gt; 35 → FLAG (coverage credibility risk)</div>
+      <div class="source-body">
+        Same-day report on Mayor Yokoyama's September 30 announcement, including verbatim quote: "Recognizing minpaku as a system has brought many visitors to Osaka, generating tax revenue and economic benefits. But the anxiety and concerns of residents are significant. If things continue as they are, there is a risk the system itself may not survive." Confirms the task force was established in July 2025 and that the city planned to strengthen monitoring, establish an enforcement team, investigate all minpaku, and prepare violation manuals.
+        <div class="source-relevance">
+          <strong>Relevance to Operator Margin Analysis</strong>
+          The mayor's framing — "risk the system itself may not survive" — signals that the suspension is not a tactical pause but a structural reassessment. Operators and investors should not model a return to unrestricted new applications on any short-term timeline.
+        </div>
       </div>
     </div>
 
-    <div class="flag-item">
-      <div class="flag-header">
-        <div class="flag-number">RF4</div>
-        <div class="flag-title-block">
-          <span class="flag-name">Osaka / Tightened-Jurisdiction Exposure Ratio</span>
-          <div class="flag-metric">Metric: % of portfolio units in municipalities with sub-180-day caps or enhanced proximity requirements</div>
+    <div class="source-card">
+      <div class="source-header">
+        <div class="source-num">S7</div>
+        <div class="source-title-block">
+          <span class="source-name">Japan's Osaka City to Suspend New Minpaku Lodging Applications</span>
+          <div class="source-meta">Bangladesh Pratidin / International newswire &nbsp;·&nbsp; <a href="https://en.bd-pratidin.com/international/2025/10/01/47717" target="_blank">bd-pratidin.com</a> &nbsp;·&nbsp; October 1, 2025</div>
         </div>
       </div>
-      <div class="flag-body">
-        Osaka City has implemented a near-total STR ban outside designated zones under its municipal ordinance, with operating day restrictions that fall well below the national 180-day cap in most residential areas. Kyoto has implemented similar ward-level restrictions. Operators with more than 20% of their portfolio in such jurisdictions face an effective RevPAR ceiling that makes the national-level compliance cost model more punishing — the same management fee is applied against a structurally lower revenue base. Any J-REIT or operator with significant Osaka residential STR exposure requires a downward RevPAR adjustment before applying the standard margin model.
-        <div class="flag-threshold">Tightened-jurisdiction exposure &gt; 20% of portfolio → FLAG (RevPAR ceiling adjustment required)</div>
+      <div class="source-body">
+        Provides the quantified complaint escalation data: FY2024 saw 399 complaints — more than double the prior year — with 250 complaints already logged by end of August 2025. Also confirms the rapid acceleration in municipal opt-outs: 27 municipalities expressing desire to exit the special zones system as of October 2025, up from just 7 on September 1 — a near-fourfold increase in 29 days.
+        <div class="source-relevance">
+          <strong>Relevance to Investment Memo Work</strong>
+          The 399 complaint figure and the municipal opt-out acceleration rate are the most specific quantitative data points available on enforcement trajectory. Both metrics are essential inputs for the RF4 (tightened-jurisdiction exposure) threshold in the J-REIT Red Flag Checklist framework.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4 ══ -->
+  <div id="sec4" class="sec-label">Section IV &nbsp; Pending &amp; Proposed Changes</div>
+  <h2>Regulatory Pipeline: Timeline Estimates and Open Questions</h2>
+
+  <p>Three regulatory developments are pending or in process as of Q1 2026, each with material implications for operator margin and J-REIT evaluation.</p>
+
+  <h3>1. National Special Zone Reform — Local Authority Enhancement</h3>
+  <p>Osaka City has formally requested that the central government revise the National Strategic Special Zone framework to grant local governments expanded authority to impose their own stricter regulations and conduct guidance and supervision of special zone minpaku. This is a request for a structural change to the national framework — not merely an Osaka-specific ordinance. If granted, it would enable other municipalities currently within special zones to apply similar tightening without requiring a formal Cabinet Office-level process for each action. Timeline: subject to national legislative calendar; no confirmed Diet consideration date as of March 2026.</p>
+
+  <h3>2. Nuisance Minpaku Eradication Team — Enforcement Ramp</h3>
+  <p>Osaka City committed to establishing a dedicated enforcement team and publishing license revocation guidelines by the end of November 2025. These guidelines were in preparation as of the October reporting. The team represents a permanent structural addition to Osaka's compliance enforcement architecture — distinct from the periodic inspections that characterised pre-2025 enforcement. Operationally, this means grandfathered special zone operators face ongoing, not episodic, compliance scrutiny. Timeline: team in operation from Q4 2025; enforcement intensity expected to increase through 2026.</p>
+
+  <h3>3. Governor Yoshimura's Program Termination Proposal</h3>
+  <p>Governor Yoshimura announced his intention to completely end the Special Zone Tokku Minpaku program, not merely suspend new applications. His stated justification: hotel supply has caught up with demand, removing the original policy rationale, and community backlash has reached unsustainable levels. This is politically more aggressive than the city's "temporary pause" framing and, if enacted, would represent a permanent closure of the year-round operation pathway for new operators. The formal legal mechanism for terminating a National Strategic Special Zone designation requires national-level action. Timeline: uncertain; dependent on Cabinet Office engagement and national policy appetite. Risk level for existing operators: elevated.</p>
+
+  <div class="source-grid">
+    <div class="source-card">
+      <div class="source-header">
+        <div class="source-num">S8</div>
+        <div class="source-title-block">
+          <span class="source-name">Comparison of New and Old Policies for Osaka Special Zone Minpaku</span>
+          <div class="source-meta">AIAIG Investment Analysis &nbsp;·&nbsp; <a href="https://www.aiaig.com/en/investment-news/osaka-tokku-minpaku-policy-compare-2025" target="_blank">aiaig.com</a> &nbsp;·&nbsp; November 11, 2025</div>
+        </div>
+      </div>
+      <div class="source-body">
+        Systematic policy comparison document covering pre- and post-suspension framework differences: confirms that Osaka City and most Osaka Prefecture municipalities stop accepting new special zone applications from May 29, 2026; that existing permit holders can continue year-round operations but face stricter enforcement; that the "Nuisance Minpaku Eradication Team" will focus on one-night stay violations; and that among the 34 cities, towns, and villages in Osaka Prefecture, 29 have simultaneously suspended new applications. Also identifies that in the few remaining municipalities still accepting applications (including Izumisano), standards have materially tightened.
+        <div class="source-relevance">
+          <strong>Relevance to Investment Memo Work</strong>
+          The most comprehensive single-source mapping of the new policy architecture. Essential for the "Osaka tightening layer" in the Buy/Avoid logic flow — specifically confirming the geographic scope (Osaka City + 28 of 34 prefecture municipalities) and the distinction between existing grandfathered operators and new entrants.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SYNTHESIS ══ -->
+  <div id="sec5" class="sec-label">Synthesis &nbsp; Underpriced Regulatory Vectors</div>
+  <h2>Three Regulatory Vectors Most Underpriced by Market Participants</h2>
+
+  <p>The following synthesis identifies the highest-impact regulatory developments that are, based on the secondary evidence compiled above, most likely to be inadequately priced into current operator valuations and J-REIT analysis. "Underpriced" means that standard top-down market analysis — which typically captures national-level rule changes but misses ground-level enforcement acceleration and municipal opt-out dynamics — is likely producing optimistic margin assumptions for affected operators.</p>
+
+  <div class="synthesis-cards">
+
+    <div class="synth-card">
+      <div class="synth-header">
+        <div class="synth-rank">#1<span>HIGHEST</span></div>
+        <div class="synth-title-block">
+          <span class="synth-title">The Municipal Opt-Out Acceleration Rate</span>
+          <div class="synth-tag">Vector Type: Geographic Scope Expansion &nbsp;·&nbsp; Visibility: Low</div>
+        </div>
+      </div>
+      <div class="synth-body">
+        The acceleration from 7 to 27 Osaka Prefecture municipalities opting out of the special zones system in a single 29-day period (September 1 to September 30, 2025) is the most underpriced data point in the publicly available evidence. Standard investment analysis typically models Osaka as a single regulatory unit. The reality is that the tightening is a cascading municipal-level phenomenon — each opt-out reduces the geographic footprint available for special zone year-round operation, compressing the revenue base for operators whose portfolio density assumptions were built on broader city access.
+        <div class="synth-why">
+          <strong>Why Underpriced</strong>
+          The opt-out data was reported in Japanese-language press and secondary aggregators, not in English-language REIT disclosures or sell-side research. Any J-REIT evaluation relying on a simple "Osaka exposure" flag without mapping portfolio units against the 29-municipality suspension will overstate operative revenue capacity.
+        </div>
       </div>
     </div>
 
-    <div class="flag-item">
-      <div class="flag-header">
-        <div class="flag-number">RF5</div>
-        <div class="flag-title-block">
-          <span class="flag-name">Lease Structure: Variable-Rent vs. Direct-Operation Ratio</span>
-          <div class="flag-metric">Metric: % of assets under variable-rent operator lease vs. direct hotel/STR operation</div>
+    <div class="synth-card">
+      <div class="synth-header">
+        <div class="synth-rank">#2<span>HIGH</span></div>
+        <div class="synth-title-block">
+          <span class="synth-title">Grandfathered Licence Premium vs. Enforcement Drag</span>
+          <div class="synth-tag">Vector Type: Existing Asset Revaluation &nbsp;·&nbsp; Visibility: Medium</div>
         </div>
       </div>
-      <div class="flag-body">
-        For J-REITs with hotel and STR exposure, the lease structure determines where compliance labour sits in the P&amp;L. Variable-rent leases (operator-tenant pays fixed base + variable rent to REIT) push compliance cost below the REIT's EBITDA line; direct-operation assets embed it within the REIT's own cost structure. A J-REIT with more than 30% of assets in direct operation faces EBITDA multiple comparisons with variable-rent peers that are not like-for-like. Standard cap rate analysis will overstate earnings quality for direct-operation heavy portfolios by failing to adjust for the compliance cost floor's inelasticity.
-        <div class="flag-threshold">Direct-operation assets &gt; 30% of portfolio → FLAG (EBITDA quality adjustment required)</div>
+      <div class="synth-body">
+        The suspension of new special zone applications has created an apparent scarcity premium for existing licensed properties — they are the only assets that can legally operate year-round in Osaka under the special zone framework. This premium is real and has been noted in investor commentary. What is underpriced is the countervailing enforcement drag: grandfathered properties are now the primary targets of Osaka's new "Nuisance Minpaku Eradication Team," operating under faster license revocation guidelines and mandatory platform reporting of violations. The net effect on existing asset values depends on how aggressively the team enforces, but the standard "scarcity premium" framing captures the supply restriction without discounting for the increased compliance tail risk on the demand side of the same assets.
+        <div class="synth-why">
+          <strong>Why Underpriced</strong>
+          Investor commentary has uniformly noted the scarcity premium (licenses become more valuable when new ones cannot be issued). The offsetting enforcement intensification receives little coverage because it has not yet produced visible license revocations at scale — but the revocation guidelines and enforcement team mandate are both confirmed in the public record.
+        </div>
+      </div>
+    </div>
+
+    <div class="synth-card">
+      <div class="synth-header">
+        <div class="synth-rank">#3<span>MEDIUM</span></div>
+        <div class="synth-title-block">
+          <span class="synth-title">National Framework Reform Request — Downstream Implications</span>
+          <div class="synth-tag">Vector Type: Structural / National Precedent &nbsp;·&nbsp; Visibility: Low</div>
+        </div>
+      </div>
+      <div class="synth-body">
+        Osaka City's formal request to the central government for expanded local authority over special zone minpaku regulation has received almost no coverage in English-language investment analysis. If granted, it would establish a template that other municipalities within National Strategic Special Zones could use to impose similar tightening without requiring a Cabinet Office-level process per city. The STR sector's playbook of absorbing municipal tightening city-by-city would face a structural shift: a single national rule change enabling simultaneous local tightening across all special zone municipalities would compress the addressable market for year-round operation in ways that cannot be hedged by geographic diversification across special zone cities.
+        <div class="synth-why">
+          <strong>Why Underpriced</strong>
+          The request is in process but has not produced a legislative proposal. Investors rationally discount unconfirmed regulatory risk. However, the combination of Osaka's demonstrated willingness to act, the national government's 60-million-visitor-by-2030 tourism target (which creates some political resistance to over-tightening), and the pending framework review creates a binary outcome risk that is not reflected in current operator valuations.
+        </div>
       </div>
     </div>
 
   </div>
 
-  <!-- LOGIC FLOW -->
-  <div class="section-label">04 &nbsp; Buy / Avoid Logic Flow</div>
-  <h2>Decision Framework with Osaka Tightening Integration</h2>
-
-  <div class="flow-wrap">
-    <div class="flow-node">
-      <div class="flow-step">S1</div>
-      <div class="flow-content">
-        <strong>Input: Operator or J-REIT under evaluation</strong>
-        Classify as: (a) individual STR operator, (b) institutional STR operator / management company, (c) J-REIT with hospitality/STR exposure
-      </div>
-    </div>
-    <div class="flow-node" style="margin-top:14px;">
-      <div class="flow-step">S2</div>
-      <div class="flow-content">
-        <strong>RF4 Screen: Tightened-jurisdiction exposure</strong>
-        Calculate % of portfolio in Osaka residential zones, Kyoto restricted wards, or other municipalities with sub-180-day caps. If &gt;20% → apply RevPAR haircut (est. 25–40% revenue reduction vs. national benchmark) before proceeding. If exposure &gt;40%, threshold for Buy moves up by one tier on all subsequent screens.
-      </div>
-    </div>
-    <div class="flow-node" style="margin-top:14px;">
-      <div class="flow-step">S3</div>
-      <div class="flow-content">
-        <strong>RF5 Screen: Lease structure quality</strong>
-        For J-REITs: score variable-rent ratio. &gt;70% variable-rent → clean EBITDA; 40–70% → adjustment required; &lt;40% → flag, apply compliance cost floor to direct-operation assets before EBITDA comparison.
-      </div>
-    </div>
-    <div class="flow-node" style="margin-top:14px;">
-      <div class="flow-step">S4</div>
-      <div class="flow-content">
-        <strong>RF1 + RF2 Screen: Fee drag and portfolio density</strong>
-        Institutional: calculate GCI and management fee % of RevPAR. Individual: calculate management fee % of RevPAR directly. Apply thresholds from checklist.
-      </div>
-    </div>
-    <div class="flow-node" style="margin-top:14px;">
-      <div class="flow-step">S5</div>
-      <div class="flow-content">
-        <strong>RF3 Screen (institutional only): Staffing ratio credibility</strong>
-        Verify units-per-licensed-kanrisha. Flag if &gt;35.
-      </div>
-    </div>
-    <div class="flow-node" style="margin-top:14px;">
-      <div class="flow-step">S6</div>
-      <div class="flow-content">
-        <strong>Score and route</strong>
-        Tally red flags triggered (0–5). Apply verdict below.
-      </div>
-    </div>
-  </div>
-
-  <div class="flow-branch">
-    <div class="branch-buy">
-      <span class="branch-label">Buy / Overweight</span>
-      <div class="branch-body">0–1 flags triggered. Institutional operator with GCI &gt;60%, internalised kanrisha, variable-rent REIT structure, minimal tightened-jurisdiction exposure. Compliance architecture is a competitive moat, not a cost drag.</div>
-    </div>
-    <div class="branch-neutral">
-      <span class="branch-label">Neutral / Hold</span>
-      <div class="branch-body">2 flags triggered. Internalisation partially complete or in-progress; Osaka exposure manageable but present; lease structure mixed. Monitor internalisation timeline and jurisdiction mix trend.</div>
-    </div>
-    <div class="branch-avoid">
-      <span class="branch-label">Avoid / Underweight</span>
-      <div class="branch-body">3+ flags triggered. Individual operators at full compliance cost exposure; J-REITs with high direct-operation ratio and tightened-jurisdiction concentration; operators with phantom internalisation (RF3 &gt;35). Structural margin compression is baked in.</div>
-    </div>
-  </div>
-
-  <!-- WORKED EXAMPLE -->
-  <div class="section-label">04a &nbsp; Worked Example</div>
-  <h2>Japan Hotel REIT Investment Corporation (JHR, TSE: 8985)</h2>
-
-  <div class="example-box">
-    <div class="ex-label">Worked Example — Secondary Research Basis — JHR FY2024 Disclosures</div>
-    <h3>Japan Hotel REIT Investment Corporation</h3>
-    <div class="ex-ticker">TSE: 8985 &nbsp;·&nbsp; 28-hotel portfolio &nbsp;·&nbsp; ¥290B+ AUM (approximate)</div>
-
-    <p style="color:rgba(247,243,236,0.75);font-size:14px;margin-bottom:16px;">JHR operates as a hotel-focused J-REIT with a predominantly variable-rent lease structure across its managed portfolio. Key characteristics drawn from FY2024 annual report and investor disclosures:</p>
-
-    <div class="ex-flags">
-      <div class="ex-flag ex-flag-pass">RF1 (Management fee % RevPAR): JHR's compliance labour is borne by operator-tenants under variable-rent leases — not reflected in the REIT's own RevPAR drag. PASS.</div>
-      <div class="ex-flag ex-flag-pass">RF2 (Geographic Concentration Index): Portfolio concentrated in major urban hotel nodes (Tokyo, Osaka, Kyoto) under hotel licensing, not minpaku framework. Proximity rule not the operative constraint. PASS (framework note applies).</div>
-      <div class="ex-flag ex-flag-pass">RF3 (Staff-to-unit ratio): Compliance staffing sits with operator-tenants; REIT does not bear direct staffing ratio risk. PASS.</div>
-      <div class="ex-flag ex-flag-warn">RF4 (Tightened-jurisdiction exposure): Osaka and Kyoto properties represent material portfolio exposure. Municipal STR restrictions tighten RevPAR ceiling for any future residential STR expansion in these cities — relevant as a strategic constraint on portfolio evolution, not current hotel operations. MONITOR.</div>
-      <div class="ex-flag ex-flag-pass">RF5 (Lease structure): Variable-rent structure dominant across the portfolio per FY2024 disclosures — compliance cost sits below the REIT's EBITDA line. PASS.</div>
-    </div>
-
-    <p style="color:rgba(247,243,236,0.75);font-size:13.5px;margin-bottom:0;">Total flags: 0 triggered, 1 monitor. JHR's variable-rent operating structure is the correct institutional architecture for navigating Japan's compliance-heavy hospitality environment — compliance cost sits with operator-tenants, not the REIT. The Osaka/Kyoto exposure is a strategic watch item for any portfolio expansion into STR-adjacent residential formats, not a current earnings risk.</p>
-
-    <div class="ex-verdict">VERDICT: BUY / OVERWEIGHT — Structure-adjusted. Monitor RF4 for portfolio evolution.</div>
-  </div>
-
-  <!-- THESIS INVALIDATION -->
-  <div class="section-label">05 &nbsp; Thesis Invalidation</div>
-  <h2>Where This Framework Breaks</h2>
-
-  <p>A rigorous investment framework must specify the conditions under which its core thesis fails. The Proximity-Margin Framework rests on the structural permanence of Article 11's physical presence requirement. Five scenarios would materially invalidate it:</p>
-
-  <ul class="invalidation-list">
-    <li data-n="I1">
-      <span class="inv-label">Primary Invalidation Risk — Kaigo Precedent</span>
-      If Japan's Ministry of Health, Labour and Welfare relaxes the Long-Term Care Insurance Act's 1:3 staffing ratio by permitting technology to substitute at the legal compliance threshold — not merely to assist present carers — this establishes the first Japanese policy precedent for a physical presence mandate yielding to technological capability. The STR sector would be the immediate next candidate for the same logic. This is the highest-probability invalidation pathway and should be monitored through MHLW press releases and Diet committee proceedings.
-    </li>
-    <li data-n="I2">
-      <span class="inv-label">Article 11 Revision — MLIT Rule Change</span>
-      A direct amendment to Article 11(1)(iii) permitting remote or technology-mediated kanrisha certification would eliminate the captive vendor relationship entirely. MLIT has shown no indication of reviewing this provision, but a revision could move quickly once proposed given the low political salience of the STR sector relative to kaigo. A formal MLIT review announcement would invalidate the fee-stickiness thesis prospectively even before any rule change took effect.
-    </li>
-    <li data-n="I3">
-      <span class="inv-label">Management Company Competition Shock</span>
-      The current fee floor assumes a non-competitive kanrisha market anchored by legal liability pricing. If a well-capitalised entrant (e.g., a real estate platform or insurance company) enters the kanrisha market with technology-subsidised pricing, using low fees as a customer acquisition cost, fee compression could occur without any regulatory change. This would be visible in JNTO annual operator survey data before it affected REIT earnings.
-    </li>
-    <li data-n="I4">
-      <span class="inv-label">Macro RevPAR Compression</span>
-      The framework assumes management fees remain fixed as a percentage of gross while RevPAR holds. A sustained decline in Tokyo/Osaka inbound tourism RevPAR (e.g., from a strong yen shock, demand disruption, or competing Southeast Asian destination growth) would compress gross revenue across the board, making the fixed-percentage fee drag proportionally more punishing and accelerating individual operator attrition faster than modelled.
-    </li>
-    <li data-n="I5">
-      <span class="inv-label">Institutional Internalisation Ceiling</span>
-      The internalisation advantage assumes that institutional operators can cluster sufficient units within single 10-minute radii to justify in-house kanrisha employment. In secondary cities or lower-density outer wards, this clustering may not be achievable, capping the internalisation advantage below the levels modelled in Tier 3. If the addressable market for institutional internalisation proves smaller than assumed, the bifurcation thesis remains valid but the TAM for the institutional advantage is more limited.
-    </li>
-  </ul>
-
-  <!-- SOURCES -->
-  <div class="section-label">06 &nbsp; Sources</div>
-  <h2>Data Sources</h2>
-
-  <ul class="sources-list">
-    <li><strong>Japan Tourism Agency (観光庁):</strong> Private Lodging Business Act text (Law No. 65 of 2017); Article 11 physical presence provisions; annual operator registration statistics and survey data (2019–2023). <em>minpaku.mlit.go.jp</em></li>
-    <li><strong>Colliers International Japan:</strong> Japanese Hospitality and Short-Term Rental Market Report, September 2024. Operator fee survey data and market structure analysis.</li>
-    <li><strong>Japan Hotel REIT Investment Corporation (JHR, TSE: 8985):</strong> FY2024 Annual Report; FY2024 Investor Presentation. Variable-rent lease structure disclosures; portfolio composition and geographic distribution.</li>
-    <li><strong>Ministry of Health, Labour and Welfare (厚生労働省):</strong> Long-Term Care Insurance Act staffing ratio provisions (1:3 requirement); Kaigo workforce shortage projection reports (2023–2025); robotics approval documentation for care-assist technologies.</li>
-    <li><strong>Japan Real Estate Institute (JREI):</strong> Residential rental benchmark data, central Tokyo wards, Q3 2025. ADR reference ranges for Shinjuku, Shibuya, Minato-ku.</li>
-    <li><strong>Osaka City Municipal Government:</strong> Minpaku ordinance implementing restrictions beyond national framework; designated zone provisions; operating day limitations in residential areas.</li>
-    <li><strong>Food Hygiene Law (食品衛生法), Article 51:</strong> On-site Food Sanitation Manager requirement provisions. Cross-sector analog for physical presence mandates.</li>
-    <li><strong>Japan Times / National Confederation of Citizens' Unions (NCCU):</strong> STR operator survey coverage; workforce and labour market reporting for hospitality compliance roles (2022–2024).</li>
-  </ul>
-
-  <div class="sourcing-banner" style="margin-top:40px;">
-    DISCLAIMER: This document is a secondary research synthesis prepared for informational and analytical purposes only. It does not constitute investment advice, a recommendation to buy or sell any security, or legal advice. All figures are illustrative and derived from public secondary sources. Independent due diligence and qualified professional advice should be sought before any investment or operational reliance on this analysis.
+  <div class="notice" style="margin-top:40px;">
+    <strong>Disclaimer:</strong> This dossier is a secondary research synthesis compiled from publicly accessible sources. It does not constitute investment advice, legal advice, or a recommendation to buy, sell, or hold any asset or security. All dates and figures reflect secondary reporting and may not capture the most current regulatory status. Readers should consult primary government sources and qualified advisors before any investment or operational reliance on this analysis.
   </div>
 
 </div>
 
 <footer>
-  J-REIT Red Flag Checklist: Proximity-Margin Framework &nbsp;·&nbsp; Secondary Research Synthesis &nbsp;·&nbsp; March 2026 &nbsp;·&nbsp; v1.0<br>
-  Sourcing: Japan Tourism Agency · Colliers International Japan · JHR FY2024 · MHLW · JREI · Osaka Municipal Government<br>
-  Not investment advice. Not for distribution without sourcing attribution.
+  Osaka STR Regulatory Tightening: Research Dossier &nbsp;·&nbsp; Secondary Research Synthesis &nbsp;·&nbsp; March 2026<br>
+  Sources: Japan Tourism Agency · Nagashima Ohno &amp; Tsunematsu · Japan Times · News On Japan · Real Gaijin · Osaka Language Solutions · AIAIG · Bangladesh Pratidin (international newswire)<br>
+  Not investment advice. Not for distribution without sourcing attribution. Verify all regulatory data against primary government sources before reliance.
 </footer>
 
 </body>
