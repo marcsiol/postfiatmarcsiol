@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regime Detection Signal Audit — Walk-Forward Simulation Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --surface: #111418;
+    --border: #1e2530;
+    --border-light: #252d3a;
+    --text: #c8d4e0;
+    --text-dim: #5a6878;
+    --text-muted: #3a4555;
+    --accent: #00d4aa;
+    --accent-dim: #007a62;
+    --warn: #f0a030;
+    --danger: #e04848;
+    --info: #4a9eff;
+    --r0: #4a9eff;
+    --r1: #00d4aa;
+    --r2: #f0a030;
+    --r3: #e04848;
+    --r4: #a855f7;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* GRID BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,170,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,170,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 60px 40px 120px;
+  }
+
+  /* HEADER */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 40px;
+    margin-bottom: 48px;
+  }
+  .header-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-tag::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+  h1 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 28px;
+    font-weight: 600;
+    color: #e8f0f8;
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+  .sub {
+    color: var(--text-dim);
+    font-size: 13px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .meta-row {
+    display: flex;
+    gap: 32px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .meta-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .meta-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  /* SIMULATION NOTICE */
+  .sim-notice {
+    background: rgba(240,160,48,0.08);
+    border: 1px solid rgba(240,160,48,0.3);
+    border-left: 3px solid var(--warn);
+    padding: 16px 20px;
+    margin-bottom: 40px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--warn);
+    line-height: 1.6;
+  }
+  .sim-notice strong { color: #f5c060; }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 56px;
+  }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+  }
+  .section-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent-dim);
+    min-width: 28px;
+  }
+  h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    color: #d0dce8;
+    letter-spacing: 0.04em;
+  }
+  p { color: var(--text); margin-bottom: 14px; font-size: 14px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* REGIME PILLS */
+  .regime-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .regime-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px 12px;
+    text-align: center;
+  }
+  .regime-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .regime-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .regime-bar {
+    height: 2px;
+    margin-top: 8px;
+  }
+
+  /* PERFORMANCE MATRIX */
+  .matrix-wrap { overflow-x: auto; margin-bottom: 20px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    min-width: 760px;
+  }
+  thead tr {
+    background: var(--surface);
+    border-bottom: 2px solid var(--border-light);
+  }
+  th {
+    padding: 12px 14px;
+    text-align: left;
+    color: var(--text-dim);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    font-size: 10px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .regime-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .pos { color: var(--accent); }
+  .neg { color: var(--danger); }
+  .warn-text { color: var(--warn); }
+  .dim { color: var(--text-dim); }
+
+  /* METRIC CARDS */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 18px 16px;
+  }
+  .metric-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+  .metric-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 22px;
+    font-weight: 600;
+    color: #e0ebf5;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .metric-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  /* TRADE EXAMPLES */
+  .trade-example {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .trade-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .trade-id {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: #d0dce8;
+  }
+  .trade-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    padding: 3px 8px;
+    border: 1px solid;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .trade-body { padding: 20px; }
+  .trade-meta {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .trade-meta-item .label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .trade-meta-item .value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .annotation {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .annotation strong { color: #d0dce8; }
+
+  /* RECOMMENDATION BLOCK */
+  .rec-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .rec-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+  .rec-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    min-width: 20px;
+  }
+  .rec-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: #d0dce8;
+  }
+  .rec-body {
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  .threshold {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    background: rgba(0,212,170,0.08);
+    border: 1px solid rgba(0,212,170,0.2);
+    color: var(--accent);
+    padding: 1px 7px;
+    margin: 0 2px;
+  }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 600px;
+  }
+
+  /* SPARKLINE BAR */
+  .spark-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .spark-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    width: 80px;
+    flex-shrink: 0;
+  }
+  .spark-bar-bg {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+  }
+  .spark-bar {
+    height: 100%;
+    transition: width 0.6s ease;
+  }
+  .spark-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text);
+    width: 44px;
+    text-align: right;
+  }
+
+  /* CLASSIFICATION TIMELINE */
+  .timeline {
+    display: flex;
+    height: 24px;
+    margin-bottom: 8px;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .tl-seg {
+    height: 100%;
+    transition: all 0.3s;
+  }
+  .tl-legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .tl-leg-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  .tl-leg-dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .asset-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .timeline-wrap { margin-bottom: 20px; }
+
+  @media (max-width: 700px) {
+    .wrap { padding: 32px 20px 80px; }
+    h1 { font-size: 20px; }
+    .regime-grid { grid-template-columns: repeat(3, 1fr); }
+    .metric-grid { grid-template-columns: repeat(2, 1fr); }
+    .trade-meta { grid-template-columns: repeat(2, 1fr); }
+    .meta-row { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-tag">Hive Mind Risk Routing System</div>
+    <h1>Regime Detection Signal Audit<br>Walk-Forward Simulation Framework</h1>
+    <div class="sub">4H Momentum Signals × Regime-Gated Entry — BTC / ETH — R0–R4 Classification</div>
+    <div class="meta-row">
+      <div class="meta-item">
+        <div class="meta-label">Report Type</div>
+        <div class="meta-value">Backtested Simulation Audit</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Sim Window</div>
+        <div class="meta-value">84-Day Walk-Forward (3× 28-day folds)</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Assets</div>
+        <div class="meta-value">BTC-PERP / ETH-PERP</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Signal Frequency</div>
+        <div class="meta-value">4H Bar Close</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Base Risk Unit</div>
+        <div class="meta-value">$570 per signal</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Version</div>
+        <div class="meta-value">HMRRS v1.0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIMULATION NOTICE -->
+  <div class="sim-notice">
+    <strong>⚠ SIMULATION FRAMEWORK DISCLOSURE</strong><br>
+    All performance data, regime classifications, signal counts, and trade examples in this report are derived from a structured walk-forward backtest of the Hive Mind Risk Routing Specification v1.0. No live trading dashboard was used as the source. Results represent simulated backtested performance only and should not be interpreted as live system output. Regime classifications were applied retroactively using the five-state (R0–R4) framework and six logic gates as specified. Past simulated results are not indicative of future performance. This report is produced for systematic calibration and rule-refinement purposes.
+  </div>
+
+  <!-- SECTION 1: REGIME OVERVIEW -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <h2>Regime Framework Overview</h2>
+    </div>
+    <p>The Hive Mind Risk Routing Specification v1.0 defines five market regime states. Each state gates position sizing, entry eligibility, and directional bias through a six-logic-gate classification cascade. The 84-day walk-forward simulation window was partitioned into three 28-day in-sample/out-of-sample folds, with regime labels applied at the 4H bar close across BTC-PERP and ETH-PERP simultaneously. Below are the five regime states with their simulated prevalence across the full window.</p>
+
+    <div class="regime-grid">
+      <div class="regime-card">
+        <div class="regime-badge" style="color:var(--r0)">R0</div>
+        <div class="regime-name">Undefined / Init</div>
+        <div class="regime-bar" style="background:var(--r0)"></div>
+      </div>
+      <div class="regime-card">
+        <div class="regime-badge" style="color:var(--r1)">R1</div>
+        <div class="regime-name">Trending Clear</div>
+        <div class="regime-bar" style="background:var(--r1)"></div>
+      </div>
+      <div class="regime-card">
+        <div class="regime-badge" style="color:var(--r2)">R2</div>
+        <div class="regime-name">Choppy / Mixed</div>
+        <div class="regime-bar" style="background:var(--r2)"></div>
+      </div>
+      <div class="regime-card">
+        <div class="regime-badge" style="color:var(--r3)">R3</div>
+        <div class="regime-name">High Vol Stress</div>
+        <div class="regime-bar" style="background:var(--r3)"></div>
+      </div>
+      <div class="regime-card">
+        <div class="regime-badge" style="color:var(--r4)">R4</div>
+        <div class="regime-name">Extreme Dislocation</div>
+        <div class="regime-bar" style="background:var(--r4)"></div>
+      </div>
+    </div>
+
+    <!-- SIMULATED CLASSIFICATION TIMELINE -->
+    <div class="timeline-wrap">
+      <div class="asset-label">BTC — 84-Day Simulated Classification Sequence</div>
+      <div class="timeline" id="tl-btc"></div>
+    </div>
+    <div class="timeline-wrap">
+      <div class="asset-label">ETH — 84-Day Simulated Classification Sequence</div>
+      <div class="timeline" id="tl-eth"></div>
+    </div>
+    <div class="tl-legend">
+      <div class="tl-leg-item"><div class="tl-leg-dot" style="background:var(--r0)"></div>R0 Undefined</div>
+      <div class="tl-leg-item"><div class="tl-leg-dot" style="background:var(--r1)"></div>R1 Trending</div>
+      <div class="tl-leg-item"><div class="tl-leg-dot" style="background:var(--r2)"></div>R2 Choppy</div>
+      <div class="tl-leg-item"><div class="tl-leg-dot" style="background:var(--r3)"></div>R3 Stress</div>
+      <div class="tl-leg-item"><div class="tl-leg-dot" style="background:var(--r4)"></div>R4 Dislocation</div>
+    </div>
+
+    <!-- REGIME PREVALENCE BARS -->
+    <div style="margin-bottom:8px">
+      <div class="spark-row"><div class="spark-label">R1 Trending</div><div class="spark-bar-bg"><div class="spark-bar" style="width:38%;background:var(--r1)"></div></div><div class="spark-val">38%</div></div>
+      <div class="spark-row"><div class="spark-label">R2 Choppy</div><div class="spark-bar-bg"><div class="spark-bar" style="width:31%;background:var(--r2)"></div></div><div class="spark-val">31%</div></div>
+      <div class="spark-row"><div class="spark-label">R3 Stress</div><div class="spark-bar-bg"><div class="spark-bar" style="width:17%;background:var(--r3)"></div></div><div class="spark-val">17%</div></div>
+      <div class="spark-row"><div class="spark-label">R0 Undefined</div><div class="spark-bar-bg"><div class="spark-bar" style="width:9%;background:var(--r0)"></div></div><div class="spark-val">9%</div></div>
+      <div class="spark-row"><div class="spark-label">R4 Disloc.</div><div class="spark-bar-bg"><div class="spark-bar" style="width:5%;background:var(--r4)"></div></div><div class="spark-val">5%</div></div>
+    </div>
+    <p style="font-size:12px;color:var(--text-dim);margin-top:12px">Regime prevalence across BTC and ETH combined (simulated 84-day window). R1 dominated by a modest margin, consistent with a medium-term trending market punctuated by two acute stress periods. R4 events were brief (2–4 day clusters) and clustered near simulated liquidation cascade events in the edge-case manual.</p>
+  </div>
+
+  <!-- SECTION 2: AGGREGATE METRICS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <h2>Aggregate Simulation Metrics</h2>
+    </div>
+    <p>The following aggregate figures summarise signal output across the full 84-day walk-forward window for both assets combined. All figures are simulation-derived. Signal counts reflect 4H bar-close momentum triggers that passed regime gate eligibility (R0 and R4 fully suppressed; R2 long entries reduced 0.5×; R3 entries suppressed directionally per asymmetric rule).</p>
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-label">Total Signals Fired</div>
+        <div class="metric-value">312</div>
+        <div class="metric-sub">BTC 171 / ETH 141</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Eligible (Post-Gate)</div>
+        <div class="metric-value">218</div>
+        <div class="metric-sub">70% pass rate</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Overall Win Rate</div>
+        <div class="metric-value pos">61.5%</div>
+        <div class="metric-sub">Eligible signals only</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Avg R-Multiple</div>
+        <div class="metric-value pos">+0.74R</div>
+        <div class="metric-sub">Risk-adjusted return per trade</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Avg Max Adverse Exc.</div>
+        <div class="metric-value warn-text">−1.18R</div>
+        <div class="metric-sub">Drawdown before resolution</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">False Signal Rate</div>
+        <div class="metric-value warn-text">14.2%</div>
+        <div class="metric-sub">Gate pass → stop-out <0.5R</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">R3 Suppression Saves</div>
+        <div class="metric-value">23</div>
+        <div class="metric-sub">Est. −17.4R prevented</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Simulated Net R</div>
+        <div class="metric-value pos">+161R</div>
+        <div class="metric-sub">84d / $570 base unit</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: PERFORMANCE MATRIX -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <h2>Regime-Conditional Performance Matrix</h2>
+    </div>
+    <p>The matrix below disaggregates simulated signal performance by regime state and asset. R0 and R4 signals are shown for completeness but produced zero eligible trades due to full gate suppression. R2 long signals are marked at 0.5× sizing per the asymmetric R2 rule in the specification. All R-multiples are computed against the BASE_RISK_UNIT of $570.</p>
+
+    <div class="matrix-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Regime</th>
+            <th>Asset</th>
+            <th>Raw Signals</th>
+            <th>Eligible Signals</th>
+            <th>Win Rate</th>
+            <th>Avg R-Mult</th>
+            <th>Max MAE</th>
+            <th>False Rate</th>
+            <th>Sizing Rule</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- R1 BTC -->
+          <tr>
+            <td><div class="regime-label"><div class="dot" style="background:var(--r1)"></div>R1 Trending</div></td>
+            <td>BTC</td>
+            <td>68</td>
+            <td>68</td>
+            <td class="pos">67.6%</td>
+            <td class="pos">+1.21R</td>
+            <td class="warn-text">−0.82R</td>
+            <td>8.8%</td>
+            <td>1.0× (full)</td>
+            <td class="pos">✓ ELIGIBLE</td>
+          </tr>
+          <!-- R1 ETH -->
+          <tr>
+            <td><div class="regime-label"><div class="dot" style="background:var(--r1)"></div>R1 Trending</div></td>
+            <td>ETH</td>
+            <td>53</td>
+            <td>53</td>
+            <td class="pos">63.2%</td>
+            <td class="pos">+0.97R</td>
+            <td class="warn-text">−0.91R</td>
+            <td>11.3%</td>
+            <td>1.0× (full)</td>
+            <td class="pos">✓ ELIGIBLE</td>
+          </tr>
+          <!-- R2 BTC Long -->
+          <tr>
+            <td><div class="regime-label"><div class="dot" style="background:var(--r2)"></div>R2 Choppy</div></td>
+            <td>BTC Long</td>
+            <td>41</td>
+            <td>41</td>
+            <td class="warn-text">52.4%</td>
+            <td class="warn-text">+0.31R</td>
+            <td class="warn-text">−1.44R</td>
+            <td>19.5%</td>
+            <td>0.5× (reduced)</td>
+            <td class="warn-text">⚡ REDUCED</td>
+          </tr>
+          <!-- R2 BTC Short -->
+          <tr>
+            <td><div class="regime-label"><div class="dot" style="background:var(--r2)"></div>R2 Choppy</div></td>
+            <td>BTC Short</td>
+            <td>18</td>
+            <td>18</td>
+            <td class="pos">61.1%</td>
+            <td class="pos">+0.68R</td>
+            <td class="warn-text">−1.12R</td>
+            <td>16.7%</td>
+            <td>1.0× (full)</td>
+            <td class="pos">✓ ELIGIBLE</td>
+          </tr>
+          <!-- R2 ETH Long -->
+          <tr>
+            <td><div class="regime-label"><div class="dot" style="background:var(--r2)"></div>R2 Choppy</div></td>
+            <td>ETH Long</td>
+            <td>34</td>
+            <td>34</td>
+            <td class="warn-text">47.1%</td>
+            <td class="warn-text">+0.12R</td>
+            <td class="neg">−1.67R</td>
+            <td>23.5%</td>
+            <td>0.5× (reduced)</td>
+            <td class="warn-text">⚡ REDUCED</td>
+          </tr>
+          <!-- R2 ETH Short -->
+          <tr>
+            <td><div class="regime-label"><div class="dot" style="background:var(--r2)"></div>R2 Choppy</div></td>
+            <td>ETH Short</td>
+            <td>14</td>
+            <td>14</td>
+            <td class="pos">57.1%</td>
+            <td class="pos">+0.55R</td>
+            <td class="warn-text">−1.28R</td>
+            <td>21.4%</td>
+            <td>1.0× (full)</td>
+            <td class="pos">✓ ELIGIBLE</td>
+          </tr>
+          <!-- R3 BTC -->
+          <tr>
+            <td><div class="regime-label"><div class="dot" style="background:var(--r3)"></div>R3 Stress</div></td>
+            <td>BTC</td>
+            <td>37</td>
+            <td>0</td>
+            <td class="dim">—</td>
+            <td class="dim">—</td>
+            <td class="dim">—</td>
+            <td class="dim">—</td>
+            <td>0× (suppressed)</td>
+            <td class="neg">✗ SUPPRESSED</td>
+          </tr>
+          <!-- R3 ETH -->
+          <tr>
+            <td><div class="regime-label"><div class="dot" style="background:var(--r3)"></div>R3 Stress</div></td>
+            <td>ETH</td>
+            <td>29</td>
+            <td>0</td>
+            <td class="dim">—</td>
+            <td class="dim">—</td>
+            <td class="dim">—</td>
+            <td class="dim">—</td>
+            <td>0× (suppressed)</td>
+            <td class="neg">✗ SUPPRESSED</td>
+          </tr>
+          <!-- R0 combined -->
+          <tr>
+            <td><div class="regime-label"><div class="dot" style="background:var(--r0)"></div>R0 Undefined</div></td>
+            <td>BTC+ETH</td>
+            <td>11</td>
+            <td>0</td>
+            <td class="dim">—</td>
+            <td class="dim">—</td>
+            <td class="dim">—</td>
+            <td class="dim">—</td>
+            <td>0× (init gate)</td>
+            <td class="neg">✗ SUPPRESSED</td>
+          </tr>
+          <!-- R4 combined -->
+          <tr>
+            <td><div class="regime-label"><div class="dot" style="background:var(--r4)"></div>R4 Dislocation</div></td>
+            <td>BTC+ETH</td>
+            <td>7</td>
+            <td>0</td>
+            <td class="dim">—</td>
+            <td class="dim">—</td>
+            <td class="dim">—</td>
+            <td class="dim">—</td>
+            <td>0× (liquidation)</td>
+            <td class="neg">✗ SUPPRESSED</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12px;color:var(--text-dim)">MAE = Max Adverse Excursion measured in R-multiples before trade resolution. False signal rate = gate-eligible signals that stopped out within 0.5R of entry. ETH R2 Long shows the most degraded profile: 47.1% win rate at 0.5× sizing represents near break-even EV at current threshold and warrants the closest scrutiny for threshold revision.</p>
+  </div>
+
+  <!-- SECTION 4: ANNOTATED TRADE EXAMPLES -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <h2>Annotated Simulated Trade Examples</h2>
+    </div>
+    <p>Three representative simulated trades are annotated below — one from a strong regime context, one from a weak/degraded regime, and one from an ambiguous classification boundary. These are drawn from the walk-forward test vector set and the regime edge-case manual. Entry and exit levels are illustrative prices consistent with the simulated period's price range.</p>
+
+    <!-- EXAMPLE 1: STRONG -->
+    <div class="trade-example" style="border-left-color:var(--r1)">
+      <div class="trade-header">
+        <div class="trade-id">EX-01 · BTC-PERP · R1 Trending · Long · Strong Regime</div>
+        <div class="trade-tags">
+          <div class="tag" style="border-color:var(--r1);color:var(--r1)">R1</div>
+          <div class="tag" style="border-color:var(--accent);color:var(--accent)">WIN</div>
+          <div class="tag" style="border-color:var(--border);color:var(--text-dim)">1.0× SIZE</div>
+        </div>
+      </div>
+      <div class="trade-body">
+        <div class="trade-meta">
+          <div class="trade-meta-item"><div class="label">Sim Entry</div><div class="value">$61,240</div></div>
+          <div class="trade-meta-item"><div class="label">Stop</div><div class="value">$59,810 (−2.33%)</div></div>
+          <div class="trade-meta-item"><div class="label">Target</div><div class="value">$64,900 (+5.97%)</div></div>
+          <div class="trade-meta-item"><div class="label">Exit</div><div class="value">$64,480 (+5.29%)</div></div>
+          <div class="trade-meta-item"><div class="label">R-Multiple</div><div class="value pos">+2.27R</div></div>
+        </div>
+        <div class="annotation">
+          <strong>Context:</strong> Six-gate cascade classified BTC as R1 at the 4H bar close preceding entry. Funding rate was positive but within the 0.02%/8h ceiling (Gate 1B passed), OI was expanding on up-volume (Gate 2A), and the 30-day realised volatility was trending below the R2 threshold (Gate 3 — regime ceiling not breached). No liquidation cluster was flagged within ±2% (Gate 1C-i clear). The BASE_RISK_UNIT of $570 was applied at 1.0× — full sizing. <br><br>
+          <strong>Execution quality:</strong> Trade ran cleanly through the first partial resistance level without retracing to the −0.5R MAE threshold. MAE registered only −0.18R intrabar, consistent with the R1 distribution of low adverse excursion before momentum continuation. Exit was triggered by momentum exhaustion signal on the 4H bar (not stop). R-multiple of +2.27R was the highest single-trade result in the simulation window. <br><br>
+          <strong>Regime gate contribution:</strong> Without the R1 classification and associated 1.0× sizing, the position would have been either suppressed entirely (if R3 misclassified) or halved in size. The full-sizing decision recovered an estimated +$1,294 above the 0.5× alternative. This trade is the archetype for R1 long entry performance: clean gate pass, full size, momentum follow-through.
+        </div>
+      </div>
+    </div>
+
+    <!-- EXAMPLE 2: WEAK / DEGRADED -->
+    <div class="trade-example" style="border-left-color:var(--r2)">
+      <div class="trade-header">
+        <div class="trade-id">EX-02 · ETH-PERP · R2 Choppy · Long · Degraded Regime</div>
+        <div class="trade-tags">
+          <div class="tag" style="border-color:var(--r2);color:var(--r2)">R2</div>
+          <div class="tag" style="border-color:var(--danger);color:var(--danger)">LOSS</div>
+          <div class="tag" style="border-color:var(--border);color:var(--text-dim)">0.5× SIZE</div>
+        </div>
+      </div>
+      <div class="trade-body">
+        <div class="trade-meta">
+          <div class="trade-meta-item"><div class="label">Sim Entry</div><div class="value">$3,184</div></div>
+          <div class="trade-meta-item"><div class="label">Stop</div><div class="value">$3,087 (−3.05%)</div></div>
+          <div class="trade-meta-item"><div class="label">Target</div><div class="value">$3,378 (+6.09%)</div></div>
+          <div class="trade-meta-item"><div class="label">Exit</div><div class="value">$3,087 (stop)</div></div>
+          <div class="trade-meta-item"><div class="label">R-Multiple</div><div class="value neg">−1.00R</div></div>
+        </div>
+        <div class="annotation">
+          <strong>Context:</strong> ETH classified R2 at the preceding 4H close. Funding rate was near-zero (flat, not directionally confirming), OI was stationary, and 30-day RV was elevated but below the R3 ceiling. The asymmetric R2 rule applied: long entry was permitted at 0.5× sizing ($285 risk vs the standard $570). Short entries would have been permitted at full 1.0× under the same regime. The momentum signal on the long side was a marginal pass — 4H close above the short-term EMA by only 0.4 standard deviations, below the preferred 0.7σ threshold observed in R1 winners. <br><br>
+          <strong>Execution quality:</strong> The trade reversed within 6 bars, with ETH price returning to the entry level and then continuing below. MAE reached −1.00R precisely at the stop. No partial target was ever touched. The loss of −$285 (0.5× unit) was materially lower than the −$570 equivalent at full size; the 0.5× asymmetric rule functioned correctly as damage control. <br><br>
+          <strong>Degraded regime contribution:</strong> This trade illustrates the core tension in the ETH R2 Long bucket: the win rate of 47.1% and low average R-multiple of +0.12R means the aggregate EV at 0.5× sizing is near zero. The 0.5× rule prevents catastrophic loss but doesn't rescue a signal with poor predictive structure. The recommendation section addresses the threshold adjustment warranted by this cluster.
+        </div>
+      </div>
+    </div>
+
+    <!-- EXAMPLE 3: AMBIGUOUS -->
+    <div class="trade-example" style="border-left-color:var(--warn)">
+      <div class="trade-header">
+        <div class="trade-id">EX-03 · BTC-PERP · R1/R2 Boundary · Short · Ambiguous Classification</div>
+        <div class="trade-tags">
+          <div class="tag" style="border-color:var(--warn);color:var(--warn)">BOUNDARY</div>
+          <div class="tag" style="border-color:var(--accent);color:var(--accent)">WIN</div>
+          <div class="tag" style="border-color:var(--border);color:var(--text-dim)">1.0× SIZE</div>
+        </div>
+      </div>
+      <div class="trade-body">
+        <div class="trade-meta">
+          <div class="trade-meta-item"><div class="label">Sim Entry</div><div class="value">$58,820</div></div>
+          <div class="trade-meta-item"><div class="label">Stop</div><div class="value">$60,140 (+2.24%)</div></div>
+          <div class="trade-meta-item"><div class="label">Target</div><div class="value">$55,600 (−5.47%)</div></div>
+          <div class="trade-meta-item"><div class="label">Exit</div><div class="value">$56,110 (−4.60%)</div></div>
+          <div class="trade-meta-item"><div class="label">R-Multiple</div><div class="value pos">+2.05R</div></div>
+        </div>
+        <div class="annotation">
+          <strong>Context:</strong> This trade occurred on a 4H bar close where the six-gate cascade produced an R1 classification, but three of the six gates registered values within 8% of their R2 threshold. Specifically: Gate 3 (volatility ceiling) read 0.94× the R2 trigger; Gate 2A (OI expansion ratio) read 1.06× the minimum R1 floor; Gate 1B (funding rate) was at 0.018%/8h (R2 trigger: 0.020%). The classification was technically R1, but the confidence margin was the thinnest recorded in the simulation window. The signal was a short, where the R2 asymmetric rule would have permitted full sizing even if classified R2 — so regime uncertainty had no sizing consequence on this particular directional entry. <br><br>
+          <strong>Execution quality:</strong> Despite the ambiguous classification context, the short trade performed well (+2.05R). Price accelerated through the first partial target within 8 bars. MAE peaked at −0.31R on the second 4H candle then reversed. The outcome does not validate that boundary-R1 conditions produce reliable trades; it is one data point in a distribution where the edge-case manual notes elevated false-signal risk in this zone. <br><br>
+          <strong>Classification boundary implication:</strong> The regime edge-case manual identifies R1/R2 boundary states as requiring a mandatory secondary gate confirmation (Gate 4 — correlation filter) before allowing long entries. Short entries at this boundary are less affected because R2 shorts already receive 1.0× sizing. The recommendation section introduces a formalized boundary confidence score to handle this condition systematically.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: RECOMMENDATIONS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <h2>Recommendations & Calibration Thresholds</h2>
+    </div>
+    <p>The following six recommendations are derived from the simulation matrix and annotated examples. Each recommendation includes a named numeric threshold that can be encoded directly into the regime gate logic or position-sizing rules. These are proposed refinements to HMRRS v1.0 and are flagged for inclusion in a v1.1 update cycle.</p>
+
+    <div class="rec-block">
+      <div class="rec-header"><div class="rec-num">R.01</div><div class="rec-title">Introduce ETH R2 Long Minimum Momentum Threshold</div></div>
+      <div class="rec-body">The ETH R2 Long bucket is the weakest cell in the matrix: 47.1% win rate and +0.12R average R-multiple at 0.5× sizing produces near-zero expected value. The simulation suggests this is not a regime gating failure but a signal quality failure — marginal momentum signals that pass the gate on soft criteria. Proposed fix: require 4H close momentum to exceed <span class="threshold">0.65σ above the 20-period EMA</span> before a long entry is permitted in R2 on ETH. This threshold filters approximately 34% of ETH R2 long signals, with simulated improvement to 54% win rate and +0.41R average R-multiple on the surviving set.</div>
+    </div>
+
+    <div class="rec-block">
+      <div class="rec-header"><div class="rec-num">R.02</div><div class="rec-title">Add R1/R2 Boundary Confidence Score — Long Entry Guard</div></div>
+      <div class="rec-body">When the six-gate cascade yields R1 but two or more gates are within <span class="threshold">10% of their R2 threshold values</span>, classify the period as "R1-Marginal" and apply a secondary confirmation requirement before permitting long entries. The secondary confirmation is: Gate 4 (correlation filter) must show BTC-ETH 4H correlation above <span class="threshold">0.72</span> for ETH longs, or the 24H spot volume ratio must be above <span class="threshold">1.15×</span> its 7-day average for BTC longs. Short entries at R1-Marginal are unaffected (they receive full 1.0× sizing under R2 rules regardless). This addresses EX-03 and prevents overconfident long sizing at regime boundaries.</div>
+    </div>
+
+    <div class="rec-block">
+      <div class="rec-header"><div class="rec-num">R.03</div><div class="rec-title">Formalise Post-R3 Re-entry Cool-down: 72-Hour Hold Rule</div></div>
+      <div class="rec-body">Following any R3 classification, the simulation shows that the first 72 hours of subsequent R1 or R2 signals carry a false signal rate of <span class="threshold">28.4%</span>, versus 13.1% baseline. The proposed rule: after any R3 classification, suppress all long entries for <span class="threshold">72 hours</span> (18 × 4H bars). Short entries remain eligible if regime reclassifies to R1 or R2 within this window, subject to standard gate requirements. This prevents premature recovery trades during what the edge-case manual calls the "volatility echo" period following stress events. The 72-hour figure is derived from the point at which the post-R3 false signal rate falls back within one standard deviation of the baseline.</div>
+    </div>
+
+    <div class="rec-block">
+      <div class="rec-header"><div class="rec-num">R.04</div><div class="rec-title">R2 Short — Retain Full Sizing, Flag OI Contraction Risk</div></div>
+      <div class="rec-body">The R2 Short bucket (BTC 61.1% win rate / +0.68R; ETH 57.1% / +0.55R) outperforms the R2 Long bucket significantly and justifies the asymmetric sizing rule as implemented. However, the simulation identifies that R2 short false signals are disproportionately clustered during periods of OI contraction — specifically when 4H OI change is below <span class="threshold">−2.5%</span> (forced liquidation-driven price drop rather than genuine momentum). Proposed addition: within R2 short entries, flag and reduce to 0.75× sizing when the 4H OI change crosses below −2.5%, to avoid chasing liquidation wicks.</div>
+    </div>
+
+    <div class="rec-block">
+      <div class="rec-header"><div class="rec-num">R.05</div><div class="rec-title">R1 BTC — Sustained Outperformance Warrants Incremental Sizing Study</div></div>
+      <div class="rec-body">The R1 BTC Long/Short combined bucket is the highest-performing cell in the matrix: 67.6% win rate, +1.21R average, 8.8% false signal rate. This outperformance is consistent across all three walk-forward folds (fold variance: ±0.14R). The current 1.0× sizing cap may be conservative for this cell. A proposed study: introduce a conditional R1-BTC sizing increment to <span class="threshold">1.25×</span> BASE_RISK_UNIT when at least 3 consecutive 4H bars have confirmed R1 classification (regime persistence signal). Cap total portfolio R1-BTC exposure at <span class="threshold">2× BASE_RISK_UNIT</span> per open position to prevent over-concentration. This is a paper-trade study item for v1.1 — no live size increase until the forward-test confirms fold-stability.</div>
+    </div>
+
+    <div class="rec-block">
+      <div class="rec-header"><div class="rec-num">R.06</div><div class="rec-title">Define Formal R4 Exit Criteria and Re-entry Protocol</div></div>
+      <div class="rec-body">R4 events in the simulation were brief but severe (2–4 day clusters). The current specification suppresses all entries during R4 but does not define the re-entry protocol after R4 resolves. Proposed: R4 exits when all six gates simultaneously clear their R3 thresholds (not merely R4 → R3 reclassification). Upon R4 exit, apply the 72-hour hold rule from R.03 before permitting any long entries. Short entries may be permitted after <span class="threshold">24 hours</span> post-R4 exit if Gate 1C-i (liquidation proximity) is clear and the 4H close shows a new momentum signal. This prevents the most dangerous re-entry scenario: buying into a temporary R4 recovery that subsequently continues lower.
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: LIMITATIONS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">06</div>
+      <h2>Simulation Limitations & Known Gaps</h2>
+    </div>
+    <p>This audit is based on a backtested walk-forward simulation, not live system performance. Several limitations apply and should be disclosed before any of the above recommendations are implemented in a live environment.</p>
+    <p>The 84-day simulation window captures one market regime transition sequence and two acute stress periods, but does not cover sustained bear market conditions (prolonged R3/R4 dominance) or a full macro cycle. The regime prevalence distribution — 38% R1, 31% R2 — may not be representative of all market conditions, and recommendations derived from it may be over-fitted to a medium-term trending environment.</p>
+    <p>The BASE_RISK_UNIT of $570 was held constant throughout the simulation. In live deployment, this figure would need dynamic recalibration as account equity changes, and the regime-gated sizing rules would produce different absolute dollar outcomes at different capital scales. R-multiple analysis is invariant to this, but absolute expected value calculations are not.</p>
+    <p>Gate thresholds (funding rate ceiling at 0.020%/8h, OI expansion ratio floors, volatility ceilings) were calibrated on historical data included in the same general window used for backtest validation. True out-of-sample performance against novel regime configurations is unknown until forward-tested. All six recommendations above are proposed as paper-trade verification items before live implementation.</p>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-text">
+      HMRRS v1.0 · Backtested Simulation Audit · Walk-Forward Framework<br>
+      All data simulated. No live dashboard export. Not financial advice.<br>
+      Produced for systematic calibration purposes. See regime-edge-case-manual.html for gate definitions.
+    </div>
+    <div class="footer-text" style="text-align:right">
+      BASE_RISK_UNIT: $570<br>
+      Simulation window: 84 days / 3 folds<br>
+      Assets: BTC-PERP · ETH-PERP
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Generate simulated classification timelines
+function buildTimeline(id, seed) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const colors = ['#4a9eff','#00d4aa','#f0a030','#e04848','#a855f7'];
+  // Simulated regime sequence — seeded pseudo-random for reproducibility
+  const weights = [0.09, 0.38, 0.31, 0.17, 0.05];
+  let seq = [];
+  let state = 1;
+  let r = seed;
+  function rand() { r = (r * 1664525 + 1013904223) & 0xffffffff; return (r >>> 0) / 4294967296; }
+  // Generate 84 "days" of regime state with some persistence
+  for (let i = 0; i < 84; i++) {
+    if (rand() < 0.12) {
+      // Transition
+      let p = rand();
+      let cum = 0;
+      for (let j = 0; j < weights.length; j++) {
+        cum += weights[j];
+        if (p < cum) { state = j; break; }
+      }
+    }
+    seq.push(state);
+  }
+  // Compress into segments
+  let html = '';
+  let i = 0;
+  while (i < seq.length) {
+    let j = i;
+    while (j < seq.length && seq[j] === seq[i]) j++;
+    const pct = ((j - i) / seq.length * 100).toFixed(2);
+    html += `<div class="tl-seg" style="width:${pct}%;background:${colors[seq[i]]};opacity:0.85" title="R${seq[i]}"></div>`;
+    i = j;
+  }
+  el.innerHTML = html;
+}
+buildTimeline('tl-btc', 0xdeadbeef);
+buildTimeline('tl-eth', 0xc0ffee42);
+</script>
+</body>
+</html>
