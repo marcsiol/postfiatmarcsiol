@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hive Mind STR Constraint Extraction Module v1.0</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07090d;
+  --surface: #0d1117;
+  --surface2: #131920;
+  --border: #1c2535;
+  --border2: #243040;
+  --text: #b8cce0;
+  --text-dim: #506070;
+  --text-muted: #2e3f52;
+  --accent: #38bdf8;
+  --accent2: #0ea5e9;
+  --green: #34d399;
+  --amber: #fbbf24;
+  --red: #f87171;
+  --purple: #c084fc;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+/* scanline overlay */
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events:none;
+  z-index:9999;
+}
+
+.wrap {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 64px 40px 120px;
+}
+
+/* MASTHEAD */
+.masthead {
+  margin-bottom: 56px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 40px;
+}
+.version-strip {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.version-strip::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border2), transparent);
+}
+h1 {
+  font-family: var(--mono);
+  font-size: 26px;
+  font-weight: 700;
+  color: #ddeeff;
+  line-height: 1.25;
+  margin-bottom: 10px;
+}
+.tagline {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 28px;
+}
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(5, auto);
+  gap: 0;
+  border: 1px solid var(--border);
+  width: fit-content;
+}
+.meta-cell {
+  padding: 8px 18px;
+  border-right: 1px solid var(--border);
+}
+.meta-cell:last-child { border-right: none; }
+.meta-key {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 3px;
+}
+.meta-val {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+}
+
+/* TOC */
+.toc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 20px 24px;
+  margin-bottom: 52px;
+}
+.toc-title {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 12px;
+}
+.toc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.toc-item {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: color 0.15s;
+}
+.toc-item:hover { color: var(--accent); }
+.toc-num { color: var(--text-muted); min-width: 24px; }
+
+/* SECTION */
+.section { margin-bottom: 64px; }
+.section-hdr {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.section-idx {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent);
+  min-width: 32px;
+}
+h2 {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: #cce4f8;
+  letter-spacing: 0.05em;
+}
+.section-desc {
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 24px;
+  max-width: 780px;
+  line-height: 1.7;
+}
+
+/* CODE BLOCKS */
+.code-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.code-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.code-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.code-type {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--accent);
+  background: rgba(56,189,248,0.08);
+  border: 1px solid rgba(56,189,248,0.15);
+  padding: 2px 8px;
+}
+pre {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: #a8c4dc;
+  padding: 20px 20px;
+  overflow-x: auto;
+  line-height: 1.65;
+  white-space: pre;
+}
+
+/* SYNTAX HIGHLIGHT CLASSES */
+.kw { color: var(--accent); }
+.str { color: var(--green); }
+.num { color: var(--amber); }
+.cmt { color: var(--text-muted); font-style: italic; }
+.key { color: #93c5fd; }
+.tag { color: var(--purple); }
+.bool { color: var(--amber); }
+.null-v { color: var(--red); }
+
+/* FEW-SHOT EXAMPLES */
+.ex-wrap {
+  border: 1px solid var(--border);
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+.ex-hdr {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+.ex-num {
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--border2);
+}
+.ex-title {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: #cce4f8;
+  font-weight: 500;
+}
+.ex-badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  padding: 3px 10px;
+  border: 1px solid;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.ex-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.ex-panel {
+  padding: 0;
+  overflow: hidden;
+}
+.ex-panel:first-child {
+  border-right: 1px solid var(--border);
+}
+.ex-panel-hdr {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(0,0,0,0.2);
+}
+.ex-panel pre {
+  font-size: 11px;
+  padding: 16px;
+  margin: 0;
+  min-height: 180px;
+}
+
+/* EDGE CASE TABLE */
+.edge-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; }
+.edge-table th {
+  text-align: left;
+  padding: 10px 14px;
+  background: var(--surface2);
+  border-bottom: 2px solid var(--border2);
+  color: var(--text-dim);
+  font-weight: 500;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.edge-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.5;
+  color: var(--text);
+}
+.edge-table tr:hover td { background: rgba(255,255,255,0.015); }
+.sev { font-size: 9px; padding: 2px 7px; border: 1px solid; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+.sev-high { color: var(--red); border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.06); }
+.sev-med  { color: var(--amber); border-color: rgba(251,191,36,0.3); background: rgba(251,191,36,0.06); }
+.sev-low  { color: var(--green); border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.06); }
+
+/* CALLOUT */
+.callout {
+  padding: 14px 18px;
+  border-left: 3px solid;
+  margin-bottom: 20px;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.callout-warn { border-color: var(--amber); background: rgba(251,191,36,0.05); color: #e0c870; }
+.callout-info { border-color: var(--accent); background: rgba(56,189,248,0.05); color: #90c8e8; }
+.callout strong { color: #fde68a; }
+.callout-info strong { color: #bae6fd; }
+
+/* INLINE CODE */
+code {
+  font-family: var(--mono);
+  font-size: 11px;
+  background: rgba(56,189,248,0.07);
+  border: 1px solid rgba(56,189,248,0.12);
+  color: var(--accent);
+  padding: 1px 6px;
+}
+
+/* FIELD TABLE */
+.field-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; margin-bottom: 16px; }
+.field-table th {
+  text-align: left;
+  padding: 8px 12px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border2);
+  color: var(--text-muted);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+.field-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.field-name { color: #93c5fd; }
+.field-type { color: var(--amber); }
+.field-req { color: var(--red); font-size: 9px; }
+.field-opt { color: var(--text-muted); font-size: 9px; }
+.field-desc { color: var(--text-dim); font-size: 10px; line-height: 1.5; }
+
+/* FOOTER */
+.footer {
+  margin-top: 80px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.footer-mono {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+
+@media (max-width: 768px) {
+  .wrap { padding: 32px 20px 80px; }
+  h1 { font-size: 18px; }
+  .meta-grid { grid-template-columns: repeat(2, 1fr); width: 100%; }
+  .ex-body { grid-template-columns: 1fr; }
+  .ex-panel:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="version-strip">Hive Mind Intake Refactor · STR Module · v1.0</div>
+  <h1>STR Constraint Extraction Module</h1>
+  <div class="tagline">// System prompts · Few-shot examples · JSON schema · Edge-case handlers · Routing API interface</div>
+  <div class="meta-grid">
+    <div class="meta-cell"><div class="meta-key">Module ID</div><div class="meta-val">HM-EXT-STR-001</div></div>
+    <div class="meta-cell"><div class="meta-key">Domain</div><div class="meta-val">Short-Term Rental / Regulatory</div></div>
+    <div class="meta-cell"><div class="meta-key">Jurisdiction Seed</div><div class="meta-val">JP (Japan minpaku)</div></div>
+    <div class="meta-cell"><div class="meta-key">Schema Version</div><div class="meta-val">constraint-schema-v1.0</div></div>
+    <div class="meta-cell"><div class="meta-key">Published</div><div class="meta-val">March 2026</div></div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">Contents</div>
+  <div class="toc-list">
+    <a href="#s1" class="toc-item"><span class="toc-num">01</span>Master System Prompt — Intake Agent</a>
+    <a href="#s2" class="toc-item"><span class="toc-num">02</span>Few-Shot Extraction Examples (5)</a>
+    <a href="#s3" class="toc-item"><span class="toc-num">03</span>JSON Output Schema — Routing API Interface</a>
+    <a href="#s4" class="toc-item"><span class="toc-num">04</span>Edge-Case Handling Instructions</a>
+    <a href="#s5" class="toc-item"><span class="toc-num">05</span>Integration Notes &amp; API Call Template</a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 1: MASTER SYSTEM PROMPT -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s1">
+  <div class="section-hdr">
+    <div class="section-idx">01</div>
+    <h2>Master System Prompt — Hive Mind STR Intake Agent</h2>
+  </div>
+  <div class="section-desc">
+    This is the complete system prompt to be passed to the extraction LLM at the top of every intake call. It defines role, constraint taxonomy, extraction targets, output format requirements, and confidence scoring rules. Deploy verbatim; do not summarise or paraphrase for production use.
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr">
+      <div class="code-label">SYSTEM_PROMPT · HM-EXT-STR-001</div>
+      <div class="code-type">DEPLOY VERBATIM</div>
+    </div>
+    <pre><span class="cmt">##############################################################################
+# HIVE MIND STR CONSTRAINT EXTRACTION AGENT
+# Module: HM-EXT-STR-001 | Schema: constraint-schema-v1.0
+# Do not modify this prompt without version-bumping the module ID.
+##############################################################################</span>
+
+<span class="kw">You are the Hive Mind STR Constraint Extraction Agent.</span>
+
+Your sole function is to read unstructured text about short-term rental (STR)
+regulatory environments — laws, ordinances, enforcement actions, market reports,
+legal memos, news articles, or operator commentary — and extract structured
+constraint data in the exact JSON format specified below.
+
+<span class="kw">ROLE</span>
+You are not a policy analyst, not a lawyer, and not an investment advisor.
+You are a structured data extraction engine. Your output is always and only
+valid JSON conforming to the schema. Never add prose, never add commentary
+outside JSON fields, never add apologies or caveats outside the
+`extraction_notes` field.
+
+<span class="kw">CONSTRAINT TAXONOMY</span>
+You must classify every extracted constraint into one of these types:
+
+  PHYSICAL_PRESENCE   — mandated human presence at or near a property
+  LICENSING_CEILING   — limit on operating days, units, or rooms
+  GEOGRAPHIC_EXCLUSION — zone or ward-level prohibition or restriction
+  FEE_FLOOR           — mandated minimum cost structure (third-party or government)
+  TECHNOLOGY_BLOCK    — explicit prohibition on tech substituting for a human requirement
+  CAPTIVE_VENDOR      — mandatory use of a specific licensed third party
+  ENFORCEMENT_ACTION  — fine, revocation, or operational suspension event
+  LEADING_INDICATOR   — upstream signal in another sector that predicts STR rule change
+  PENDING_CHANGE      — proposed, announced, or consulted regulatory modification
+
+<span class="kw">EXTRACTION TARGETS</span>
+For each constraint found in the text, extract:
+  1. The constraint type (from taxonomy above)
+  2. The specific rule, distance, ratio, percentage, or threshold value
+  3. The legal citation or source reference (if present)
+  4. The effective date or announcement date
+  5. The jurisdiction (country / region / municipality)
+  6. Whether technology substitution is explicitly permitted or prohibited
+  7. The captive vendor type (if applicable)
+  8. Unit economics impact (if quantified in the source)
+  9. Confidence level: HIGH / MEDIUM / LOW
+  10. Any leading indicator cross-sector parallel (if mentioned)
+
+<span class="kw">OPACITY SCORING</span>
+Assign an opacity score 1–5 to each constraint:
+  1 = Fully public, official government source, unambiguous text
+  2 = Public source, minor interpretation required
+  3 = Secondary synthesis from reliable reports; no primary text cited
+  4 = Inferred from market behaviour, operator commentary, or indirect signals
+  5 = Speculative / unverified / rumour-level
+
+<span class="kw">CONFIDENCE RULES</span>
+- Set confidence: "HIGH" only when legal citation, official source, or primary
+  regulatory text is present in the input.
+- Set confidence: "MEDIUM" when the source is a credible secondary report
+  (law firm memo, industry survey, REIT disclosure) but no primary text is cited.
+- Set confidence: "LOW" when the constraint is inferred, operator-reported,
+  or described in non-expert media without legal citation.
+
+<span class="kw">INCOMPLETE DATA PROTOCOL</span>
+If a required field cannot be extracted from the text:
+  - Set the field to null.
+  - Add an entry to the `extraction_notes` array explaining what is missing
+    and what type of primary source would resolve the gap.
+  - NEVER invent values. NEVER assume distances, ratios, or fees not stated
+    in the source text.
+  - If the text is too fragmentary to extract even a constraint type, return
+    a single object with constraint_type: "INDETERMINATE" and populate only
+    `raw_text_excerpt` and `extraction_notes`.
+
+<span class="kw">SECONDARY SYNTHESIS FLAG</span>
+If the input text is clearly secondary synthesis (analyst memo, research
+report, aggregated survey) rather than primary regulatory text, set
+`sourcing_type: "SECONDARY_SYNTHESIS"` on every extracted constraint.
+Primary regulatory text (law, ordinance, enforcement order) should be
+marked `sourcing_type: "PRIMARY"`.
+
+<span class="kw">OUTPUT FORMAT</span>
+Return only the JSON object specified in the schema. No preamble. No trailing
+commentary. The root key is always `"extraction"`. If no STR constraints are
+found in the text, return:
+  {"extraction": {"constraints": [], "extraction_notes":
+   ["No STR-relevant constraints identified in input text."]}}
+
+<span class="kw">DO NOT</span>:
+  - Reproduce the full input text in any field
+  - Add markdown formatting to the JSON output
+  - Include fields not in the schema
+  - Hallucinate legal citations not present in the source
+  - Express uncertainty through hedging language in structured fields;
+    use the confidence and opacity scores instead
+
+<span class="kw">ALWAYS</span>:
+  - Extract ALL constraints present in the text, not just the most prominent
+  - Preserve numeric values exactly as stated (do not convert units)
+  - Note the source type (law, ordinance, survey, news, operator commentary)
+  - Tag leading indicators in adjacent sectors (elder care, food service,
+    construction) per the cross-sector analog matrix
+
+<span class="cmt">##############################################################################
+# END SYSTEM PROMPT
+##############################################################################</span></pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 2: FEW-SHOT EXAMPLES -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s2">
+  <div class="section-hdr">
+    <div class="section-idx">02</div>
+    <h2>Few-Shot Extraction Examples</h2>
+  </div>
+  <div class="section-desc">
+    Five annotated input→output pairs sourced from Japan STR regulatory data. These are passed as user/assistant turn pairs immediately after the system prompt and before the live input. They teach the model the full extraction surface: simple proximity rules, compound constraints, market-inferred constraints, leading indicators, and incomplete data cases.
+  </div>
+
+  <!-- EXAMPLE 1 -->
+  <div class="ex-wrap">
+    <div class="ex-hdr">
+      <div class="ex-num">01</div>
+      <div class="ex-title">Simple Physical Presence Constraint — Primary Legal Text</div>
+      <div class="ex-badge" style="border-color:rgba(52,211,153,0.4);color:var(--green)">CLEAN EXTRACT</div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-panel">
+        <div class="ex-panel-hdr">USER INPUT</div>
+        <pre>Article 11(1)(iii) of the Private Lodging Business Act
+(民泊新法, enacted June 2018, effective June 15 2018)
+requires that a licensed management company (kanrisha)
+be physically reachable within 10 minutes of the
+registered property during all guest stay periods.
+The requirement applies via foot or vehicle. Failure
+to maintain this proximity standard constitutes
+grounds for registration cancellation under
+Article 33(1)(iv). Technology-based remote monitoring
+systems do not satisfy the proximity requirement.</pre>
+      </div>
+      <div class="ex-panel">
+        <div class="ex-panel-hdr">ASSISTANT OUTPUT</div>
+        <pre>{
+  <span class="key">"extraction"</span>: {
+    <span class="key">"constraints"</span>: [
+      {
+        <span class="key">"constraint_id"</span>: <span class="str">"JP-PHYS-001"</span>,
+        <span class="key">"constraint_type"</span>: <span class="str">"PHYSICAL_PRESENCE"</span>,
+        <span class="key">"jurisdiction"</span>: {
+          <span class="key">"country"</span>: <span class="str">"JP"</span>,
+          <span class="key">"region"</span>: <span class="null-v">null</span>,
+          <span class="key">"municipality"</span>: <span class="null-v">null</span>,
+          <span class="key">"scope"</span>: <span class="str">"NATIONAL"</span>
+        },
+        <span class="key">"rule_description"</span>: <span class="str">"Licensed kanrisha must be physically reachable within 10 minutes (foot or vehicle) of registered property during all guest stays"</span>,
+        <span class="key">"threshold_value"</span>: <span class="num">10</span>,
+        <span class="key">"threshold_unit"</span>: <span class="str">"minutes"</span>,
+        <span class="key">"threshold_mode"</span>: <span class="str">"foot_or_vehicle"</span>,
+        <span class="key">"legal_citation"</span>: <span class="str">"Article 11(1)(iii), Private Lodging Business Act (民泊新法)"</span>,
+        <span class="key">"enforcement_citation"</span>: <span class="str">"Article 33(1)(iv)"</span>,
+        <span class="key">"effective_date"</span>: <span class="str">"2018-06-15"</span>,
+        <span class="key">"announcement_date"</span>: <span class="null-v">null</span>,
+        <span class="key">"technology_substitution_permitted"</span>: <span class="bool">false</span>,
+        <span class="key">"technology_substitution_source"</span>: <span class="str">"Explicit — stated in source text"</span>,
+        <span class="key">"captive_vendor_type"</span>: <span class="str">"licensed_kanrisha"</span>,
+        <span class="key">"captive_vendor_required"</span>: <span class="bool">true</span>,
+        <span class="key">"unit_economics_impact"</span>: <span class="null-v">null</span>,
+        <span class="key">"sourcing_type"</span>: <span class="str">"PRIMARY"</span>,
+        <span class="key">"confidence"</span>: <span class="str">"HIGH"</span>,
+        <span class="key">"opacity"</span>: <span class="num">1</span>,
+        <span class="key">"leading_indicator_parallel"</span>: <span class="null-v">null</span>,
+        <span class="key">"raw_text_excerpt"</span>: <span class="str">"physically reachable within 10 minutes...Technology-based remote monitoring systems do not satisfy the proximity requirement"</span>
+      }
+    ],
+    <span class="key">"extraction_notes"</span>: []
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXAMPLE 2 -->
+  <div class="ex-wrap">
+    <div class="ex-hdr">
+      <div class="ex-num">02</div>
+      <div class="ex-title">Hidden Fee Floor — Market-Inferred Constraint from Secondary Report</div>
+      <div class="ex-badge" style="border-color:rgba(251,191,36,0.4);color:var(--amber)">OPACITY 3–4</div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-panel">
+        <div class="ex-panel-hdr">USER INPUT</div>
+        <pre>According to Colliers International Japan's September
+2024 hospitality report, management fees for licensed
+STR kanrisha services in Tokyo have remained stable
+at 15–20% of gross revenue since the Private Lodging
+Business Act came into force in 2018, despite
+significant technology adoption (smart locks, IoT
+sensors, automated check-in) that has reduced the
+operational workload of on-site management. The
+fee stability is attributed by operators to the
+irreducible legal liability exposure of kanrisha
+licensees, not to labour costs. Platform fees
+(primarily Airbnb) average approximately 14% of
+gross, creating a combined compliance and platform
+cost floor of approximately 31.5% of gross revenue
+before operating expenses.</pre>
+      </div>
+      <div class="ex-panel">
+        <div class="ex-panel-hdr">ASSISTANT OUTPUT</div>
+        <pre>{
+  <span class="key">"extraction"</span>: {
+    <span class="key">"constraints"</span>: [
+      {
+        <span class="key">"constraint_id"</span>: <span class="str">"JP-FEE-001"</span>,
+        <span class="key">"constraint_type"</span>: <span class="str">"FEE_FLOOR"</span>,
+        <span class="key">"jurisdiction"</span>: {
+          <span class="key">"country"</span>: <span class="str">"JP"</span>,
+          <span class="key">"region"</span>: <span class="str">"Tokyo"</span>,
+          <span class="key">"municipality"</span>: <span class="null-v">null</span>,
+          <span class="key">"scope"</span>: <span class="str">"REGIONAL"</span>
+        },
+        <span class="key">"rule_description"</span>: <span class="str">"Kanrisha management fees have remained 15–20% of gross since 2018 despite technology cost reductions; structural fee floor driven by legal liability, not labour"</span>,
+        <span class="key">"threshold_value"</span>: <span class="str">"15–20"</span>,
+        <span class="key">"threshold_unit"</span>: <span class="str">"percent_of_gross_revenue"</span>,
+        <span class="key">"threshold_mode"</span>: <span class="str">"market_observed_range"</span>,
+        <span class="key">"legal_citation"</span>: <span class="null-v">null</span>,
+        <span class="key">"enforcement_citation"</span>: <span class="null-v">null</span>,
+        <span class="key">"effective_date"</span>: <span class="str">"2018-06-15"</span>,
+        <span class="key">"announcement_date"</span>: <span class="null-v">null</span>,
+        <span class="key">"technology_substitution_permitted"</span>: <span class="bool">false</span>,
+        <span class="key">"technology_substitution_source"</span>: <span class="str">"Inferred — IoT adoption has not reduced fees per source"</span>,
+        <span class="key">"captive_vendor_type"</span>: <span class="str">"licensed_kanrisha"</span>,
+        <span class="key">"captive_vendor_required"</span>: <span class="bool">true</span>,
+        <span class="key">"unit_economics_impact"</span>: {
+          <span class="key">"combined_compliance_platform_floor_pct"</span>: <span class="num">31.5</span>,
+          <span class="key">"platform_fee_component_pct"</span>: <span class="num">14</span>,
+          <span class="key">"kanrisha_fee_component_pct"</span>: <span class="str">"17.5 (midpoint)"</span>,
+          <span class="key">"notes"</span>: <span class="str">"Floor is pre-operating-expense; net margin depends on additional cost structure"</span>
+        },
+        <span class="key">"sourcing_type"</span>: <span class="str">"SECONDARY_SYNTHESIS"</span>,
+        <span class="key">"confidence"</span>: <span class="str">"MEDIUM"</span>,
+        <span class="key">"opacity"</span>: <span class="num">3</span>,
+        <span class="key">"leading_indicator_parallel"</span>: <span class="null-v">null</span>,
+        <span class="key">"raw_text_excerpt"</span>: <span class="str">"management fees...remained stable at 15–20%...combined compliance and platform cost floor of approximately 31.5% of gross revenue"</span>
+      }
+    ],
+    <span class="key">"extraction_notes"</span>: [
+      <span class="str">"Legal citation absent — fee floor is market-observed, not legally mandated. Primary source to resolve: Japan Tourism Agency annual operator survey or MLIT market data. Legal mandate derives from Article 11(1)(iii) requiring kanrisha engagement, not from a fee regulation."</span>
+    ]
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXAMPLE 3 -->
+  <div class="ex-wrap">
+    <div class="ex-hdr">
+      <div class="ex-num">03</div>
+      <div class="ex-title">Leading Indicator — Cross-Sector Analog (Kaigo Elder Care)</div>
+      <div class="ex-badge" style="border-color:rgba(192,132,252,0.4);color:var(--purple)">UPSTREAM SIGNAL</div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-panel">
+        <div class="ex-panel-hdr">USER INPUT</div>
+        <pre>Japan's Ministry of Health, Labour and Welfare (MHLW)
+has approved the use of robotic care systems and AI
+scheduling in long-term care facilities under the
+Long-Term Care Insurance Act, but has explicitly
+stated in guidance issued March 2024 that the 1:3
+carer-to-resident staffing ratio required under
+Article 14 of the Long-Term Care Insurance Act
+remains unchanged. The ministry noted that robotic
+systems assist present carers; they do not substitute
+for the legal presence requirement. Industry groups
+representing over 4,000 care facilities have
+petitioned MHLW for ratio relaxation, citing a
+projected 300,000-worker shortfall. MHLW review is
+pending with no timeline announced.</pre>
+      </div>
+      <div class="ex-panel">
+        <div class="ex-panel-hdr">ASSISTANT OUTPUT</div>
+        <pre>{
+  <span class="key">"extraction"</span>: {
+    <span class="key">"constraints"</span>: [
+      {
+        <span class="key">"constraint_id"</span>: <span class="str">"JP-LI-KAIGO-001"</span>,
+        <span class="key">"constraint_type"</span>: <span class="str">"LEADING_INDICATOR"</span>,
+        <span class="key">"jurisdiction"</span>: {
+          <span class="key">"country"</span>: <span class="str">"JP"</span>,
+          <span class="key">"region"</span>: <span class="null-v">null</span>,
+          <span class="key">"municipality"</span>: <span class="null-v">null</span>,
+          <span class="key">"scope"</span>: <span class="str">"NATIONAL"</span>
+        },
+        <span class="key">"rule_description"</span>: <span class="str">"MHLW 1:3 carer-to-resident staffing ratio (Long-Term Care Insurance Act, Art.14) unchanged despite robotic adoption; technology permitted as assistance only, not presence substitution"</span>,
+        <span class="key">"threshold_value"</span>: <span class="str">"1:3"</span>,
+        <span class="key">"threshold_unit"</span>: <span class="str">"carer_to_resident_ratio"</span>,
+        <span class="key">"threshold_mode"</span>: <span class="str">"staffing_floor"</span>,
+        <span class="key">"legal_citation"</span>: <span class="str">"Article 14, Long-Term Care Insurance Act (介護保険法)"</span>,
+        <span class="key">"enforcement_citation"</span>: <span class="null-v">null</span>,
+        <span class="key">"effective_date"</span>: <span class="null-v">null</span>,
+        <span class="key">"announcement_date"</span>: <span class="str">"2024-03"</span>,
+        <span class="key">"technology_substitution_permitted"</span>: <span class="bool">false</span>,
+        <span class="key">"technology_substitution_source"</span>: <span class="str">"Explicit — MHLW guidance March 2024 states robots assist, do not substitute"</span>,
+        <span class="key">"captive_vendor_type"</span>: <span class="null-v">null</span>,
+        <span class="key">"captive_vendor_required"</span>: <span class="bool">false</span>,
+        <span class="key">"unit_economics_impact"</span>: <span class="null-v">null</span>,
+        <span class="key">"sourcing_type"</span>: <span class="str">"PRIMARY"</span>,
+        <span class="key">"confidence"</span>: <span class="str">"HIGH"</span>,
+        <span class="key">"opacity"</span>: <span class="num">1</span>,
+        <span class="key">"leading_indicator_parallel"</span>: {
+          <span class="key">"target_sector"</span>: <span class="str">"short_term_rental"</span>,
+          <span class="key">"analog_sector"</span>: <span class="str">"elder_care_kaigo"</span>,
+          <span class="key">"signal_type"</span>: <span class="str">"PRIMARY"</span>,
+          <span class="key">"signal_logic"</span>: <span class="str">"MHLW kaigo ratio is the closest policy analog to MLIT STR proximity rule — both are presence mandates resistant to technology substitution. Ratio relaxation in kaigo would establish first Japanese precedent for physical presence mandate yielding to technology, raising STR rule-change probability."</span>,
+          <span class="key">"trigger_condition"</span>: <span class="str">"MHLW announces kaigo ratio relaxation OR pilot permitting technology substitution at legal compliance threshold"</span>,
+          <span class="key">"current_status"</span>: <span class="str">"Review pending, no timeline. Industry petition filed by 4,000+ facility coalition."</span>
+        },
+        <span class="key">"raw_text_excerpt"</span>: <span class="str">"robotic systems assist present carers; they do not substitute for the legal presence requirement...review is pending with no timeline announced"</span>
+      }
+    ],
+    <span class="key">"extraction_notes"</span>: [
+      <span class="str">"No MHLW review timeline present in source. Monitor MHLW press releases and Diet Health Committee proceedings for update."</span>
+    ]
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXAMPLE 4 -->
+  <div class="ex-wrap">
+    <div class="ex-hdr">
+      <div class="ex-num">04</div>
+      <div class="ex-title">Municipal Opt-Out / Geographic Exclusion — Multiple Constraints in One Source</div>
+      <div class="ex-badge" style="border-color:rgba(248,113,113,0.4);color:var(--red)">MULTI-EXTRACT</div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-panel">
+        <div class="ex-panel-hdr">USER INPUT</div>
+        <pre>News On Japan, September 30 2025: Osaka Mayor
+Yokoyama announced that 27 of 34 Osaka Prefecture
+municipalities had formally suspended new minpaku
+applications in their jurisdictions, up from 7
+municipalities as of September 1, 2025. The mayor
+stated the prefecture intends to formally propose
+suspension of the entire Special Zone Tokku Minpaku
+programme to the Cabinet Office by November 2025.
+Governor Yoshimura indicated intent to end the
+programme entirely. Fines for non-compliant
+operators have been increased to up to ¥1,000,000
+per violation under the revised enforcement
+framework. A dedicated enforcement team — the
+"Nuisance Minpaku Eradication Team" — began
+operations in July 2025.</pre>
+      </div>
+      <div class="ex-panel">
+        <div class="ex-panel-hdr">ASSISTANT OUTPUT</div>
+        <pre>{
+  <span class="key">"extraction"</span>: {
+    <span class="key">"constraints"</span>: [
+      {
+        <span class="key">"constraint_id"</span>: <span class="str">"JP-GEO-OSK-001"</span>,
+        <span class="key">"constraint_type"</span>: <span class="str">"GEOGRAPHIC_EXCLUSION"</span>,
+        <span class="key">"jurisdiction"</span>: {
+          <span class="key">"country"</span>: <span class="str">"JP"</span>,
+          <span class="key">"region"</span>: <span class="str">"Osaka Prefecture"</span>,
+          <span class="key">"municipality"</span>: <span class="str">"27 of 34 municipalities (specific names not in source)"</span>,
+          <span class="key">"scope"</span>: <span class="str">"MUNICIPAL"</span>
+        },
+        <span class="key">"rule_description"</span>: <span class="str">"27 of 34 Osaka Prefecture municipalities suspended new minpaku applications as of September 30 2025, up from 7 on September 1 2025"</span>,
+        <span class="key">"threshold_value"</span>: <span class="str">"27/34"</span>,
+        <span class="key">"threshold_unit"</span>: <span class="str">"municipalities_suspended"</span>,
+        <span class="key">"threshold_mode"</span>: <span class="str">"new_application_suspension"</span>,
+        <span class="key">"legal_citation"</span>: <span class="null-v">null</span>,
+        <span class="key">"enforcement_citation"</span>: <span class="null-v">null</span>,
+        <span class="key">"effective_date"</span>: <span class="str">"2025-09-30"</span>,
+        <span class="key">"announcement_date"</span>: <span class="str">"2025-09-30"</span>,
+        <span class="key">"technology_substitution_permitted"</span>: <span class="null-v">null</span>,
+        <span class="key">"technology_substitution_source"</span>: <span class="null-v">null</span>,
+        <span class="key">"captive_vendor_type"</span>: <span class="null-v">null</span>,
+        <span class="key">"captive_vendor_required"</span>: <span class="null-v">null</span>,
+        <span class="key">"unit_economics_impact"</span>: <span class="null-v">null</span>,
+        <span class="key">"sourcing_type"</span>: <span class="str">"SECONDARY_SYNTHESIS"</span>,
+        <span class="key">"confidence"</span>: <span class="str">"MEDIUM"</span>,
+        <span class="key">"opacity"</span>: <span class="num">2</span>,
+        <span class="key">"leading_indicator_parallel"</span>: <span class="null-v">null</span>,
+        <span class="key">"raw_text_excerpt"</span>: <span class="str">"27 of 34 Osaka Prefecture municipalities had formally suspended new minpaku applications"</span>
+      },
+      {
+        <span class="key">"constraint_id"</span>: <span class="str">"JP-PEND-OSK-001"</span>,
+        <span class="key">"constraint_type"</span>: <span class="str">"PENDING_CHANGE"</span>,
+        <span class="key">"jurisdiction"</span>: {
+          <span class="key">"country"</span>: <span class="str">"JP"</span>,
+          <span class="key">"region"</span>: <span class="str">"Osaka Prefecture"</span>,
+          <span class="key">"municipality"</span>: <span class="null-v">null</span>,
+          <span class="key">"scope"</span>: <span class="str">"REGIONAL"</span>
+        },
+        <span class="key">"rule_description"</span>: <span class="str">"Governor Yoshimura indicated intent to end Special Zone Tokku Minpaku programme entirely; formal Cabinet Office proposal targeted November 2025"</span>,
+        <span class="key">"threshold_value"</span>: <span class="null-v">null</span>,
+        <span class="key">"threshold_unit"</span>: <span class="null-v">null</span>,
+        <span class="key">"threshold_mode"</span>: <span class="str">"programme_termination"</span>,
+        <span class="key">"legal_citation"</span>: <span class="null-v">null</span>,
+        <span class="key">"enforcement_citation"</span>: <span class="null-v">null</span>,
+        <span class="key">"effective_date"</span>: <span class="null-v">null</span>,
+        <span class="key">"announcement_date"</span>: <span class="str">"2025-09-30"</span>,
+        <span class="key">"technology_substitution_permitted"</span>: <span class="null-v">null</span>,
+        <span class="key">"technology_substitution_source"</span>: <span class="null-v">null</span>,
+        <span class="key">"captive_vendor_type"</span>: <span class="null-v">null</span>,
+        <span class="key">"captive_vendor_required"</span>: <span class="null-v">null</span>,
+        <span class="key">"unit_economics_impact"</span>: <span class="null-v">null</span>,
+        <span class="key">"sourcing_type"</span>: <span class="str">"SECONDARY_SYNTHESIS"</span>,
+        <span class="key">"confidence"</span>: <span class="str">"MEDIUM"</span>,
+        <span class="key">"opacity"</span>: <span class="num">2</span>,
+        <span class="key">"leading_indicator_parallel"</span>: <span class="null-v">null</span>,
+        <span class="key">"raw_text_excerpt"</span>: <span class="str">"Governor Yoshimura indicated intent to end the programme entirely"</span>
+      },
+      {
+        <span class="key">"constraint_id"</span>: <span class="str">"JP-ENF-OSK-001"</span>,
+        <span class="key">"constraint_type"</span>: <span class="str">"ENFORCEMENT_ACTION"</span>,
+        <span class="key">"jurisdiction"</span>: {
+          <span class="key">"country"</span>: <span class="str">"JP"</span>,
+          <span class="key">"region"</span>: <span class="str">"Osaka Prefecture"</span>,
+          <span class="key">"municipality"</span>: <span class="null-v">null</span>,
+          <span class="key">"scope"</span>: <span class="str">"REGIONAL"</span>
+        },
+        <span class="key">"rule_description"</span>: <span class="str">"Fines for non-compliant operators increased to up to ¥1,000,000 per violation; dedicated Nuisance Minpaku Eradication Team operational from July 2025"</span>,
+        <span class="key">"threshold_value"</span>: <span class="num">1000000</span>,
+        <span class="key">"threshold_unit"</span>: <span class="str">"JPY_per_violation_maximum"</span>,
+        <span class="key">"threshold_mode"</span>: <span class="str">"fine_ceiling"</span>,
+        <span class="key">"legal_citation"</span>: <span class="null-v">null</span>,
+        <span class="key">"enforcement_citation"</span>: <span class="null-v">null</span>,
+        <span class="key">"effective_date"</span>: <span class="str">"2025-07"</span>,
+        <span class="key">"announcement_date"</span>: <span class="null-v">null</span>,
+        <span class="key">"technology_substitution_permitted"</span>: <span class="null-v">null</span>,
+        <span class="key">"technology_substitution_source"</span>: <span class="null-v">null</span>,
+        <span class="key">"captive_vendor_type"</span>: <span class="null-v">null</span>,
+        <span class="key">"captive_vendor_required"</span>: <span class="null-v">null</span>,
+        <span class="key">"unit_economics_impact"</span>: <span class="null-v">null</span>,
+        <span class="key">"sourcing_type"</span>: <span class="str">"SECONDARY_SYNTHESIS"</span>,
+        <span class="key">"confidence"</span>: <span class="str">"MEDIUM"</span>,
+        <span class="key">"opacity"</span>: <span class="num">2</span>,
+        <span class="key">"leading_indicator_parallel"</span>: <span class="null-v">null</span>,
+        <span class="key">"raw_text_excerpt"</span>: <span class="str">"Fines...increased to up to ¥1,000,000 per violation"</span>
+      }
+    ],
+    <span class="key">"extraction_notes"</span>: [
+      <span class="str">"Three distinct constraints extracted from single source: geographic exclusion, pending programme termination, and enforcement escalation. Specific names of 27 suspended municipalities not provided in source — field marked null. Legal citations for revised fine schedule absent — primary source needed: Osaka Prefecture regulatory gazette."</span>
+    ]
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXAMPLE 5 -->
+  <div class="ex-wrap">
+    <div class="ex-hdr">
+      <div class="ex-num">05</div>
+      <div class="ex-title">Incomplete / Indeterminate Input — Edge Case Handling</div>
+      <div class="ex-badge" style="border-color:rgba(248,113,113,0.4);color:var(--red)">INCOMPLETE DATA</div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-panel">
+        <div class="ex-panel-hdr">USER INPUT</div>
+        <pre>Sources in the Osaka hospitality sector suggest
+that some ward authorities are now requiring
+stricter inspections for STR properties near
+tourist attractions, though the exact requirements
+haven't been officially published yet. Operators
+are reportedly worried about the implications for
+their existing licences.</pre>
+      </div>
+      <div class="ex-panel">
+        <div class="ex-panel-hdr">ASSISTANT OUTPUT</div>
+        <pre>{
+  <span class="key">"extraction"</span>: {
+    <span class="key">"constraints"</span>: [
+      {
+        <span class="key">"constraint_id"</span>: <span class="str">"JP-INDET-001"</span>,
+        <span class="key">"constraint_type"</span>: <span class="str">"INDETERMINATE"</span>,
+        <span class="key">"jurisdiction"</span>: {
+          <span class="key">"country"</span>: <span class="str">"JP"</span>,
+          <span class="key">"region"</span>: <span class="str">"Osaka"</span>,
+          <span class="key">"municipality"</span>: <span class="str">"ward-level, unspecified"</span>,
+          <span class="key">"scope"</span>: <span class="str">"MUNICIPAL"</span>
+        },
+        <span class="key">"rule_description"</span>: <span class="str">"Unverified reports of stricter STR inspections near tourist attractions; no official publication confirmed"</span>,
+        <span class="key">"threshold_value"</span>: <span class="null-v">null</span>,
+        <span class="key">"threshold_unit"</span>: <span class="null-v">null</span>,
+        <span class="key">"threshold_mode"</span>: <span class="null-v">null</span>,
+        <span class="key">"legal_citation"</span>: <span class="null-v">null</span>,
+        <span class="key">"enforcement_citation"</span>: <span class="null-v">null</span>,
+        <span class="key">"effective_date"</span>: <span class="null-v">null</span>,
+        <span class="key">"announcement_date"</span>: <span class="null-v">null</span>,
+        <span class="key">"technology_substitution_permitted"</span>: <span class="null-v">null</span>,
+        <span class="key">"technology_substitution_source"</span>: <span class="null-v">null</span>,
+        <span class="key">"captive_vendor_type"</span>: <span class="null-v">null</span>,
+        <span class="key">"captive_vendor_required"</span>: <span class="null-v">null</span>,
+        <span class="key">"unit_economics_impact"</span>: <span class="null-v">null</span>,
+        <span class="key">"sourcing_type"</span>: <span class="str">"SECONDARY_SYNTHESIS"</span>,
+        <span class="key">"confidence"</span>: <span class="str">"LOW"</span>,
+        <span class="key">"opacity"</span>: <span class="num">5</span>,
+        <span class="key">"leading_indicator_parallel"</span>: <span class="null-v">null</span>,
+        <span class="key">"raw_text_excerpt"</span>: <span class="str">"ward authorities are now requiring stricter inspections...exact requirements haven't been officially published yet"</span>
+      }
+    ],
+    <span class="key">"extraction_notes"</span>: [
+      <span class="str">"Input is operator rumour without official publication. Constraint classified INDETERMINATE — insufficient data to assign type, threshold, or legal basis. All quantitative fields null."</span>,
+      <span class="str">"Resolution sources: (1) Osaka City ward office official gazettes (ku-yakusho); (2) Japan Tourism Agency operator registration portal for inspection schedule updates; (3) Nagashima Ohno & Tsunematsu regulatory monitoring service."</span>,
+      <span class="str">"Do not route to Hive Mind risk model until confidence >= MEDIUM and constraint_type confirmed. Flag for re-extraction when primary source available."</span>
+    ]
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 3: JSON SCHEMA -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s3">
+  <div class="section-hdr">
+    <div class="section-idx">03</div>
+    <h2>JSON Output Schema — Routing API Interface</h2>
+  </div>
+  <div class="section-desc">
+    The canonical schema for the extraction module output. Every field is defined below with type, required/optional status, and accepted values. The routing API must validate against this schema before ingesting constraints into the Hive Mind model.
+  </div>
+
+  <div class="callout callout-info">
+    <strong>Routing API contract:</strong> The Hive Mind intake refactor expects the root key <code>"extraction"</code> with a <code>"constraints"</code> array. Each element in the array is one extracted constraint object. A single input document may yield 0–N constraint objects. The <code>"extraction_notes"</code> array at root level carries human-readable gap annotations; it is informational only and should not be parsed by the routing engine.
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr">
+      <div class="code-label">JSON SCHEMA · constraint-schema-v1.0</div>
+      <div class="code-type">JSON SCHEMA DRAFT-07</div>
+    </div>
+    <pre>{
+  <span class="key">"$schema"</span>: <span class="str">"http://json-schema.org/draft-07/schema#"</span>,
+  <span class="key">"title"</span>: <span class="str">"HiveMindSTRConstraintExtraction"</span>,
+  <span class="key">"type"</span>: <span class="str">"object"</span>,
+  <span class="key">"required"</span>: [<span class="str">"extraction"</span>],
+  <span class="key">"properties"</span>: {
+    <span class="key">"extraction"</span>: {
+      <span class="key">"type"</span>: <span class="str">"object"</span>,
+      <span class="key">"required"</span>: [<span class="str">"constraints"</span>, <span class="str">"extraction_notes"</span>],
+      <span class="key">"properties"</span>: {
+
+        <span class="key">"constraints"</span>: {
+          <span class="key">"type"</span>: <span class="str">"array"</span>,
+          <span class="key">"items"</span>: {
+            <span class="key">"type"</span>: <span class="str">"object"</span>,
+            <span class="key">"required"</span>: [
+              <span class="str">"constraint_id"</span>, <span class="str">"constraint_type"</span>, <span class="str">"jurisdiction"</span>,
+              <span class="str">"rule_description"</span>, <span class="str">"confidence"</span>, <span class="str">"opacity"</span>,
+              <span class="str">"sourcing_type"</span>, <span class="str">"raw_text_excerpt"</span>
+            ],
+            <span class="key">"properties"</span>: {
+
+              <span class="key">"constraint_id"</span>: {
+                <span class="key">"type"</span>: <span class="str">"string"</span>,
+                <span class="key">"pattern"</span>: <span class="str">"^[A-Z]{2}-[A-Z]+-[A-Z]+-[0-9]{3}$"</span>,
+                <span class="key">"description"</span>: <span class="str">"Format: CC-TYPE-GEO-NNN (e.g. JP-PHYS-NATL-001)"</span>
+              },
+
+              <span class="key">"constraint_type"</span>: {
+                <span class="key">"type"</span>: <span class="str">"string"</span>,
+                <span class="key">"enum"</span>: [
+                  <span class="str">"PHYSICAL_PRESENCE"</span>, <span class="str">"LICENSING_CEILING"</span>,
+                  <span class="str">"GEOGRAPHIC_EXCLUSION"</span>, <span class="str">"FEE_FLOOR"</span>,
+                  <span class="str">"TECHNOLOGY_BLOCK"</span>, <span class="str">"CAPTIVE_VENDOR"</span>,
+                  <span class="str">"ENFORCEMENT_ACTION"</span>, <span class="str">"LEADING_INDICATOR"</span>,
+                  <span class="str">"PENDING_CHANGE"</span>, <span class="str">"INDETERMINATE"</span>
+                ]
+              },
+
+              <span class="key">"jurisdiction"</span>: {
+                <span class="key">"type"</span>: <span class="str">"object"</span>,
+                <span class="key">"required"</span>: [<span class="str">"country"</span>, <span class="str">"scope"</span>],
+                <span class="key">"properties"</span>: {
+                  <span class="key">"country"</span>:      { <span class="key">"type"</span>: <span class="str">"string"</span> },
+                  <span class="key">"region"</span>:       { <span class="key">"type"</span>: [<span class="str">"string"</span>, <span class="str">"null"</span>] },
+                  <span class="key">"municipality"</span>: { <span class="key">"type"</span>: [<span class="str">"string"</span>, <span class="str">"null"</span>] },
+                  <span class="key">"scope"</span>: {
+                    <span class="key">"type"</span>: <span class="str">"string"</span>,
+                    <span class="key">"enum"</span>: [<span class="str">"NATIONAL"</span>, <span class="str">"REGIONAL"</span>, <span class="str">"MUNICIPAL"</span>, <span class="str">"WARD"</span>]
+                  }
+                }
+              },
+
+              <span class="key">"rule_description"</span>:    { <span class="key">"type"</span>: <span class="str">"string"</span>, <span class="key">"maxLength"</span>: <span class="num">400</span> },
+              <span class="key">"threshold_value"</span>:     { <span class="key">"type"</span>: [<span class="str">"number"</span>, <span class="str">"string"</span>, <span class="str">"null"</span>] },
+              <span class="key">"threshold_unit"</span>:      { <span class="key">"type"</span>: [<span class="str">"string"</span>, <span class="str">"null"</span>] },
+              <span class="key">"threshold_mode"</span>:      { <span class="key">"type"</span>: [<span class="str">"string"</span>, <span class="str">"null"</span>] },
+              <span class="key">"legal_citation"</span>:      { <span class="key">"type"</span>: [<span class="str">"string"</span>, <span class="str">"null"</span>] },
+              <span class="key">"enforcement_citation"</span>: { <span class="key">"type"</span>: [<span class="str">"string"</span>, <span class="str">"null"</span>] },
+              <span class="key">"effective_date"</span>:      { <span class="key">"type"</span>: [<span class="str">"string"</span>, <span class="str">"null"</span>] },
+              <span class="key">"announcement_date"</span>:   { <span class="key">"type"</span>: [<span class="str">"string"</span>, <span class="str">"null"</span>] },
+
+              <span class="key">"technology_substitution_permitted"</span>: {
+                <span class="key">"type"</span>: [<span class="str">"boolean"</span>, <span class="str">"null"</span>]
+              },
+              <span class="key">"technology_substitution_source"</span>: {
+                <span class="key">"type"</span>: [<span class="str">"string"</span>, <span class="str">"null"</span>]
+              },
+
+              <span class="key">"captive_vendor_type"</span>:     { <span class="key">"type"</span>: [<span class="str">"string"</span>, <span class="str">"null"</span>] },
+              <span class="key">"captive_vendor_required"</span>: { <span class="key">"type"</span>: [<span class="str">"boolean"</span>, <span class="str">"null"</span>] },
+
+              <span class="key">"unit_economics_impact"</span>: {
+                <span class="key">"type"</span>: [<span class="str">"object"</span>, <span class="str">"null"</span>],
+                <span class="key">"description"</span>: <span class="str">"Freeform object; include any quantified cost, margin, or fee impact. Keys are freeform but must be documented."</span>
+              },
+
+              <span class="key">"sourcing_type"</span>: {
+                <span class="key">"type"</span>: <span class="str">"string"</span>,
+                <span class="key">"enum"</span>: [<span class="str">"PRIMARY"</span>, <span class="str">"SECONDARY_SYNTHESIS"</span>, <span class="str">"OPERATOR_COMMENTARY"</span>, <span class="str">"UNKNOWN"</span>]
+              },
+
+              <span class="key">"confidence"</span>: {
+                <span class="key">"type"</span>: <span class="str">"string"</span>,
+                <span class="key">"enum"</span>: [<span class="str">"HIGH"</span>, <span class="str">"MEDIUM"</span>, <span class="str">"LOW"</span>]
+              },
+
+              <span class="key">"opacity"</span>: {
+                <span class="key">"type"</span>: <span class="str">"integer"</span>,
+                <span class="key">"minimum"</span>: <span class="num">1</span>,
+                <span class="key">"maximum"</span>: <span class="num">5</span>
+              },
+
+              <span class="key">"leading_indicator_parallel"</span>: {
+                <span class="key">"type"</span>: [<span class="str">"object"</span>, <span class="str">"null"</span>],
+                <span class="key">"properties"</span>: {
+                  <span class="key">"target_sector"</span>:    { <span class="key">"type"</span>: <span class="str">"string"</span> },
+                  <span class="key">"analog_sector"</span>:    { <span class="key">"type"</span>: <span class="str">"string"</span> },
+                  <span class="key">"signal_type"</span>: {
+                    <span class="key">"type"</span>: <span class="str">"string"</span>,
+                    <span class="key">"enum"</span>: [<span class="str">"PRIMARY"</span>, <span class="str">"SECONDARY"</span>, <span class="str">"TERTIARY"</span>]
+                  },
+                  <span class="key">"signal_logic"</span>:      { <span class="key">"type"</span>: <span class="str">"string"</span> },
+                  <span class="key">"trigger_condition"</span>: { <span class="key">"type"</span>: <span class="str">"string"</span> },
+                  <span class="key">"current_status"</span>:   { <span class="key">"type"</span>: <span class="str">"string"</span> }
+                }
+              },
+
+              <span class="key">"raw_text_excerpt"</span>: {
+                <span class="key">"type"</span>: <span class="str">"string"</span>,
+                <span class="key">"maxLength"</span>: <span class="num">300</span>,
+                <span class="key">"description"</span>: <span class="str">"Verbatim excerpt of the key sentence(s) that support the extraction"</span>
+              }
+            }
+          }
+        },
+
+        <span class="key">"extraction_notes"</span>: {
+          <span class="key">"type"</span>: <span class="str">"array"</span>,
+          <span class="key">"items"</span>: { <span class="key">"type"</span>: <span class="str">"string"</span> },
+          <span class="key">"description"</span>: <span class="str">"Human-readable gap annotations, resolution suggestions, and re-extraction triggers. Informational only."</span>
+        }
+
+      }
+    }
+  }
+}</pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 4: EDGE-CASE HANDLING -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s4">
+  <div class="section-hdr">
+    <div class="section-idx">04</div>
+    <h2>Edge-Case Handling Instructions</h2>
+  </div>
+  <div class="section-desc">
+    These instructions govern LLM behaviour when input text is ambiguous, incomplete, contradictory, or outside the module's primary jurisdiction scope. They are referenced in the system prompt via the INCOMPLETE DATA PROTOCOL clause and extend it with specific patterns.
+  </div>
+
+  <div class="callout callout-warn">
+    <strong>Non-hallucination rule:</strong> Under no circumstances should the extraction LLM infer, estimate, or construct a threshold value not explicitly stated in the source text. If a distance is not stated, <code>threshold_value</code> is null. If a percentage is described as "significant" or "large" without a number, it is null. The opacity and confidence scores carry the uncertainty — the value fields must not.
+  </div>
+
+  <div class="code-wrap" style="margin-top:20px">
+    <div class="code-hdr">
+      <div class="code-label">EDGE-CASE TABLE</div>
+      <div class="code-type">8 PATTERNS</div>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="edge-table">
+      <thead>
+        <tr>
+          <th>Pattern</th>
+          <th>Severity</th>
+          <th>Detection Cue</th>
+          <th>Required LLM Behaviour</th>
+          <th>Routing API Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>EC-01: No numeric threshold</strong><br>Rule described qualitatively only ("must be nearby", "within walking distance")</td>
+          <td><span class="sev sev-med">MEDIUM</span></td>
+          <td>No distance, ratio, or percentage in source text for what appears to be a presence or fee constraint</td>
+          <td>Set <code>threshold_value: null</code>. Add extraction_note naming the specific value type needed and the primary source that would contain it (e.g., "Precise distance not stated — primary source: municipal registration guide or Tourism Agency FAQ").</td>
+          <td>Accept constraint; route with confidence downgrade to MEDIUM or LOW. Do not use for quantitative unit economics modelling.</td>
+        </tr>
+        <tr>
+          <td><strong>EC-02: Contradictory sources</strong><br>Two extractions in same session assign different values to same constraint</td>
+          <td><span class="sev sev-high">HIGH</span></td>
+          <td>Same constraint_type + jurisdiction + effective_date appears with different threshold_value across inputs</td>
+          <td>Extract both, assign distinct constraint_ids with suffix "-A" and "-B". Set both to confidence: "LOW". Add extraction_note: "Conflicting values detected — do not use until primary source reconciles." Flag opacity at 4 for both.</td>
+          <td>Hold both objects in pending queue. Do not route to Hive Mind model until reconciled. Alert operator with both IDs and source citations.</td>
+        </tr>
+        <tr>
+          <td><strong>EC-03: Proposed vs. enacted confusion</strong><br>Source conflates "proposed", "announced", and "in effect"</td>
+          <td><span class="sev sev-high">HIGH</span></td>
+          <td>Words like "plans to", "intends to", "is considering", "will require" without effective date confirmation</td>
+          <td>Classify as PENDING_CHANGE, not the target constraint type. Set <code>effective_date: null</code>. Add extraction_note: "Status is proposed/announced — re-extract when effective date confirmed in official publication."</td>
+          <td>Route to pending_change queue only. Do not merge with enacted constraints of same type. Maintain separate pending_change register.</td>
+        </tr>
+        <tr>
+          <td><strong>EC-04: Non-JP jurisdiction</strong><br>Source describes STR regulation outside Japan</td>
+          <td><span class="sev sev-low">LOW</span></td>
+          <td>Country codes or city names other than JP, Tokyo, Osaka, Kyoto, etc.</td>
+          <td>Extract normally using full taxonomy. Set <code>jurisdiction.country</code> to ISO 2-letter code. Add extraction_note: "Non-JP jurisdiction — cross-sector analog mapping may differ from Japan base model." Do not assume 10-minute rule or kanrisha structure applies.</td>
+          <td>Route to general STR constraint register, not JP-specific pipeline. Flag for manual review before Hive Mind model integration.</td>
+        </tr>
+        <tr>
+          <td><strong>EC-05: Operator commentary without regulatory basis</strong><br>Source is operator-reported behaviour or market gossip without citing law or official guidance</td>
+          <td><span class="sev sev-med">MEDIUM</span></td>
+          <td>Phrases like "operators say", "industry sources indicate", "reportedly", "according to market participants"</td>
+          <td>Set <code>sourcing_type: "OPERATOR_COMMENTARY"</code>, <code>confidence: "LOW"</code>, <code>opacity: 4</code> or 5. Do not assign a legal citation. Add extraction_note naming the type of official source that would confirm.</td>
+          <td>Accept into low-confidence queue. Do not use as basis for unit economics parameters. Useful as signal-detection input only.</td>
+        </tr>
+        <tr>
+          <td><strong>EC-06: Multi-jurisdiction text</strong><br>Single source covers two or more distinct jurisdictions with different rules</td>
+          <td><span class="sev sev-med">MEDIUM</span></td>
+          <td>Comparative articles, multi-city market reports, national-vs-municipal rule descriptions</td>
+          <td>Create one constraint object per jurisdiction per constraint type. Do not merge or average values across jurisdictions. Each object gets its own constraint_id.</td>
+          <td>Route each object independently. Prevent cross-contamination of threshold values across jurisdictions in Hive Mind model.</td>
+        </tr>
+        <tr>
+          <td><strong>EC-07: Technology substitution ambiguity</strong><br>Source discusses technology but does not explicitly address whether it satisfies legal compliance</td>
+          <td><span class="sev sev-med">MEDIUM</span></td>
+          <td>Smart lock, IoT, remote check-in, AI scheduling mentioned without regulatory ruling on substitution permissibility</td>
+          <td>Set <code>technology_substitution_permitted: null</code>. Set <code>technology_substitution_source</code> to: "Not addressed in source — regulatory ruling absent." Do not default to true or false. Add extraction_note recommending the specific regulatory body to query for official position.</td>
+          <td>Flag constraint for manual technology-substitution review before including in captive vendor or fee floor models.</td>
+        </tr>
+        <tr>
+          <td><strong>EC-08: Entire input is indeterminate</strong><br>Text too vague, too short, or entirely unrelated to STR regulation to yield any extraction</td>
+          <td><span class="sev sev-low">LOW</span></td>
+          <td>Input &lt;50 words, no regulatory content, social media post, non-STR topic</td>
+          <td>Return: <code>{"extraction": {"constraints": [], "extraction_notes": ["No STR-relevant constraints identified in input text. Input may be too brief, off-topic, or unstructured for extraction."]}}</code></td>
+          <td>Discard from constraint queue. Log input hash for audit trail. Do not escalate to operator.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 5: INTEGRATION NOTES -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s5">
+  <div class="section-hdr">
+    <div class="section-idx">05</div>
+    <h2>Integration Notes &amp; API Call Template</h2>
+  </div>
+  <div class="section-desc">
+    Reference implementation for calling the extraction module. The system prompt from Section 1 is passed as the <code>system</code> parameter. The five few-shot examples from Section 2 are prepended as alternating user/assistant turns. The live input document is appended as the final user turn. Validate response against the schema in Section 3 before routing.
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr">
+      <div class="code-label">API CALL TEMPLATE · Python</div>
+      <div class="code-type">REFERENCE IMPLEMENTATION</div>
+    </div>
+    <pre><span class="cmt"># Hive Mind STR Constraint Extraction Module — API Call Template
+# Module: HM-EXT-STR-001 | schema: constraint-schema-v1.0</span>
+
+<span class="kw">import</span> anthropic
+<span class="kw">import</span> json
+<span class="kw">import</span> jsonschema
+
+<span class="cmt"># Load components from this module document</span>
+SYSTEM_PROMPT = <span class="str">"""... (Section 1 verbatim) ..."""</span>
+
+FEW_SHOT_TURNS = [
+    {<span class="str">"role"</span>: <span class="str">"user"</span>,      <span class="str">"content"</span>: <span class="str">"... (Example 1 input) ..."</span>},
+    {<span class="str">"role"</span>: <span class="str">"assistant"</span>,  <span class="str">"content"</span>: <span class="str">"... (Example 1 output JSON) ..."</span>},
+    {<span class="str">"role"</span>: <span class="str">"user"</span>,      <span class="str">"content"</span>: <span class="str">"... (Example 2 input) ..."</span>},
+    {<span class="str">"role"</span>: <span class="str">"assistant"</span>,  <span class="str">"content"</span>: <span class="str">"... (Example 2 output JSON) ..."</span>},
+    <span class="cmt"># ... examples 3, 4, 5 ...</span>
+]
+
+SCHEMA = <span class="str">"""... (Section 3 JSON schema) ..."""</span>
+
+<span class="kw">def</span> extract_constraints(input_text: str) -> dict:
+    client = anthropic.Anthropic()
+
+    messages = FEW_SHOT_TURNS + [
+        {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: input_text}
+    ]
+
+    response = client.messages.create(
+        model=<span class="str">"claude-sonnet-4-20250514"</span>,
+        max_tokens=<span class="num">4096</span>,
+        system=SYSTEM_PROMPT,
+        messages=messages
+    )
+
+    raw = response.content[<span class="num">0</span>].text.strip()
+
+    <span class="cmt"># Strip any accidental markdown fencing</span>
+    <span class="kw">if</span> raw.startswith(<span class="str">"```"</span>):
+        raw = raw.split(<span class="str">"\n"</span>, <span class="num">1</span>)[<span class="num">1</span>].rsplit(<span class="str">"```"</span>, <span class="num">1</span>)[<span class="num">0</span>].strip()
+
+    parsed = json.loads(raw)
+
+    <span class="cmt"># Validate against schema before routing</span>
+    schema_obj = json.loads(SCHEMA)
+    jsonschema.validate(instance=parsed, schema=schema_obj)
+
+    return parsed
+
+
+<span class="kw">def</span> route_to_hive_mind(extraction: dict) -> None:
+    constraints = extraction[<span class="str">"extraction"</span>][<span class="str">"constraints"</span>]
+    notes = extraction[<span class="str">"extraction"</span>][<span class="str">"extraction_notes"</span>]
+
+    <span class="kw">for</span> c <span class="kw">in</span> constraints:
+        <span class="cmt"># Suppress INDETERMINATE and LOW-confidence pending changes</span>
+        <span class="kw">if</span> c[<span class="str">"constraint_type"</span>] == <span class="str">"INDETERMINATE"</span>:
+            log_pending(c, reason=<span class="str">"indeterminate"</span>)
+            <span class="kw">continue</span>
+        <span class="kw">if</span> c[<span class="str">"confidence"</span>] == <span class="str">"LOW"</span> <span class="kw">and</span> c[<span class="str">"constraint_type"</span>] == <span class="str">"PENDING_CHANGE"</span>:
+            log_pending(c, reason=<span class="str">"low_confidence_pending"</span>)
+            <span class="kw">continue</span>
+        <span class="cmt"># Route enacted, medium+ confidence constraints to Hive Mind intake</span>
+        hive_mind_intake_api(c)
+
+    <span class="kw">if</span> notes:
+        log_extraction_notes(notes)
+
+
+<span class="cmt"># Routing thresholds:
+# confidence=HIGH,  opacity 1–2  → direct ingest, no review
+# confidence=MEDIUM, opacity 1–3 → ingest with flag for periodic review
+# confidence=LOW                  → pending queue, manual review required
+# constraint_type=INDETERMINATE   → do not ingest; log for re-extraction
+# constraint_type=PENDING_CHANGE  → pending queue until effective_date confirmed</span></pre>
+  </div>
+
+  <div class="callout callout-info" style="margin-top:20px">
+    <strong>Model selection:</strong> This module is specified for <code>claude-sonnet-4-20250514</code>. Do not downgrade to Haiku for production extraction — structured output reliability on complex multi-constraint documents requires Sonnet-class capability. Opus is not required; Sonnet is the correct cost/quality balance for this task at the expected document volume.
+  </div>
+
+  <div class="callout callout-warn" style="margin-top:12px">
+    <strong>Version discipline:</strong> Any change to the system prompt, taxonomy enum values, schema field names, or few-shot examples requires a module version bump (HM-EXT-STR-002, etc.) and re-validation of all downstream routing logic against the updated schema. Do not make in-place edits to a deployed version without a new module ID.
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-mono">
+    HM-EXT-STR-001 · constraint-schema-v1.0<br>
+    Jurisdiction seed: Japan (minpaku framework)<br>
+    Published: March 2026
+  </div>
+  <div class="footer-mono" style="text-align:right">
+    Sourcing: Secondary synthesis — Japan STR regulatory dataset<br>
+    Integration target: Hive Mind intake refactor v1.1<br>
+    Not legal advice. Validate primary sources before operational use.
+  </div>
+</div>
+
+</div>
+</body>
+</html>
