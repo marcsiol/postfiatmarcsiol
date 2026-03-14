@@ -1,0 +1,86 @@
+[
+  {
+    "id": "STR-001",
+    "vector_type": "constraint_extraction",
+    "scenario_name": "10-minute proximity rule — primary legal text",
+    "scenario_type": "PHYSICAL_PRESENCE",
+    "input_text": "Article 11(1)(iii) of the Private Lodging Business Act (民泊新法, effective June 15 2018) requires that a licensed management company (kanrisha) be physically reachable within 10 minutes of the registered property during all guest stay periods, by foot or vehicle. Failure constitutes grounds for registration cancellation under Article 33(1)(iv). Technology-based remote monitoring systems do not satisfy the proximity requirement.",
+    "expected": {
+      "constraint_type": "PHYSICAL_PRESENCE",
+      "threshold_value": 10,
+      "threshold_unit": "minutes",
+      "technology_substitution_permitted": false,
+      "captive_vendor_required": true,
+      "confidence": "HIGH",
+      "opacity": 1,
+      "sourcing_type": "PRIMARY",
+      "legal_citation_contains": "Article 11"
+    }
+  },
+  {
+    "id": "STR-002",
+    "vector_type": "constraint_extraction",
+    "scenario_name": "Fee floor — secondary synthesis with unit economics",
+    "scenario_type": "FEE_FLOOR",
+    "input_text": "Colliers International Japan (September 2024): management fees for licensed STR kanrisha in Tokyo have remained stable at 15-20% of gross revenue since 2018 despite IoT adoption. Platform fees average ~14% of gross, creating a combined cost floor of ~31.5% of gross before operating expenses.",
+    "expected": {
+      "constraint_type": "FEE_FLOOR",
+      "threshold_value_contains": "15",
+      "threshold_unit": "percent_of_gross_revenue",
+      "technology_substitution_permitted": false,
+      "captive_vendor_required": true,
+      "confidence": "MEDIUM",
+      "opacity_max": 3,
+      "sourcing_type": "SECONDARY_SYNTHESIS",
+      "legal_citation": null,
+      "unit_economics_impact_not_null": true
+    }
+  },
+  {
+    "id": "STR-003",
+    "vector_type": "constraint_extraction",
+    "scenario_name": "Osaka municipal opt-out — geographic exclusion + enforcement",
+    "scenario_type": "GEOGRAPHIC_EXCLUSION",
+    "input_text": "As of September 30 2025, 27 of 34 Osaka Prefecture municipalities formally suspended new minpaku applications. Fines for non-compliant operators increased to up to 1000000 JPY per violation. A dedicated Nuisance Minpaku Eradication Team began operations July 2025.",
+    "expected": {
+      "constraint_count_min": 2,
+      "contains_types": ["GEOGRAPHIC_EXCLUSION", "ENFORCEMENT_ACTION"],
+      "enforcement_threshold_value": 1000000,
+      "confidence_max": "MEDIUM",
+      "opacity_max": 3
+    }
+  },
+  {
+    "id": "STR-004",
+    "vector_type": "constraint_extraction",
+    "scenario_name": "Kaigo leading indicator — cross-sector analog",
+    "scenario_type": "LEADING_INDICATOR",
+    "input_text": "MHLW guidance March 2024: robotic care systems approved in long-term care facilities but the 1:3 carer-to-resident staffing ratio under Article 14 of the Long-Term Care Insurance Act remains unchanged. Robots assist present carers; they do not substitute for the legal presence requirement. MHLW review pending, no timeline.",
+    "expected": {
+      "constraint_type": "LEADING_INDICATOR",
+      "threshold_value": "1:3",
+      "technology_substitution_permitted": false,
+      "confidence": "HIGH",
+      "opacity": 1,
+      "sourcing_type": "PRIMARY",
+      "leading_indicator_parallel_not_null": true,
+      "leading_indicator_signal_type": "PRIMARY"
+    }
+  },
+  {
+    "id": "STR-005",
+    "vector_type": "constraint_extraction",
+    "scenario_name": "Incomplete / indeterminate — operator rumour",
+    "scenario_type": "INDETERMINATE",
+    "input_text": "Word on the street in Osaka is that some wards near Dotonbori are cracking down harder on unlicensed rentals. Nothing official yet.",
+    "expected": {
+      "constraint_type": "INDETERMINATE",
+      "confidence": "LOW",
+      "opacity_min": 4,
+      "sourcing_type": "OPERATOR_COMMENTARY",
+      "legal_citation": null,
+      "threshold_value": null,
+      "extraction_notes_not_empty": true
+    }
+  }
+]
