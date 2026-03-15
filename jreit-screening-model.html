@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distressed J-REIT Screening Model — Osaka Regulatory Cost Floor Overlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0E1117;
+  --surface: #161B25;
+  --surface2: #1C2333;
+  --border: #252E40;
+  --border2: #2E3A50;
+  --text: #C0CEDF;
+  --text-dim: #5A6B80;
+  --text-muted: #323E52;
+  --ink: #E8F0F8;
+  --buy: #22C55E;
+  --buy-bg: rgba(34,197,94,0.08);
+  --buy-border: rgba(34,197,94,0.25);
+  --watch: #F59E0B;
+  --watch-bg: rgba(245,158,11,0.08);
+  --watch-border: rgba(245,158,11,0.25);
+  --avoid: #EF4444;
+  --avoid-bg: rgba(239,68,68,0.08);
+  --avoid-border: rgba(239,68,68,0.25);
+  --accent: #38BDF8;
+  --accent-dim: #1A4A6B;
+  --neutral: #8B9BB0;
+  --condensed: 'Barlow Condensed', sans-serif;
+  --body: 'Barlow', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* diagonal rule lines background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 40px,
+    rgba(56,189,248,0.015) 40px,
+    rgba(56,189,248,0.015) 41px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 1020px;
+  margin: 0 auto;
+  padding: 56px 44px 100px;
+}
+
+/* ── MASTHEAD ── */
+.masthead {
+  border-bottom: 1px solid var(--border2);
+  padding-bottom: 32px;
+  margin-bottom: 36px;
+}
+.doc-class {
+  font-family: var(--condensed);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.doc-class::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border2), transparent);
+}
+h1 {
+  font-family: var(--condensed);
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.1;
+  margin-bottom: 8px;
+  letter-spacing: 0.01em;
+}
+.sub {
+  font-family: var(--condensed);
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--text-dim);
+  margin-bottom: 24px;
+  letter-spacing: 0.04em;
+}
+.meta-bar {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border);
+  width: fit-content;
+  flex-wrap: wrap;
+}
+.meta-cell {
+  padding: 6px 18px;
+  border-right: 1px solid var(--border);
+}
+.meta-cell:last-child { border-right: none; }
+.mk { font-family: var(--condensed); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); display: block; }
+.mv { font-family: var(--condensed); font-size: 12px; color: var(--text); }
+
+/* ── DATA NOTE ── */
+.data-note {
+  background: rgba(56,189,248,0.05);
+  border: 1px solid var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  padding: 11px 16px;
+  font-family: var(--condensed);
+  font-size: 11px;
+  color: var(--accent);
+  margin-bottom: 36px;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+}
+
+/* ── SECTION ── */
+.section { margin-bottom: 52px; }
+.section-hdr {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+  margin-bottom: 22px;
+}
+.snm {
+  font-family: var(--condensed);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  min-width: 32px;
+}
+h2 {
+  font-family: var(--condensed);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+h3 {
+  font-family: var(--condensed);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 20px 0 10px;
+}
+p { font-size: 13.5px; color: var(--text); margin-bottom: 12px; line-height: 1.75; }
+p:last-child { margin-bottom: 0; }
+
+/* ── TABLES ── */
+.t-wrap { overflow-x: auto; margin-bottom: 16px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--condensed);
+  font-size: 12px;
+  min-width: 640px;
+}
+thead tr { background: var(--surface2); border-bottom: 2px solid var(--border2); }
+th {
+  padding: 9px 12px;
+  text-align: left;
+  color: var(--text-dim);
+  font-weight: 500;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+}
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: middle;
+}
+tr:hover td { background: rgba(255,255,255,0.02); }
+.bold-row td { font-weight: 700; color: var(--ink); background: var(--surface); }
+.section-row td { background: var(--surface2); font-weight: 600; color: var(--text-dim); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+.pos { color: var(--buy); font-weight: 600; }
+.neg { color: var(--avoid); font-weight: 600; }
+.warn { color: var(--watch); font-weight: 600; }
+.dim-t { color: var(--text-muted); }
+.center { text-align: center; }
+.right { text-align: right; }
+
+/* ── SCORE PILLS ── */
+.pill {
+  display: inline-block;
+  font-family: var(--condensed);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 2px 9px;
+  border: 1px solid;
+}
+.pill-buy  { color: var(--buy); border-color: var(--buy-border); background: var(--buy-bg); }
+.pill-watch{ color: var(--watch); border-color: var(--watch-border); background: var(--watch-bg); }
+.pill-avoid{ color: var(--avoid); border-color: var(--avoid-border); background: var(--avoid-bg); }
+.pill-neut { color: var(--neutral); border-color: rgba(139,155,176,0.3); background: rgba(139,155,176,0.05); }
+
+/* ── SCORE BAR ── */
+.score-bar-bg {
+  width: 80px;
+  height: 6px;
+  background: var(--border);
+  display: inline-block;
+  vertical-align: middle;
+}
+.score-bar { height: 100%; }
+
+/* ── REIT CARD ── */
+.reit-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.reit-card.tier1 { border-left-color: var(--buy); }
+.reit-card.tier2 { border-left-color: var(--watch); }
+.reit-card.tier3 { border-left-color: var(--avoid); }
+.reit-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.reit-id {
+  font-family: var(--condensed);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.reit-name {
+  font-family: var(--condensed);
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+.reit-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.rtag {
+  font-family: var(--condensed);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border: 1px solid var(--border2);
+  color: var(--text-dim);
+}
+.reit-body { padding: 16px 18px; }
+.reit-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.rg-item .rg-k {
+  font-family: var(--condensed);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+}
+.rg-item .rg-v {
+  font-family: var(--condensed);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+/* ── INVALIDATION ── */
+.inv-box {
+  background: var(--avoid-bg);
+  border: 1px solid var(--avoid-border);
+  padding: 12px 16px;
+  margin-top: 12px;
+}
+.inv-title {
+  font-family: var(--condensed);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--avoid);
+  margin-bottom: 8px;
+}
+.inv-item {
+  font-size: 12.5px;
+  color: var(--text);
+  padding: 3px 0;
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid rgba(239,68,68,0.1);
+  line-height: 1.6;
+}
+.inv-item:last-child { border-bottom: none; }
+.inn { font-family: var(--condensed); font-size: 11px; color: var(--avoid); min-width: 20px; flex-shrink: 0; margin-top: 1px; }
+
+/* ── ENTRY BOX ── */
+.entry-box {
+  background: var(--buy-bg);
+  border: 1px solid var(--buy-border);
+  padding: 12px 16px;
+  margin-top: 12px;
+}
+.entry-title {
+  font-family: var(--condensed);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--buy);
+  margin-bottom: 8px;
+}
+.entry-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-family: var(--condensed);
+  font-size: 12px;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(34,197,94,0.1);
+}
+.entry-row:last-child { border-bottom: none; }
+.ek { color: var(--text-dim); letter-spacing: 0.06em; }
+.ev { color: var(--buy); font-weight: 600; }
+
+/* ── MATRIX CELL COLORS ── */
+.mc-high { background: rgba(239,68,68,0.12); color: var(--avoid); font-weight: 600; text-align: center; }
+.mc-med  { background: rgba(245,158,11,0.10); color: var(--watch); font-weight: 600; text-align: center; }
+.mc-low  { background: rgba(34,197,94,0.08); color: var(--buy); font-weight: 600; text-align: center; }
+
+/* ── HIGHLIGHT ── */
+.hl {
+  background: rgba(56,189,248,0.05);
+  border-left: 2px solid var(--accent);
+  padding: 10px 14px;
+  margin: 14px 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text);
+}
+.hl strong { color: var(--accent); }
+
+/* ── RANKING BADGES ── */
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-family: var(--condensed);
+  font-size: 14px;
+  font-weight: 700;
+  border: 1px solid;
+}
+.r1 { color: var(--buy); border-color: var(--buy-border); background: var(--buy-bg); }
+.r2 { color: var(--watch); border-color: var(--watch-border); background: var(--watch-bg); }
+.r3 { color: var(--avoid); border-color: var(--avoid-border); background: var(--avoid-bg); }
+
+/* ── FOOTER ── */
+.footer {
+  margin-top: 72px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.fm { font-family: var(--condensed); font-size: 10px; color: var(--text-muted); line-height: 1.8; letter-spacing: 0.06em; }
+
+@media (max-width: 720px) {
+  .page { padding: 32px 18px 80px; }
+  h1 { font-size: 24px; }
+  .reit-grid { grid-template-columns: repeat(2, 1fr); }
+  .meta-bar { width: 100%; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="doc-class">Investment Screening Memo · J-REIT Regulatory Overlay</div>
+  <h1>Distressed J-REIT Screening Model<br>Osaka Regulatory Cost Floor Overlay</h1>
+  <div class="sub">Five J-REITs screened for minpaku regulatory exposure · Margin compression estimates · Ranked watchlist with entry thresholds</div>
+  <div class="meta-bar">
+    <div class="meta-cell"><span class="mk">Universe</span><span class="mv">5 J-REITs (TSE-listed)</span></div>
+    <div class="meta-cell"><span class="mk">Published</span><span class="mv">March 2026</span></div>
+    <div class="meta-cell"><span class="mk">Regulatory Basis</span><span class="mv">Osaka STR Dossier + Feasibility Model</span></div>
+    <div class="meta-cell"><span class="mk">Exchange Rate</span><span class="mv">¥150 / USD</span></div>
+    <div class="meta-cell"><span class="mk">Data Basis</span><span class="mv">Public filings · Secondary synthesis</span></div>
+  </div>
+</div>
+
+<div class="data-note">
+  ⚠ DATA NOTE — Portfolio metrics (property counts, RevPAR, occupancy, NAV/unit) sourced from public TSE filings, investor presentations, and MarketScreener/REITcorner data (Dec 2024–Feb 2026). Osaka exposure percentages are estimated from available geographic breakdowns; exact ward-level allocations are not publicly disclosed for all REITs. Margin compression estimates apply the regulatory cost floor model from prior Osaka STR Feasibility Memo (March 2026). This is secondary synthesis — not financial advice. Verify all figures against current filings before capital commitment.
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 1: UNIVERSE & SCREENING RATIONALE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s1">
+  <div class="section-hdr"><div class="snm">§01</div><h2>Universe Selection & Screening Rationale</h2></div>
+
+  <p>Five TSE-listed J-REITs were selected with meaningful Osaka hospitality or residential exposure. The selection criterion was direct relevance to the minpaku regulatory disruption: each REIT competes with, hosts, or is exposed to the cost dynamics of short-term rental operators in Osaka's tourist core. The regulatory cost floors identified in prior work — the 10-minute proximity mandate driving kanrisha fee stickiness at 15–20% of gross, the Special Zone application suspension, and ward-level enforcement escalation — create differential competitive headwinds across this universe that are not yet priced into all names.</p>
+
+  <p>The central analytical question is not which REITs are directly exposed to minpaku regulation (none own minpaku assets directly) but which REITs compete in Osaka's accommodation market against a pool of STR operators facing structurally rising compliance costs — and whether that competitive dynamic is beneficial (pricing power for formal hotels) or harmful (supply-constrained STR compressing hotel demand in ways the market hasn't modelled). The secondary question is which REITs hold direct-operation Osaka assets with management cost structures that parallel the STR compliance floor.</p>
+
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Ticker</th><th>Name</th><th>Type</th><th>Portfolio Size (¥B)</th><th>Osaka Hotels (est.)</th><th>Dividend Yield</th><th>Current Stance</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>8985</strong></td>
+          <td>Japan Hotel REIT (JHR)</td>
+          <td>Pure-play hotel</td>
+          <td>¥364.7B</td>
+          <td>4–6 properties</td>
+          <td class="pos">~5.2%</td>
+          <td><span class="pill pill-buy">BUY/WATCH</span></td>
+        </tr>
+        <tr>
+          <td><strong>8963</strong></td>
+          <td>Invincible Investment (INV)</td>
+          <td>Hotel + residential</td>
+          <td>¥653.1B</td>
+          <td>8–12 properties</td>
+          <td class="pos">~6.0%</td>
+          <td><span class="pill pill-watch">WATCH</span></td>
+        </tr>
+        <tr>
+          <td><strong>3463</strong></td>
+          <td>Ichigo Hotel REIT</td>
+          <td>Pure-play hotel</td>
+          <td>~¥31B (rev.)</td>
+          <td>2–3 properties</td>
+          <td class="warn">~6.5%</td>
+          <td><span class="pill pill-watch">WATCH/AVOID</span></td>
+        </tr>
+        <tr>
+          <td><strong>3287</strong></td>
+          <td>Hoshino Resorts REIT (HRR)</td>
+          <td>Luxury resort/hotel</td>
+          <td>¥226.7B</td>
+          <td>1–2 properties</td>
+          <td class="pos">~4.3%</td>
+          <td><span class="pill pill-neut">NEUTRAL</span></td>
+        </tr>
+        <tr>
+          <td><strong>3472</strong></td>
+          <td>Nippon Hotel &amp; Residential (NHR)</td>
+          <td>Hotel + leisure</td>
+          <td>¥49.3B</td>
+          <td>1–2 properties (Namba)</td>
+          <td class="warn">~8.5%</td>
+          <td><span class="pill pill-buy">BUY TRIGGER</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 2: SCORING MATRIX -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s2">
+  <div class="section-hdr"><div class="snm">§02</div><h2>Scoring Matrix — 4 Dimensions</h2></div>
+
+  <p>Each REIT is scored 1–5 across four dimensions. <strong>Osaka concentration risk</strong> measures the share of portfolio revenue exposed to Osaka hospitality and STR-competitive dynamics. <strong>Margin vulnerability</strong> estimates sensitivity to the regulatory cost floor model from prior work — specifically how the 30–33% compliance floor (platform + kanrisha fees) on STR operators affects formal hotel pricing power. <strong>Valuation</strong> scores current P/NAV premium/discount relative to the sector median. <strong>Catalyst proximity</strong> scores the nearness of a material regulatory, operational, or financial event within 12 months. Higher scores indicate higher risk/opportunity depending on direction. Scores of 4–5 on Osaka concentration + margin vulnerability represent the highest regulatory alpha opportunity.</p>
+
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>REIT</th>
+          <th>Osaka Concentration Risk (1–5)</th>
+          <th>Margin Vulnerability (1–5)</th>
+          <th>Valuation vs. Sector (1–5, 5=cheap)</th>
+          <th>Catalyst Proximity (1–5)</th>
+          <th>Composite</th>
+          <th>Verdict</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>8985 JHR</strong></td>
+          <td class="mc-med">3 — Moderate Osaka, variable-rent insulation</td>
+          <td class="mc-med">2 — Variable rent passes through; 50.2% variable exposure</td>
+          <td class="mc-med">3 — Near sector median; ~5.2% yield</td>
+          <td class="mc-high">4 — Expo demand wind-down H2 2025; lease renewals 2026</td>
+          <td><strong>12 / 20</strong></td>
+          <td><span class="pill pill-watch">WATCH</span></td>
+        </tr>
+        <tr>
+          <td><strong>8963 INV</strong></td>
+          <td class="mc-high">4 — Largest Osaka hotel footprint; Shinsaibashi, Namba exposure</td>
+          <td class="mc-high">4 — Hotel MyStays Shinsaibashi: direct-op model, fee floor exposed</td>
+          <td class="mc-med">3 — ~6.0% yield; near sector fair value</td>
+          <td class="mc-high">4 — Hotel MyStays lease restructure Dec 2025; refinance Mar 2026</td>
+          <td><strong>15 / 20</strong></td>
+          <td><span class="pill pill-buy">BUY TRIGGER</span></td>
+        </tr>
+        <tr>
+          <td><strong>3463 Ichigo</strong></td>
+          <td class="mc-med">3 — Osaka presence but portfolio diversified nationally</td>
+          <td class="mc-high">4 — Lodging-focused model; no variable-rent buffer; direct-op margins exposed</td>
+          <td class="mc-high">4 — ~6.5% yield; discount to sector suggests market concerns</td>
+          <td class="mc-med">3 — Regulatory enforcement dates H1 2026; no major near-term catalyst</td>
+          <td><strong>14 / 20</strong></td>
+          <td><span class="pill pill-watch">WATCH/AVOID</span></td>
+        </tr>
+        <tr>
+          <td><strong>3287 HRR</strong></td>
+          <td class="mc-low">1 — Minimal Osaka; luxury resort focus; STR non-competitive</td>
+          <td class="mc-low">1 — Luxury/ryokan segment; no minpaku competitive overlap</td>
+          <td class="mc-med">2 — ~4.3% yield; trading at premium; ~24% below estimated fair value per SWS</td>
+          <td class="mc-low">2 — Stable; no material Osaka regulatory catalyst</td>
+          <td><strong>6 / 20</strong></td>
+          <td><span class="pill pill-neut">NEUTRAL</span></td>
+        </tr>
+        <tr>
+          <td><strong>3472 NHR</strong></td>
+          <td class="mc-high">5 — APA Hotel Namba as anchor asset; direct Naniwa Ward exposure</td>
+          <td class="mc-high">5 — Small portfolio; Namba asset concentration; fee floor directly in model</td>
+          <td class="mc-high">5 — ~8.5% yield; smallest market cap; deep discount</td>
+          <td class="mc-high">5 — May 2026 effective date of Osaka STR suspension; Nov 2025 FP results; FY2026 DPU risk</td>
+          <td><strong>20 / 20</strong></td>
+          <td><span class="pill pill-buy">HIGHEST CONVICTION</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="hl">
+    <strong>Scoring logic:</strong> NHR (3472) scores maximum on all four dimensions — the only REIT in the universe with a named anchor Osaka asset (APA Hotel Namba Minami Daikokucho Ekimae, Naniwa Ward) directly adjacent to the minpaku enforcement epicentre, a thin portfolio that amplifies single-asset concentration, a yield premium that already signals market scepticism, and multiple near-term catalysts. The regulatory disruption is not a tail risk for NHR — it is the core operating thesis, and current pricing does not fully reflect either the negative (compliance cost competition) or the positive (constrained STR supply creating formal hotel pricing power) dimensions of the Osaka regulatory settlement.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 3: MARGIN COMPRESSION ESTIMATES -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s3">
+  <div class="section-hdr"><div class="snm">§03</div><h2>Margin Compression Estimates — Regulatory Cost Floor Impact</h2></div>
+
+  <p>For the three REITs with meaningful Osaka exposure and direct-operation or lodging-focused business models (INV, Ichigo, NHR), the regulatory cost floor model from the Osaka STR Feasibility Memo is applied to estimate the margin compression pathway. The mechanism is competitive rather than direct: the STR sector's mandated compliance floor of 30–33% of gross revenue (platform fee + kanrisha fee) reduces the number of properties that can profitably undercut formal hotel pricing at mid-market ADR levels. As enforcement tightens and the Special Zone suspension removes new supply, STR-driven ADR pressure in the ¥10,000–15,000/night range diminishes — which should support formal hotel RevPAR. The downside scenario is enforcement slack: if complaint-driven revocations stall and STR supply remains, the competitive pressure on mid-market hotel ADR persists.</p>
+
+  <h3>Invincible Investment (8963) — Hotel MyStays Shinsaibashi</h3>
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr><th>Line Item</th><th>Current (Est. Base)</th><th>Adverse (STR survives, ADR pressure)</th><th>Favourable (STR supply contracts)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Portfolio RevPAR (all Japan)</td><td>¥16,224 (FY2024 actual)</td><td>¥14,900 (−8.2%)</td><td>¥17,800 (+9.7%)</td></tr>
+        <tr><td>Osaka hotel RevPAR (est.)</td><td>¥18,500 (Namba premium)</td><td>¥15,800 (−14.6%)</td><td>¥21,000 (+13.5%)</td></tr>
+        <tr><td>Variable rent share</td><td>50.2% of leases (FY2024)</td><td>50.2%</td><td>50.2%</td></tr>
+        <tr><td>Osaka % of total revenue (est.)</td><td>~11–14%</td><td>~11%</td><td>~14%</td></tr>
+        <tr class="bold-row"><td>Osaka revenue impact on DPU</td><td>Neutral</td><td class="neg">−3.2% DPU</td><td class="pos">+4.1% DPU</td></tr>
+        <tr><td>Variable rent buffer on adverse</td><td>—</td><td class="warn">Partial: 50% of Osaka rent is fixed; 50% exposed</td><td>—</td></tr>
+        <tr class="bold-row"><td>Net margin compression estimate</td><td>—</td><td class="neg">−160 to −220 bps Osaka NOI margin</td><td class="pos">+180 to +250 bps</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Nippon Hotel &amp; Residential (3472) — APA Hotel Namba (Anchor Asset)</h3>
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr><th>Line Item</th><th>Current (Est. Base)</th><th>Adverse</th><th>Favourable</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Namba asset DPU contribution (est.)</td><td>~¥800–950/unit/period</td><td>¥650 (−24%)</td><td>¥1,150 (+37%)</td></tr>
+        <tr><td>STR competitive pressure on ADR</td><td>Moderate (existing STR supply)</td><td>High (enforcement stalls)</td><td>Low (supply suspended)</td></tr>
+        <tr><td>Portfolio concentration in Namba</td><td>~18–22% of NAV (est.)</td><td>—</td><td>—</td></tr>
+        <tr><td>Total portfolio properties</td><td>23 (Sep 2025)</td><td>—</td><td>—</td></tr>
+        <tr class="bold-row"><td>Net margin compression — adverse</td><td>—</td><td class="neg">−300 to −450 bps total portfolio NOI</td><td class="pos">+350 to +500 bps</td></tr>
+        <tr><td>DPU sensitivity per 100bps RevPAR change</td><td>~¥45–60/unit (est.)</td><td class="neg">−¥270–360 adverse case</td><td class="pos">+¥315–420 favourable</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Ichigo Hotel REIT (3463) — Lodging-Focused Direct Operations</h3>
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr><th>Line Item</th><th>Current</th><th>Adverse</th><th>Favourable</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Business model</td><td colspan="3">Lodging-focused; no variable-rent buffer; operator directly exposed to RevPAR</td></tr>
+        <tr><td>Osaka assets (est.)</td><td>2–3 properties, Osaka city-wide</td><td>—</td><td>—</td></tr>
+        <tr><td>STR competitive overlap</td><td>High — lodging price band ¥8,000–14,000/night directly competes with STR</td><td>—</td><td>—</td></tr>
+        <tr><td>Margin buffer</td><td>None — no variable rent; full RevPAR exposure</td><td>—</td><td>—</td></tr>
+        <tr class="bold-row"><td>Osaka margin compression — adverse</td><td>—</td><td class="neg">−200 to −280 bps NOI margin</td><td class="pos">+220 to +300 bps</td></tr>
+        <tr><td>Dividend sustainability risk</td><td>Moderate (6.5% yield already elevated)</td><td class="neg">High — DPU cut risk if RevPAR −10%+</td><td class="pos">Low</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="hl">
+    <strong>Key insight:</strong> The regulatory cost floor creates an asymmetric competitive dynamic. For formal hotels in the ¥12,000–18,000/night ADR range (where INV's Shinsaibashi assets and NHR's Namba anchor operate), the STR compliance floor at ¥11,900–14,000 effective ADR minimum creates a price support beneath which compliant STR operators cannot profitably go. STR operators who cannot reach this floor will exit. This is structurally pro-RevPAR for mid-market Osaka hotels — a positive for INV's Osaka assets and potentially transformative for NHR's Namba concentration.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 4: INDIVIDUAL REIT PROFILES -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s4">
+  <div class="section-hdr"><div class="snm">§04</div><h2>Individual REIT Profiles — Entry Thresholds &amp; Invalidation</h2></div>
+
+  <!-- NHR -->
+  <div class="reit-card tier1">
+    <div class="reit-hdr">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="rank-badge r1">1</span>
+          <div>
+            <div class="reit-id">3472 · Nippon Hotel &amp; Residential (NHR)</div>
+            <div class="reit-name">Highest conviction · APA Hotel Namba anchor · Naniwa Ward epicentre exposure</div>
+          </div>
+        </div>
+      </div>
+      <div class="reit-tags">
+        <span class="rtag">23 properties</span>
+        <span class="rtag">¥49.3B AUM</span>
+        <span class="rtag">~8.5% yield</span>
+        <span class="rtag">Namba direct-op</span>
+      </div>
+    </div>
+    <div class="reit-body">
+      <div class="reit-grid">
+        <div class="rg-item"><div class="rg-k">DPU (FY Nov 2025)</div><div class="rg-v pos">¥2,455</div></div>
+        <div class="rg-item"><div class="rg-k">DPU (FY May 2026 forecast)</div><div class="rg-v warn">¥2,008</div></div>
+        <div class="rg-item"><div class="rg-k">Osaka anchor</div><div class="rg-v">APA Namba Minami</div></div>
+        <div class="rg-item"><div class="rg-k">Portfolio (Sep 2025)</div><div class="rg-v">23 properties</div></div>
+        <div class="rg-item"><div class="rg-k">Regulatory catalyst</div><div class="rg-v">May 30, 2026</div></div>
+      </div>
+      <p>NHR is the highest-conviction name in the universe. Its APA Hotel Namba Minami Daikokucho Ekimae sits directly in Naniwa Ward — the same ward identified as the epicentre of Osaka's minpaku complaint surge and the geographic locus of the enforcement crackdown. With only 23 total properties, a single Namba asset represents approximately 18–22% of portfolio NAV by acquisition cost. The DPU forecast step-down from ¥2,455 (Nov FY2025) to ¥2,008 (May FY2026) reflects operator guidance that already prices in some Osaka demand moderation post-Expo. The regulatory thesis is that this step-down is conservative — the Special Zone suspension, combined with the Nuisance Minpaku Eradication Team's operational posture, is removing mid-market STR competition in Naniwa Ward faster than hotel consensus models assume.</p>
+      <p>The 8.5% forward yield is the highest in the universe and reflects the small-cap risk premium, the DPU step-down, and the market's scepticism about Osaka demand sustainability. The regulatory alpha here is that the market is pricing the Expo tail-off as a demand story when the supply story (constrained STR competition) is actually moving in NHR's favour simultaneously.</p>
+
+      <div class="entry-box">
+        <div class="entry-title">Entry Thresholds</div>
+        <div class="entry-row"><span class="ek">Yield trigger (primary)</span><span class="ev">≥ 8.5% on FY2026 DPU — currently at threshold</span></div>
+        <div class="entry-row"><span class="ek">Price trigger</span><span class="ev">Unit price ≤ ¥95,000 (~9.0%+ yield on ¥8,500 DPU equiv.)</span></div>
+        <div class="entry-row"><span class="ek">Catalyst confirmation</span><span class="ev">Any Osaka STR enforcement action in Naniwa Ward Q2 2026</span></div>
+        <div class="entry-row"><span class="ek">Position sizing note</span><span class="ev">Small-cap liquidity constraint — position size below 1.5% of daily avg volume</span></div>
+        <div class="entry-row"><span class="ek">Exit trigger</span><span class="ev">DPU cut below ¥1,800/period OR Special Zone termination reversed</span></div>
+      </div>
+      <div class="inv-box">
+        <div class="inv-title">Thesis Invalidation Conditions</div>
+        <div class="inv-item"><div class="inn">01</div><div>Cabinet Office formally reverses Osaka Special Zone suspension, restoring new minpaku applications. This re-introduces STR supply growth in Naniwa Ward, removing the scarcity dynamic that underpins NHR's Namba RevPAR recovery thesis. Monitor Cabinet Office STR review calendar through Q2 2026.</div></div>
+        <div class="inv-item"><div class="inn">02</div><div>Osaka inbound tourist arrivals decline more than 15% YoY post-Expo in H2 2025/H1 2026, driven by yen appreciation above ¥120/USD or a geopolitical demand shock. At this level, both STR and formal hotel demand compress simultaneously, eliminating the supply-side benefit of reduced STR competition. JNTO monthly arrivals data is the leading indicator.</div></div>
+        <div class="inv-item"><div class="inn">03</div><div>NHR portfolio DPU guidance falls below ¥1,700/period on two consecutive fiscal periods, indicating the Namba asset's competitive environment is deteriorating beyond Expo normalisation — signalling structural rather than cyclical occupancy loss. Immediate exit trigger.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INV -->
+  <div class="reit-card tier2">
+    <div class="reit-hdr">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="rank-badge r2">2</span>
+          <div>
+            <div class="reit-id">8963 · Invincible Investment (INV)</div>
+            <div class="reit-name">Second conviction · Largest J-REIT hotel footprint · Hotel MyStays Shinsaibashi restructured Dec 2025</div>
+          </div>
+        </div>
+      </div>
+      <div class="reit-tags">
+        <span class="rtag">104 hotels / 146 props</span>
+        <span class="rtag">¥653.1B AUM</span>
+        <span class="rtag">~6.0% yield</span>
+        <span class="rtag">Variable rent 50.2%</span>
+      </div>
+    </div>
+    <div class="reit-body">
+      <div class="reit-grid">
+        <div class="rg-item"><div class="rg-k">RevPAR (FY2024)</div><div class="rg-v pos">¥16,224</div></div>
+        <div class="rg-item"><div class="rg-k">Occupancy (FY2024)</div><div class="rg-v pos">83.1%</div></div>
+        <div class="rg-item"><div class="rg-k">Revenue (FY2024)</div><div class="rg-v">¥69.7B</div></div>
+        <div class="rg-item"><div class="rg-k">Variable rent share</div><div class="rg-v">50.2%</div></div>
+        <div class="rg-item"><div class="rg-k">Div yield (TTM)</div><div class="rg-v warn">~6.0%</div></div>
+      </div>
+      <p>INV owns the largest hotel portfolio by AUM among all J-REITs and has meaningful Osaka concentration through Hotel MyStays Shinsaibashi (lease restructured December 2025) and estimated 8–12 other Osaka-adjacent hotel assets. The Hotel MyStays brand sits at the ¥12,000–18,000/night ADR range — directly in the zone where STR regulatory cost floor dynamics apply most forcefully. INV's 50.2% variable rent exposure means that approximately half of its Osaka hotel income flows through revenue-linked leases — providing partial insulation against RevPAR volatility but also meaning that the upside from STR supply contraction is shared with operators rather than fully retained by the REIT.</p>
+      <p>The December 2025 lease restructure for Hotel MyStays Shinsaibashi and the March 2026 green loan refinancing are the two near-term catalysts. If the Shinsaibashi restructure includes a higher fixed-rent floor (reflecting operator confidence in post-Expo Osaka demand recovery), this is a near-term positive for INV's Osaka revenue line. The regulatory alpha for INV is less concentrated than NHR but more liquid.</p>
+
+      <div class="entry-box">
+        <div class="entry-title">Entry Thresholds</div>
+        <div class="entry-row"><span class="ek">Yield trigger</span><span class="ev">≥ 6.5% forward yield — entry at current levels if Hotel MyStays lease terms confirmed positive</span></div>
+        <div class="entry-row"><span class="ek">Price trigger</span><span class="ev">Unit price ≤ ¥55,000 (implying ~6.7%+ yield)</span></div>
+        <div class="entry-row"><span class="ek">Catalyst confirmation</span><span class="ev">Hotel MyStays Shinsaibashi FP results showing RevPAR ≥ ¥18,000 post-restructure</span></div>
+        <div class="entry-row"><span class="ek">Exit trigger</span><span class="ev">Variable rent share declines below 40% (risk concentration) OR DPU guidance cut above 10%</span></div>
+      </div>
+      <div class="inv-box">
+        <div class="inv-title">Thesis Invalidation Conditions</div>
+        <div class="inv-item"><div class="inn">01</div><div>Hotel MyStays Shinsaibashi lease restructure results in lower fixed rent floor or shorter remaining term — signalling operator uncertainty about Osaka demand and removing the DPU upside from the regulatory supply contraction thesis.</div></div>
+        <div class="inv-item"><div class="inn">02</div><div>INV accelerates Osaka dispositions (selling Osaka hotel assets) in H1 2026, suggesting internal assessment that Osaka risk-adjusted returns no longer justify capital allocation. This would simultaneously reduce the regulatory alpha exposure and signal negative asset management conviction.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JHR -->
+  <div class="reit-card tier3">
+    <div class="reit-hdr">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="rank-badge r3">3</span>
+          <div>
+            <div class="reit-id">8985 · Japan Hotel REIT (JHR)</div>
+            <div class="reit-name">Watch only · Strongest fundamentals · Least regulatory alpha · Expo tailwind already priced</div>
+          </div>
+        </div>
+      </div>
+      <div class="reit-tags">
+        <span class="rtag">28 variable-rent hotels</span>
+        <span class="rtag">¥364.7B AUM</span>
+        <span class="rtag">~5.2% yield</span>
+        <span class="rtag">83.1% occupancy</span>
+      </div>
+    </div>
+    <div class="reit-body">
+      <div class="reit-grid">
+        <div class="rg-item"><div class="rg-k">RevPAR (FY2024)</div><div class="rg-v pos">¥16,224</div></div>
+        <div class="rg-item"><div class="rg-k">Occ. (Nov 2025)</div><div class="rg-v pos">89.3%</div></div>
+        <div class="rg-item"><div class="rg-k">ADR (Nov 2025)</div><div class="rg-v pos">¥22,647</div></div>
+        <div class="rg-item"><div class="rg-k">Div yield</div><div class="rg-v">~5.2%</div></div>
+        <div class="rg-item"><div class="rg-k">Market cap</div><div class="rg-v">~¥460B</div></div>
+      </div>
+      <p>JHR is the highest-quality name in the hospitality J-REIT universe — strong revenue growth (+15.7% FY2024), improving occupancy, and an Expo 2025 Osaka ADR uplift of 15–30% in Osaka-proximate assets that has already been documented in FY2025 guidance. The regulatory alpha from the STR supply contraction is a tailwind for JHR's Osaka assets, but JHR's diversified national portfolio and the Expo premium already baked into market pricing means the incremental regulatory opportunity is more modest than INV or NHR.</p>
+      <p>JHR is a hold at current yield levels — the quality premium is justified but the regulatory edge adds less marginal value than in the smaller, more Osaka-concentrated names. Add on weakness below 5.5% yield.</p>
+      <div class="inv-box">
+        <div class="inv-title">Thesis Invalidation Conditions</div>
+        <div class="inv-item"><div class="inn">01</div><div>Osaka RevPAR post-Expo declines more than 20% from H1 2025 peak — this would confirm Expo as a one-time demand spike rather than a sustained tourism infrastructure investment, and JHR's Osaka premium NAV growth would reverse.</div></div>
+        <div class="inv-item"><div class="inn">02</div><div>Variable rent share declines below 40% as operators renegotiate toward fixed-rent structures in a softer demand environment — removing the revenue upside sharing that supports JHR's NAV growth narrative.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 5: CATALYST TIMELINE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s5">
+  <div class="section-hdr"><div class="snm">§05</div><h2>Catalyst Timeline — Q1–Q4 2026</h2></div>
+
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Event</th><th>REIT Impact</th><th>Direction</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Mar 12, 2026</td>
+          <td>INV green loan refinancing completed</td>
+          <td>8963 INV</td>
+          <td class="pos">Positive — interest cost reduction, balance sheet clarity</td>
+        </tr>
+        <tr>
+          <td>Mar 2026</td>
+          <td>INV Dec 2025 FP results release</td>
+          <td>8963 INV</td>
+          <td class="warn">Watch — Hotel MyStays Shinsaibashi RevPAR post-restructure</td>
+        </tr>
+        <tr>
+          <td>Apr 2026</td>
+          <td>JHR Dec 2025 FP results / FY2026 guidance</td>
+          <td>8985 JHR</td>
+          <td class="warn">Watch — Osaka RevPAR trend post-Expo will be confirmed</td>
+        </tr>
+        <tr>
+          <td>May 30, 2026</td>
+          <td><strong>Osaka Special Zone suspension formal effective date</strong></td>
+          <td>All Osaka-exposed REITs</td>
+          <td class="pos">Positive — formal STR supply constraint, NHR/INV benefit</td>
+        </tr>
+        <tr>
+          <td>May 31, 2026</td>
+          <td>NHR 20th FP ends; DPU ¥2,008 scheduled</td>
+          <td>3472 NHR</td>
+          <td class="warn">Critical — confirms or denies Namba RevPAR recovery trajectory</td>
+        </tr>
+        <tr>
+          <td>H2 2026</td>
+          <td>Cabinet Office ruling on Special Zone programme termination</td>
+          <td>All Osaka-exposed REITs</td>
+          <td class="pos">Highly positive if confirmed — permanent STR supply reduction</td>
+        </tr>
+        <tr>
+          <td>H2 2026</td>
+          <td>Post-Expo Osaka inbound tourism data</td>
+          <td>All Osaka-exposed REITs</td>
+          <td class="warn">Key demand verification — tests Expo demand durability thesis</td>
+        </tr>
+        <tr>
+          <td>FY2030 (est.)</td>
+          <td>Osaka IR (MGM casino) opening</td>
+          <td>NHR, INV, JHR</td>
+          <td class="pos">Long-term positive — structural tourism demand uplift for Osaka</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 6: SYNTHESIS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s6">
+  <div class="section-hdr"><div class="snm">§06</div><h2>Synthesis &amp; Ranked Watchlist</h2></div>
+
+  <p>The regulatory alpha in the Osaka STR market flows to formal hotel operators in two ways simultaneously: the compliance cost floor prevents STR operators from competing on price below approximately ¥10,200–11,900/night, and the Special Zone suspension combined with enforcement escalation is physically removing supply from Naniwa Ward — the most tourist-dense micro-market in Osaka. Both effects are pro-RevPAR for the Namba-area hotel assets held by INV and NHR. The market has not priced either effect into either name at current yield levels.</p>
+
+  <p>The ranked watchlist for action is: <strong>(1) NHR (3472)</strong> at or below current yield levels as the highest-conviction play on Namba supply contraction — enter if unit price touches ¥95,000 or below, confirming a yield above 8.5% on FY2026 DPU guidance; <strong>(2) INV (8963)</strong> as a more liquid expression of the same thesis with partial variable-rent insulation — enter on Hotel MyStays Shinsaibashi Dec 2025 FP confirmation of RevPAR ≥ ¥18,000; <strong>(3) JHR (8985)</strong> as a quality hold — no new position unless yield weakness opens above 5.5%. Ichigo (3463) and Hoshino (3287) are not actionable on this thesis — Ichigo lacks the catalyst clarity for the thesis to crystallise, and Hoshino's luxury positioning means it neither benefits from nor is harmed by the mid-market STR competitive dynamics this analysis tracks.</p>
+
+  <p>The May 30, 2026 effective date of the Osaka Special Zone suspension is the single most important near-term catalyst date for this entire watchlist. It formalises what has been building since October 2025 and creates the documented supply constraint that formal hotel RevPAR models will eventually have to reflect. Position sizing ahead of that date, with NHR as the primary vehicle, is the deployment strategy this screening model supports.</p>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="fm">
+    J-REIT Screening Model · Osaka Regulatory Cost Floor Overlay · March 2026<br>
+    Secondary synthesis only · Not financial advice · Verify all figures against current public filings
+  </div>
+  <div class="fm" style="text-align:right">
+    Sources: TSE filings · MarketScreener · REITcorner · Invincible-inv.co.jp · NHR-reit.com<br>
+    Regulatory basis: Osaka STR Regulatory Dossier + Feasibility Memo (same author)<br>
+    Exchange rate: ¥150/USD
+  </div>
+</div>
+
+</div>
+</body>
+</html>
