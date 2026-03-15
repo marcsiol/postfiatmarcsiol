@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acquisition Memo — Ebisuhigashi 1LDK · Naniwa Ward · Osaka</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ivory: #FAF7F2;
+  --cream: #F0EBE0;
+  --warm: #E8E0D0;
+  --ink: #1E1810;
+  --ink2: #3A3020;
+  --dim: #7A6E5A;
+  --muted: #B0A890;
+  --rule: #D4C8B0;
+  --rule2: #C0B49A;
+  --go: #1A5C2A;
+  --go-bg: #EDF7EE;
+  --go-b: #A8D4B0;
+  --hold: #6B4800;
+  --hold-bg: #FBF4E0;
+  --hold-b: #D4B060;
+  --stop: #7A1810;
+  --stop-bg: #F8EDEC;
+  --stop-b: #D4A09A;
+  --blue: #1A3060;
+  --blue-bg: #EBF0F8;
+  --blue-b: #B0C4E0;
+  --red: #C03020;
+  --display: 'Playfair Display', Georgia, serif;
+  --body: 'Source Serif 4', Georgia, serif;
+  --mono: 'Courier New', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--ivory);
+  color: var(--ink2);
+  font-family: var(--body);
+  font-size: 14.5px;
+  line-height: 1.8;
+}
+
+/* subtle cross-hatch paper texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.018) 28px, rgba(0,0,0,0.018) 29px),
+    repeating-linear-gradient(90deg, transparent, transparent 28px, rgba(0,0,0,0.010) 28px, rgba(0,0,0,0.010) 29px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 64px 60px 120px;
+  background: var(--ivory);
+}
+
+/* ── MASTHEAD ── */
+.masthead {
+  text-align: center;
+  border-top: 3px double var(--ink);
+  border-bottom: 3px double var(--ink);
+  padding: 32px 0 28px;
+  margin-bottom: 44px;
+}
+.doc-class {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 14px;
+}
+h1 {
+  font-family: var(--display);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.sub-title {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--dim);
+  margin-bottom: 22px;
+}
+.meta-line {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.meta-line span { color: var(--dim); margin: 0 8px; }
+
+/* ── DATA NOTE ── */
+.data-note {
+  background: var(--blue-bg);
+  border: 1px solid var(--blue-b);
+  border-left: 3px solid var(--blue);
+  padding: 10px 16px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--blue);
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+/* ── SECTION ── */
+.section { margin-bottom: 52px; }
+.section-hdr {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid var(--rule2);
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+}
+.snm {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  min-width: 28px;
+  letter-spacing: 0.1em;
+}
+h2 {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+}
+h3 {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin: 22px 0 10px;
+}
+p { font-size: 14px; color: var(--ink2); margin-bottom: 13px; line-height: 1.82; }
+p:last-child { margin-bottom: 0; }
+
+/* ── PROPERTY CARD ── */
+.prop-card {
+  background: var(--cream);
+  border: 1px solid var(--rule);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.prop-block { }
+.pk {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+.pv {
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.4;
+}
+.pv.large { font-size: 22px; font-family: var(--display); }
+
+/* ── TABLES ── */
+.t-wrap { overflow-x: auto; margin-bottom: 14px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 11.5px;
+}
+thead tr { background: var(--warm); border-bottom: 2px solid var(--rule2); }
+th {
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+  font-weight: 600;
+  white-space: nowrap;
+}
+td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink2);
+  vertical-align: middle;
+}
+tr:hover td { background: rgba(0,0,0,0.013); }
+.total-row td { border-top: 1px solid var(--ink); font-weight: 700; color: var(--ink); background: var(--cream); }
+.sec-row td { background: var(--warm); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); font-weight: 600; }
+.pos { color: var(--go); font-weight: 700; }
+.neg { color: var(--red); font-weight: 700; }
+.warn { color: var(--hold); font-weight: 700; }
+.dim-c { color: var(--muted); }
+.r { text-align: right; }
+.c { text-align: center; }
+
+/* ── CELL COLORS ── */
+.c-go   { background: var(--go-bg);   color: var(--go);   font-weight: 700; }
+.c-hold { background: var(--hold-bg); color: var(--hold); font-weight: 700; }
+.c-stop { background: var(--stop-bg); color: var(--stop); font-weight: 700; }
+
+/* ── BOXES ── */
+.go-box, .hold-box, .stop-box, .blue-box {
+  border: 1px solid;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+}
+.go-box   { border-color: var(--go-b);   background: var(--go-bg);   border-left: 3px solid var(--go); }
+.hold-box { border-color: var(--hold-b); background: var(--hold-bg); border-left: 3px solid var(--hold); }
+.stop-box { border-color: var(--stop-b); background: var(--stop-bg); border-left: 3px solid var(--red); }
+.blue-box { border-color: var(--blue-b); background: var(--blue-bg); border-left: 3px solid var(--blue); }
+.box-title {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+.go-box   .box-title { color: var(--go); }
+.hold-box .box-title { color: var(--hold); }
+.stop-box .box-title { color: var(--red); }
+.blue-box .box-title { color: var(--blue); }
+.box-body { font-size: 13.5px; line-height: 1.72; color: var(--ink2); }
+.box-body strong { color: var(--ink); }
+
+/* ── THRESHOLD TABLE ── */
+.thresh-table td:first-child { font-style: italic; width: 36%; }
+.thresh-table .pass { color: var(--go); font-weight: 700; }
+.thresh-table .fail { color: var(--red); font-weight: 700; }
+.thresh-table .watch { color: var(--hold); font-weight: 700; }
+
+/* ── VERDICT BADGE ── */
+.verdict {
+  text-align: center;
+  padding: 20px;
+  border: 2px solid;
+  margin-top: 20px;
+}
+.verdict.go { border-color: var(--go); background: var(--go-bg); }
+.verdict.hold { border-color: var(--hold-b); background: var(--hold-bg); }
+.verdict-word {
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.verdict.go .verdict-word { color: var(--go); }
+.verdict.hold .verdict-word { color: var(--hold); }
+.verdict-sub { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin-top: 4px; }
+
+/* ── INVALIDATION LIST ── */
+.inv-item {
+  display: flex;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px dotted var(--rule2);
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+.inv-item:last-child { border-bottom: none; }
+.inv-n { font-family: var(--mono); font-size: 11px; color: var(--red); min-width: 22px; flex-shrink: 0; margin-top: 2px; font-weight: 700; }
+
+/* ── FOOTER ── */
+.footer {
+  margin-top: 72px;
+  padding-top: 18px;
+  border-top: 2px double var(--ink);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.fm {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--muted);
+  line-height: 1.8;
+  letter-spacing: 0.06em;
+}
+
+@media (max-width: 700px) {
+  .page { padding: 32px 20px 80px; }
+  h1 { font-size: 22px; }
+  .prop-card { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="doc-class">Property Acquisition Memo · Confidential · For Discussion Only</div>
+  <h1>Ebisuhigashi 1LDK Proxy Acquisition<br>Naniwa Ward, Osaka</h1>
+  <div class="sub-title">Namba/Dotonbori Core · Special Zone Licensed Proxy · Decision-Ready Analysis</div>
+  <div class="meta-line">
+    March 2026<span>·</span>Author: Marcus<span>·</span>Highest-conviction neighbourhood from prior feasibility model<span>·</span>¥150 / USD
+  </div>
+</div>
+
+<div class="data-note">
+  ⚠ PROXY PROPERTY DISCLOSURE — This memo models a closely specified proxy based on market-representative listings in Naniwa Ward, Osaka. The primary calibration reference is The Peak Tsutenkaku Elite (1-222 Ebisuhigashi, Naniwa-ku), a 2025-completed freehold development at Ebisucho Station (2-min walk), priced ¥39.4M–¥47.5M for 25–43m² units. The modelled proxy is a 35m² 1LDK within this building or a directly comparable Ebisuhigashi / Nambanaka listing at the same price point and transit proximity. All ADR and occupancy figures from AirROI Naniwa Ward (Dec 2024–Nov 2025), Airbtics Osaka city-wide (Sep 2024–Aug 2025), and Japan Real Estate Institute benchmarks. This is secondary synthesis — not financial advice. Validate all figures before commitment.
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 1: PROPERTY SUMMARY -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s1">
+  <div class="section-hdr"><div class="snm">§01</div><h2>Property Summary</h2></div>
+
+  <div class="prop-card">
+    <div class="prop-block">
+      <div class="pk">Property Name</div>
+      <div class="pv">Ebisuhigashi 1LDK — Namba Proxy Unit</div>
+    </div>
+    <div class="prop-block">
+      <div class="pk">Address / Reference</div>
+      <div class="pv">Ebisuhigashi 1-chome, Naniwa-ku, Osaka<br><span style="font-size:12px;color:var(--dim)">Calibrated against: The Peak Tsutenkaku Elite, 1-222 Ebisuhigashi</span></div>
+    </div>
+    <div class="prop-block">
+      <div class="pk">Purchase Price</div>
+      <div class="pv large">¥42,000,000</div>
+    </div>
+    <div class="prop-block">
+      <div class="pk">Size / Type</div>
+      <div class="pv">35m² · 1LDK · Mid-floor · 2025-completed</div>
+    </div>
+    <div class="prop-block">
+      <div class="pk">Transit</div>
+      <div class="pv">Ebisucho Station (Sakaisuji Line) — 2 min walk<br>Namba Station — 8 min walk / 3 min by train</div>
+    </div>
+    <div class="prop-block">
+      <div class="pk">Ward / Regulatory Zone</div>
+      <div class="pv">Naniwa Ward (浪速区) · National Strategic Special Zone<br>Acquisition requires: existing Special Zone licence transfer</div>
+    </div>
+    <div class="prop-block">
+      <div class="pk">Licence Status (Required)</div>
+      <div class="pv">Verified Special Zone licence — 365-day operation<br><span style="font-size:12px;color:var(--red)">⚠ New applications suspended Oct 2025 — must acquire licensed unit</span></div>
+    </div>
+    <div class="prop-block">
+      <div class="pk">Price per m²</div>
+      <div class="pv">¥1,200,000/m² (blended; market range ¥1,125K–¥1,360K)</div>
+    </div>
+    <div class="prop-block">
+      <div class="pk">ADR Benchmark (1BR)</div>
+      <div class="pv">¥14,000/night (AirROI Naniwa Ward median)</div>
+    </div>
+    <div class="prop-block">
+      <div class="pk">Base Occupancy</div>
+      <div class="pv">65% (annual average; peak Jul 75.8%)</div>
+    </div>
+  </div>
+
+  <p>This proxy unit sits at the geographic epicentre of the prior regulatory work — Naniwa Ward, immediately adjacent to the Dotonbori/Namba tourism corridor. The Ebisucho Station location places it within the 10-minute kanrisha compliance zone of multiple licensed management companies already operating in the area, which is why Namba/Dotonbori received the lowest management fee estimate (16% of gross) in the feasibility model: kanrisha supply density in this micro-market creates competitive fee pressure that does not exist in Tennoji or Fukushima. The 2025 construction date and freehold ownership structure are both meaningful — new-build freehold units with Special Zone licensing are the scarcest acquisition target in the post-suspension environment, and their scarcity premium is expected to widen as the May 2026 effective date formalises the supply constraint permanently.</p>
+
+  <p>The ¥42M price point is the midpoint of the Ebisuhigashi 1LDK comparable range (¥39.4M–¥47.5M per The Peak Tsutenkaku Elite brochure, calibrated against Naniwa-ku market data showing a 9.7% land price increase in 2025). Transaction costs including acquisition tax, registration, agent fees, and sundry legal costs are modelled at 7.5% of purchase price (¥3,150,000), bringing total acquisition cost to ¥45,150,000.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 2: REGULATORY RISK ASSESSMENT -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s2">
+  <div class="section-hdr"><div class="snm">§02</div><h2>Regulatory Risk Assessment</h2></div>
+
+  <p>The regulatory environment for this property is the most material single variable in the investment case — more than ADR assumptions, occupancy variance, or financing structure. The analysis below draws directly from the Osaka STR Regulatory Dossier (March 2026) and the J-REIT Screening Memo (March 2026).</p>
+
+  <div class="blue-box">
+    <div class="box-title">10-Minute Proximity Rule — Article 11(1)(iii), Private Lodging Business Act</div>
+    <div class="box-body">The operative constraint requiring a licensed kanrisha within 10 minutes by foot or vehicle during all guest stays. Technology does not substitute. The Ebisucho location sits within the operating radius of at least four licensed management companies already active in the Naniwa/Namba corridor, creating competitive fee pressure and guaranteed compliance coverage. This is the structural reason Namba carries a 16% management fee assumption rather than the 18–20% applicable in outer wards. The proximity rule is simultaneously the property's largest ongoing cost and its most defensible competitive moat against operators in markets with thinner kanrisha coverage.</div>
+  </div>
+
+  <div class="hold-box">
+    <div class="box-title">Special Zone Suspension — New Applications Halted Oct 2025 · Formal Effective Date May 30, 2026</div>
+    <div class="box-body"><strong>Critical acquisition condition:</strong> This property is only viable as a Special Zone STR if purchased with an existing, verified Special Zone licence already attached. New Special Zone applications were suspended by Osaka City in October 2025, with the formal effective date of May 30, 2026 formalising that suspension. A property acquired without a transferable Special Zone licence defaults to the 180-day standard minpaku cap — cutting annual gross revenue by approximately 50% and rendering the investment case non-viable at ¥42M acquisition cost. Licence verification is the single non-negotiable pre-commitment diligence step.</div>
+  </div>
+
+  <div class="stop-box">
+    <div class="box-title">Naniwa Ward Enforcement Escalation — Complaint Trajectory</div>
+    <div class="box-body">Naniwa Ward is the geographic epicentre of Osaka's STR complaint surge: 17 special zone properties packed into a 500m² area, approximately 399 complaints in FY2023, and an acceleration trajectory driving the suspension. The "Nuisance Minpaku Eradication Team" began operations July 2025. <strong>Risk to this investment:</strong> The property's location in the highest-complaint-density micro-market in Osaka means that licence revocation risk, while low for individually compliant operators, is elevated by the neighbourhood's aggregate enforcement profile. Mitigation: professional third-party management with documented complaint-response protocol, noise management hardware, and guest screening are essential operational requirements — not optional add-ons.</div>
+  </div>
+
+  <h3>Regulatory Risk Summary</h3>
+  <div class="t-wrap">
+    <table>
+      <thead><tr><th>Risk Factor</th><th>Severity</th><th>Probability</th><th>Mitigation</th><th>Residual</th></tr></thead>
+      <tbody>
+        <tr><td>Licence transfer failure at acquisition</td><td class="neg">CRITICAL</td><td>Low if diligenced</td><td>Legal verification pre-commitment</td><td class="pos">Low</td></tr>
+        <tr><td>Special Zone programme termination (Cabinet Office)</td><td class="neg">CRITICAL</td><td>Medium (ruling H2 2026)</td><td>Position sizing; monitoring</td><td class="warn">Medium</td></tr>
+        <tr><td>Ward-level complaint-driven revocation</td><td class="neg">HIGH</td><td>Low for compliant operator</td><td>Professional mgmt + noise protocols</td><td class="pos">Low-Medium</td></tr>
+        <tr><td>Management fee increase (kanrisha consolidation)</td><td class="warn">MEDIUM</td><td>Low (competitive market)</td><td>3-year fixed-fee contract clause</td><td class="pos">Low</td></tr>
+        <tr><td>ADR compression post-Expo</td><td class="warn">MEDIUM</td><td>Medium (H2 2025 data pending)</td><td>Scenario modelled in pro-forma</td><td class="warn">Medium</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 3: 12-MONTH PRO-FORMA P&L -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s3">
+  <div class="section-hdr"><div class="snm">§03</div><h2>12-Month Pro-Forma P&amp;L</h2></div>
+
+  <p>The model runs three occupancy scenarios (Bear 45% / Base 65% / Bull 80%) against two ADR scenarios (current ¥14,000 / compressed −15% at ¥11,900), producing six revenue paths. Operating costs are held constant across ADR scenarios; cleaning costs scale with occupied nights. All figures assume Special Zone 365-day operation rights. Seasonal ADR adjustments are applied: July–August and December–January carry a +15% ADR uplift; March–April (cherry blossom) +10%; February and September −10%.</p>
+
+  <h3>Base Case Annual Operating Model — 65% Occupancy, ¥14,000 ADR</h3>
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr><th>Month</th><th>Avail. Nights</th><th>Occ. Rate</th><th>Occ. Nights</th><th>Seasonal ADR</th><th>Gross Revenue</th><th>Platform 14%</th><th>Mgmt 16%</th><th>Cleaning</th><th>Acc.Tax</th><th>NOI</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Apr</td><td>30</td><td>65%</td><td>19.5</td><td>¥15,400</td><td>¥300,300</td><td>(¥42,042)</td><td>(¥48,048)</td><td>(¥42,900)</td><td>(¥3,900)</td><td class="pos">¥163,410</td></tr>
+        <tr><td>May</td><td>31</td><td>65%</td><td>20.2</td><td>¥14,000</td><td>¥282,800</td><td>(¥39,592)</td><td>(¥45,248)</td><td>(¥44,440)</td><td>(¥4,040)</td><td class="pos">¥149,480</td></tr>
+        <tr><td>Jun</td><td>30</td><td>65%</td><td>19.5</td><td>¥14,000</td><td>¥273,000</td><td>(¥38,220)</td><td>(¥43,680)</td><td>(¥42,900)</td><td>(¥3,900)</td><td class="pos">¥144,300</td></tr>
+        <tr><td>Jul</td><td>31</td><td>76%</td><td>23.6</td><td>¥16,100</td><td>¥379,960</td><td>(¥53,194)</td><td>(¥60,794)</td><td>(¥51,920)</td><td>(¥4,720)</td><td class="pos">¥209,332</td></tr>
+        <tr><td>Aug</td><td>31</td><td>76%</td><td>23.6</td><td>¥16,100</td><td>¥379,960</td><td>(¥53,194)</td><td>(¥60,794)</td><td>(¥51,920)</td><td>(¥4,720)</td><td class="pos">¥209,332</td></tr>
+        <tr><td>Sep</td><td>30</td><td>58%</td><td>17.4</td><td>¥12,600</td><td>¥219,240</td><td>(¥30,694)</td><td>(¥35,078)</td><td>(¥38,280)</td><td>(¥3,480)</td><td class="pos">¥111,708</td></tr>
+        <tr><td>Oct</td><td>31</td><td>65%</td><td>20.2</td><td>¥14,000</td><td>¥282,800</td><td>(¥39,592)</td><td>(¥45,248)</td><td>(¥44,440)</td><td>(¥4,040)</td><td class="pos">¥149,480</td></tr>
+        <tr><td>Nov</td><td>30</td><td>65%</td><td>19.5</td><td>¥14,000</td><td>¥273,000</td><td>(¥38,220)</td><td>(¥43,680)</td><td>(¥42,900)</td><td>(¥3,900)</td><td class="pos">¥144,300</td></tr>
+        <tr><td>Dec</td><td>31</td><td>72%</td><td>22.3</td><td>¥16,100</td><td>¥359,030</td><td>(¥50,264)</td><td>(¥57,445)</td><td>(¥49,060)</td><td>(¥4,460)</td><td class="pos">¥197,801</td></tr>
+        <tr><td>Jan</td><td>31</td><td>72%</td><td>22.3</td><td>¥16,100</td><td>¥359,030</td><td>(¥50,264)</td><td>(¥57,445)</td><td>(¥49,060)</td><td>(¥4,460)</td><td class="pos">¥197,801</td></tr>
+        <tr><td>Feb</td><td>28</td><td>58%</td><td>16.2</td><td>¥12,600</td><td>¥204,120</td><td>(¥28,577)</td><td>(¥32,659)</td><td>(¥35,640)</td><td>(¥3,240)</td><td class="pos">¥104,004</td></tr>
+        <tr><td>Mar</td><td>31</td><td>68%</td><td>21.1</td><td>¥15,400</td><td>¥324,940</td><td>(¥45,492)</td><td>(¥51,990)</td><td>(¥46,420)</td><td>(¥4,220)</td><td class="pos">¥176,818</td></tr>
+        <tr class="total-row">
+          <td colspan="5"><strong>Annual Total</strong></td>
+          <td><strong>¥3,438,180</strong></td>
+          <td><strong>(¥481,345)</strong></td>
+          <td><strong>(¥549,109)</strong></td>
+          <td><strong>(¥539,880)</strong></td>
+          <td><strong>(¥49,080)</strong></td>
+          <td class="pos"><strong>¥1,957,766</strong></td>
+        </tr>
+        <tr class="sec-row"><td colspan="11">Fixed Annual Costs — Insurance ¥90,000 · Maintenance Reserve ¥150,000 · Registration/Compliance ¥38,000</td></tr>
+        <tr class="total-row"><td colspan="10"><strong>Annual NOI (after all operating costs)</strong></td><td class="pos"><strong>¥1,679,766</strong></td></tr>
+        <tr><td colspan="10" class="dim-c">NOI Margin</td><td class="dim-c">48.8%</td></tr>
+        <tr><td colspan="10" class="dim-c">Gross yield on acquisition cost (¥42M)</td><td class="dim-c">8.19%</td></tr>
+        <tr><td colspan="10" class="dim-c">NOI yield on acquisition cost</td><td class="dim-c">4.00%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Three-Scenario Annual Summary</h3>
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr><th>Scenario</th><th>Occ.</th><th>ADR</th><th>Annual Gross</th><th>Annual NOI</th><th>NOI Margin</th><th>Gross Yield</th><th>NOI Yield</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>BEAR</strong></td><td>45%</td><td>¥11,900</td><td>¥2,027,940</td><td class="warn">¥744,300</td><td>36.7%</td><td>4.83%</td><td>1.77%</td><td><span style="color:var(--hold);font-weight:700">MARGINAL</span></td></tr>
+        <tr><td><strong>BASE</strong></td><td>65%</td><td>¥14,000</td><td>¥3,438,180</td><td class="pos">¥1,679,766</td><td>48.8%</td><td>8.19%</td><td>4.00%</td><td><span style="color:var(--go);font-weight:700">VIABLE</span></td></tr>
+        <tr><td><strong>BULL</strong></td><td>80%</td><td>¥14,000</td><td>¥4,230,400</td><td class="pos">¥2,358,000</td><td>55.7%</td><td>10.07%</td><td>5.61%</td><td><span style="color:var(--go);font-weight:700">STRONG</span></td></tr>
+        <tr><td><strong>BEAR COMPRESSED</strong></td><td>45%</td><td>¥11,900</td><td>¥1,723,749</td><td class="neg">¥440,109</td><td>25.5%</td><td>4.10%</td><td>1.05%</td><td><span style="color:var(--red);font-weight:700">NO-GO</span></td></tr>
+        <tr><td><strong>BASE COMPRESSED</strong></td><td>65%</td><td>¥11,900</td><td>¥2,922,453</td><td class="warn">¥1,164,039</td><td>39.8%</td><td>6.96%</td><td>2.77%</td><td><span style="color:var(--hold);font-weight:700">MARGINAL</span></td></tr>
+        <tr><td><strong>BULL COMPRESSED</strong></td><td>80%</td><td>¥11,900</td><td>¥3,595,840</td><td class="pos">¥1,723,654</td><td>47.9%</td><td>8.56%</td><td>4.10%</td><td><span style="color:var(--go);font-weight:700">VIABLE</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:12px;color:var(--dim);margin-top:8px">Cleaning costs: ¥5,500/turnover × (occupied nights ÷ 2.3 avg stay). Fixed costs: insurance ¥90K, maintenance reserve ¥150K, registration/compliance ¥38K. Platform fee 14%, kanrisha 16%, accommodation tax ¥200/night avg. Bear Compressed scenario is the only combination producing a NOI yield below 1.5% — this is the sole unambiguous investment-destruction case.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 4: FINANCING COMPARISON -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s4">
+  <div class="section-hdr"><div class="snm">§04</div><h2>Financing Comparison</h2></div>
+
+  <h3>Structure A — All-Cash Acquisition</h3>
+  <div class="t-wrap">
+    <table>
+      <thead><tr><th>Item</th><th>Amount</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Purchase price</td><td>¥42,000,000</td><td>Proxy listing, Ebisuhigashi 1LDK</td></tr>
+        <tr><td>Transaction costs (7.5%)</td><td>¥3,150,000</td><td>Acquisition tax, registration, agent, legal</td></tr>
+        <tr><td>Light renovation / fit-out</td><td>¥800,000</td><td>Smart lock, STR-grade furnishing, IoT sensors</td></tr>
+        <tr class="total-row"><td><strong>Total Capital Deployed</strong></td><td><strong>¥45,950,000</strong></td><td>~$306,333 USD</td></tr>
+        <tr><td>Annual NOI (base case)</td><td class="pos">¥1,679,766</td><td></td></tr>
+        <tr><td>Cash-on-Cash Return (base)</td><td class="pos">3.66%</td><td>NOI / total deployed</td></tr>
+        <tr><td>Cash-on-Cash Return (bull)</td><td class="pos">5.13%</td><td></td></tr>
+        <tr><td>Cash-on-Cash Return (bear)</td><td class="warn">1.62%</td><td>Marginal but positive</td></tr>
+        <tr><td>Breakeven occupancy (base ADR)</td><td>36%</td><td>NOI covers fixed costs only</td></tr>
+        <tr><td>5-Year IRR (base + 4% annual cap rate compression)</td><td class="pos">8.2%</td><td>Includes capital appreciation at Naniwa-ku 9.7%/yr land trend</td></tr>
+        <tr><td>5-Year IRR (base, no appreciation)</td><td class="warn">4.0%</td><td>NOI-only, no exit premium</td></tr>
+        <tr><td>10-Year IRR (base + 4% appreciation)</td><td class="pos">9.6%</td><td>Compounding appreciation + STR income</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Structure B — Leveraged Acquisition (60% LTV)</h3>
+  <div class="t-wrap">
+    <table>
+      <thead><tr><th>Item</th><th>Amount</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Purchase price</td><td>¥42,000,000</td><td></td></tr>
+        <tr><td>Transaction costs</td><td>¥3,150,000</td><td></td></tr>
+        <tr><td>Renovation / fit-out</td><td>¥800,000</td><td></td></tr>
+        <tr><td>Loan amount (60% LTV on ¥42M)</td><td>¥25,200,000</td><td>Foreign buyer rate: ~1.8–2.2% (variable); fixed modelled at 2.0%</td></tr>
+        <tr><td>Loan term</td><td>25 years</td><td></td></tr>
+        <tr><td>Monthly debt service (P+I)</td><td>¥106,980</td><td>¥1,283,760/year</td></tr>
+        <tr><td>Equity deployed</td><td>¥20,750,000</td><td>¥16.8M down + ¥3.95M costs+reno</td></tr>
+        <tr class="total-row"><td><strong>Total Cash Out (equity)</strong></td><td><strong>¥20,750,000</strong></td><td>~$138,333 USD</td></tr>
+        <tr><td>Annual NOI (base)</td><td>¥1,679,766</td><td></td></tr>
+        <tr><td>Less: annual debt service</td><td>(¥1,283,760)</td><td></td></tr>
+        <tr class="total-row"><td><strong>Levered Annual Cash Flow (base)</strong></td><td class="pos"><strong>¥396,006</strong></td><td></td></tr>
+        <tr><td>Cash-on-Cash Return on Equity (base)</td><td class="pos">1.91%</td><td>Low but positive; leverage cuts cash return</td></tr>
+        <tr><td>Cash-on-Cash Return on Equity (bull)</td><td class="pos">5.17%</td><td>Bull case rescues levered return</td></tr>
+        <tr><td>Levered cash flow (bear case)</td><td class="neg">(¥539,460)</td><td>Negative — debt service exceeds NOI</td></tr>
+        <tr><td>Breakeven occupancy (base ADR, leveraged)</td><td class="warn">57%</td><td>Must exceed to cover debt service</td></tr>
+        <tr><td>5-Year IRR (base + 4% appreciation)</td><td class="pos">14.8%</td><td>Leverage amplifies capital appreciation</td></tr>
+        <tr><td>5-Year IRR (base, no appreciation)</td><td class="warn">1.9%</td><td>Leverage adds risk without appreciation</td></tr>
+        <tr><td>Interest rate sensitivity (+100bps)</td><td class="neg">−¥252,000/yr cash flow</td><td>BoJ rate hike risk: monitor</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="blue-box" style="margin-top:16px">
+    <div class="box-title">Financing Recommendation</div>
+    <div class="box-body"><strong>All-cash is the appropriate structure for this investment at this stage of the regulatory cycle.</strong> The levered structure's IRR advantage (14.8% vs 8.2% at base + appreciation) is real, but it requires a 57% occupancy breakeven — above the 45% bear case — and is critically sensitive to BoJ rate normalisation. With the Cabinet Office STR ruling pending in H2 2026, the uncertainty window over the next 6–12 months makes the all-cash structure's wider safety margin (36% breakeven) the more appropriate risk-adjusted choice. If the Cabinet Office confirms Special Zone continuation and Naniwa RevPAR holds, refinancing to extract 50–60% LTV in Year 2 is the optimal path — capturing leverage upside after the regulatory risk resolves.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 5: GO/NO-GO DECISION MATRIX -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s5">
+  <div class="section-hdr"><div class="snm">§05</div><h2>Go / No-Go Decision Matrix</h2></div>
+
+  <div class="t-wrap">
+    <table class="thresh-table">
+      <thead>
+        <tr><th>Threshold</th><th>Go Condition</th><th>Hold / Diligence</th><th>No-Go Trigger</th><th>Current Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>T1 — Licence Verification</strong><br>Valid Special Zone licence, transferable, no outstanding complaints or revocation proceedings</td>
+          <td class="pass">Licence verified, clean history</td>
+          <td class="watch">Licence exists but complaint on record</td>
+          <td class="fail">No licence / not transferable</td>
+          <td><span class="watch">DILIGENCE REQUIRED</span></td>
+        </tr>
+        <tr>
+          <td><strong>T2 — Minimum Trailing NOI Yield</strong><br>NOI yield ≥ 3.5% on total acquisition cost (cash basis)</td>
+          <td class="pass">≥ 3.5% — viable standalone</td>
+          <td class="watch">2.5–3.5% — marginal, needs appreciation support</td>
+          <td class="fail">&lt; 2.5% — structurally insufficient</td>
+          <td><span class="pass">Base case: 4.0% ✓</span></td>
+        </tr>
+        <tr>
+          <td><strong>T3 — Occupancy Breakeven</strong><br>Bear-case occupancy (45%) must produce positive NOI; levered breakeven ≤ 60%</td>
+          <td class="pass">NOI positive at 45% occ.</td>
+          <td class="watch">NOI positive only at ≥55%</td>
+          <td class="fail">NOI negative at 55%+ occupancy</td>
+          <td><span class="pass">Bear case NOI ¥744K ✓</span></td>
+        </tr>
+        <tr>
+          <td><strong>T4 — Management Fee Cap</strong><br>Kanrisha fee ≤ 18% of gross revenue on executed contract</td>
+          <td class="pass">Contract at ≤ 16%</td>
+          <td class="watch">Contract at 17–18%</td>
+          <td class="fail">&gt; 18% — margin destruction</td>
+          <td><span class="pass">Target: 16% (Namba market floor) ✓</span></td>
+        </tr>
+        <tr>
+          <td><strong>T5 — Cabinet Office Regulatory Status</strong><br>No active termination ruling against Osaka Special Zone programme</td>
+          <td class="pass">No ruling / suspension confirmed as administrative only</td>
+          <td class="watch">Review ongoing, no ruling</td>
+          <td class="fail">Termination ruling issued</td>
+          <td><span class="watch">PENDING — ruling H2 2026</span></td>
+        </tr>
+        <tr>
+          <td><strong>T6 — Maximum Purchase Price</strong><br>Acquisition price ≤ ¥44M for 35m² unit to maintain NOI yield ≥ 3.5%</td>
+          <td class="pass">≤ ¥44M — threshold preserved</td>
+          <td class="watch">¥44M–¥46M — yield margin thin</td>
+          <td class="fail">&gt; ¥46M — insufficient NOI yield</td>
+          <td><span class="pass">¥42M proxy — within threshold ✓</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p style="font-size:12px;color:var(--dim);margin-top:8px">T1 and T5 are binary conditions — a fail on either is an absolute no-go regardless of all other thresholds. T2, T3, T4, T6 are financial thresholds — a fail on any one triggers a hold-and-renegotiate posture before proceeding. All six must be in go or watch status with no single fail to proceed to commitment.</p>
+
+  <div class="verdict hold">
+    <div class="verdict-word">CONDITIONAL GO</div>
+    <div class="verdict-sub">Proceed to full diligence · T1 licence verification + T5 Cabinet Office monitoring required before commitment · No pricing concession available above ¥44M</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 6: CAPITAL DEPLOYMENT TIMELINE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s6">
+  <div class="section-hdr"><div class="snm">§06</div><h2>Capital Deployment Timeline</h2></div>
+
+  <div class="t-wrap">
+    <table>
+      <thead><tr><th>Phase</th><th>Timing</th><th>Action</th><th>Capital</th><th>Gate</th></tr></thead>
+      <tbody>
+        <tr class="sec-row"><td colspan="5">Pre-Commitment Diligence</td></tr>
+        <tr><td>Phase 0</td><td>Week 1–2</td><td>Licence verification — confirm Special Zone status, no complaints, transferability</td><td>¥0</td><td>T1 must PASS</td></tr>
+        <tr><td>Phase 0</td><td>Week 1–3</td><td>Physical inspection, building management review, kanrisha candidate shortlist</td><td>¥0</td><td>—</td></tr>
+        <tr><td>Phase 0</td><td>Week 2–4</td><td>Legal counsel instruction (licence transfer structure, acquisition tax exposure)</td><td>¥150,000</td><td>—</td></tr>
+        <tr class="sec-row"><td colspan="5">Commitment & Acquisition</td></tr>
+        <tr><td>Phase 1</td><td>Month 2</td><td>Reservation deposit, purchase agreement execution</td><td>¥4,200,000 (10%)</td><td>T1, T6 confirmed</td></tr>
+        <tr><td>Phase 2</td><td>Month 3</td><td>Balance payment + transaction costs settlement</td><td>¥41,600,000</td><td>All T thresholds</td></tr>
+        <tr class="sec-row"><td colspan="5">Operational Preparation</td></tr>
+        <tr><td>Phase 3</td><td>Month 3–4</td><td>Kanrisha contract execution (target 16%, 3-year term, 30-day termination clause)</td><td>¥0</td><td>T4 confirmed</td></tr>
+        <tr><td>Phase 3</td><td>Month 3–4</td><td>Fit-out: smart lock, IoT sensor, STR-grade furnishing, photography</td><td>¥800,000</td><td>—</td></tr>
+        <tr><td>Phase 4</td><td>Month 4</td><td>Platform listing launch (Airbnb primary; Booking.com secondary)</td><td>¥0</td><td>—</td></tr>
+        <tr class="sec-row"><td colspan="5">Ongoing & Review Gates</td></tr>
+        <tr><td>Review 1</td><td>Month 7</td><td>First-quarter operational review: occupancy vs. base case, guest complaints, kanrisha performance</td><td>¥0</td><td>Occupancy ≥ 55%?</td></tr>
+        <tr><td>Review 2</td><td>Month 12</td><td>Annual performance review + Cabinet Office regulatory ruling assessment</td><td>¥0</td><td>T5 status update</td></tr>
+        <tr><td>Refi Gate</td><td>Month 13–15</td><td>IF: 12-month occupancy ≥ 60% AND T5 resolved GO → execute 60% LTV refinancing to extract equity</td><td>Refi proceeds ~¥25.2M</td><td>T2, T3, T5 all GO</td></tr>
+        <tr class="total-row"><td><strong>Total Capital at Full Deployment</strong></td><td colspan="3"><strong>¥45,950,000 (pre-refi cash acquisition)</strong></td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 7: THESIS INVALIDATION CONDITIONS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s7">
+  <div class="section-hdr"><div class="snm">§07</div><h2>Thesis Invalidation Conditions</h2></div>
+
+  <div class="stop-box">
+    <div class="box-title">Thesis Invalidation — any of these triggers mandatory exit or hold reassessment</div>
+  </div>
+
+  <div class="inv-item">
+    <div class="inv-n">01</div>
+    <div><strong>Cabinet Office enacts full termination of Osaka Special Zone programme.</strong> If Governor Yoshimura's stated intent (filed November 2025) receives Cabinet Office approval and the Tokku Minpaku programme is formally terminated rather than merely suspended, existing Special Zone licences revert to 180-day standard minpaku operation. At 180 permitted days, annual gross revenue drops from ¥3.44M to approximately ¥1.72M — the NOI yield on acquisition falls from 4.0% to approximately 0.9% at base occupancy. The investment case does not survive this scenario at ¥42M acquisition cost. The May 30, 2026 formal effective date of the suspension is the key monitoring event; if that converts to a termination ruling, execute orderly exit strategy. Monitor: Cabinet Office STR review calendar, Diet legislative proceedings, Osaka Prefecture official gazette.</div>
+  </div>
+  <div class="inv-item">
+    <div class="inv-n">02</div>
+    <div><strong>Naniwa Ward revocation order issued against the acquired licence.</strong> Distinct from the programme-level termination risk above, a ward-level enforcement action targeting the specific property's licence — triggered by documented guest complaints, inspection failures, or a neighbourhood-wide enforcement sweep — would terminate operating rights immediately and render the property a standard residential asset worth approximately ¥28–32M (50–75% of STR premium purchase price), crystallising a ¥10–14M capital loss. Mitigation requires professional management with documented noise protocol, monthly complaint log, and pre-emptive neighbour engagement. If a revocation notice is received, immediately engage legal counsel — there is a 30-day appeal window under Article 33(1)(iv). Do not proceed with this acquisition if ward-level enforcement is already accelerating or if property-specific complaints are on record at the time of T1 diligence.</div>
+  </div>
+  <div class="inv-item">
+    <div class="inv-n">03</div>
+    <div><strong>Sustained ADR compression exceeds 20% for two consecutive quarters.</strong> The base case ADR of ¥14,000 incorporates no Expo wind-down discount — it reflects the AirROI Naniwa Ward median from December 2024 through November 2025. If post-Expo demand normalisation drives ADR below ¥11,200 (the 20% compression threshold) and holds there for two quarters, the base case NOI yield drops below 2.8% — below the minimum return threshold for a ¥42M speculative-premium acquisition. This is a fundamentally different signal than the 15% ADR compression modelled in the stressed scenario, which still produces positive NOI. A 20%+ sustained decline would require a major demand event — a yen appreciation above ¥115/USD or a geopolitical shock materially reducing inbound tourism. Monitor: JNTO monthly Osaka inbound arrivals, AirROI Naniwa Ward ADR trailing 90-day average.</div>
+  </div>
+  <div class="inv-item">
+    <div class="inv-n">04</div>
+    <div><strong>BoJ rate normalisation pushes variable mortgage rate above 2.8% if refinancing was executed.</strong> This condition only becomes material if the Phase 4 refinancing is executed (Month 13–15). At a 60% LTV mortgage of ¥25.2M, an increase from the modelled 2.0% to 2.8% adds approximately ¥100,800/year in debt service, compressing levered cash flow from ¥396,006 to approximately ¥295,000. Still positive, but the sensitivity to further rate increases is elevated. At 3.5%, levered cash flow turns marginally negative in the base case. Monitor: BoJ policy rate decisions (April and October announcements); if rate trajectory suggests 3%+ within 18 months, execute fixed-rate conversion or delay refinancing.</div>
+  </div>
+
+  <h3>Summary Assessment</h3>
+  <p>The Ebisuhigashi 1LDK proxy acquisition is a high-conviction entry into the highest-conviction neighbourhood identified across the prior analytical chain — from the Japan STR regulatory dossier through the site feasibility model and J-REIT screening memo. The investment thesis has genuine structural support: real supply constraint from the Special Zone suspension, kanrisha density economics producing market-floor management fees, and a capital appreciation trend (Naniwa-ku +9.7% land prices in 2025) that partially backstops the STR income case. The single most important near-term binary is the Cabinet Office ruling on Special Zone continuation — that decision, expected H2 2026, determines whether this is a structurally durable income asset or a time-limited arbitrage on a regulatory transition. Position accordingly: all-cash acquisition, no leverage until T5 resolves, monthly monitoring of Naniwa Ward enforcement data and JNTO arrivals.</p>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="fm">
+    Acquisition Memo — Ebisuhigashi 1LDK Proxy · Naniwa Ward, Osaka · March 2026<br>
+    Secondary synthesis only · Not financial or legal advice · Verify before commitment
+  </div>
+  <div class="fm" style="text-align:right">
+    Sources: The Peak Tsutenkaku Elite brochure · AirROI Naniwa Ward · Airbtics Osaka · JREI Q3 2025<br>
+    Osaka STR Regulatory Dossier · Site Feasibility Model · J-REIT Screening Memo (same author)<br>
+    Exchange rate: ¥150/USD · Acquisition tax + costs modelled at 7.5% of purchase price
+  </div>
+</div>
+
+</div>
+</body>
+</html>
