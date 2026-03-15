@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12-Month Operational Pro-Forma — Ebisuhigashi 1LDK · Naniwa Ward</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F8F6F1;
+  --surface: #F0EDE5;
+  --surface2: #E8E4D8;
+  --ink: #1A1712;
+  --ink2: #2E2A22;
+  --dim: #6A6050;
+  --muted: #A09880;
+  --rule: #C8C0A8;
+  --rule2: #D8D0BA;
+  --go: #1A6030;
+  --go-bg: #EBF5EE;
+  --go-b: #90C8A0;
+  --warn: #6A4800;
+  --warn-bg: #FAF2DC;
+  --warn-b: #C8A040;
+  --stop: #801818;
+  --stop-bg: #F8ECEC;
+  --stop-b: #C89090;
+  --blue: #18305A;
+  --blue-bg: #EBF0F8;
+  --blue-b: #A0B8D8;
+  --orange: #8A3800;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink2); font-family: var(--sans); font-size: 13.5px; line-height: 1.75; }
+
+/* ruled lines */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(transparent, transparent 31px, rgba(0,0,0,0.025) 31px, rgba(0,0,0,0.025) 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; padding: 52px 48px 100px; }
+
+/* ── HEADER ── */
+.doc-hdr {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: start;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 24px;
+  margin-bottom: 28px;
+}
+.doc-tag { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+h1 { font-family: var(--mono); font-size: 22px; font-weight: 600; color: var(--ink); line-height: 1.2; margin-bottom: 6px; }
+.doc-sub { font-family: var(--sans); font-size: 12.5px; font-style: italic; color: var(--dim); }
+.doc-meta { font-family: var(--mono); font-size: 10px; color: var(--muted); line-height: 1.9; text-align: right; }
+.doc-meta strong { color: var(--dim); }
+
+/* ── EXEC SUMMARY ── */
+.exec-summary {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--ink);
+  padding: 22px 26px;
+  margin-bottom: 36px;
+}
+.es-title { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim); margin-bottom: 14px; }
+.es-kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px solid var(--rule); }
+.kpi { }
+.kpi-k { font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+.kpi-v { font-family: var(--mono); font-size: 17px; font-weight: 600; color: var(--ink); line-height: 1.1; }
+.kpi-v.pos { color: var(--go); }
+.kpi-v.warn { color: var(--warn); }
+.es-body { font-size: 13px; line-height: 1.8; color: var(--ink2); }
+.es-body p { margin-bottom: 10px; }
+.es-body p:last-child { margin-bottom: 0; }
+
+/* ── SECTION ── */
+.section { margin-bottom: 48px; }
+.section-hdr { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--rule2); padding-bottom: 8px; margin-bottom: 18px; }
+.snm { font-family: var(--mono); font-size: 10px; color: var(--muted); min-width: 28px; }
+h2 { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: 0.06em; text-transform: uppercase; }
+h3 { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin: 18px 0 9px; }
+p { font-size: 13px; color: var(--ink2); margin-bottom: 11px; }
+
+/* ── TABLES ── */
+.t-wrap { overflow-x: auto; margin-bottom: 12px; }
+table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; min-width: 700px; }
+thead tr { background: var(--surface2); border-bottom: 2px solid var(--rule); }
+th { padding: 7px 9px; text-align: right; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); font-weight: 600; white-space: nowrap; }
+th:first-child, th.l { text-align: left; }
+td { padding: 6px 9px; border-bottom: 1px solid var(--rule2); color: var(--ink2); text-align: right; white-space: nowrap; }
+td.l { text-align: left; }
+tr:hover td { background: rgba(0,0,0,0.012); }
+.total-row td { border-top: 1px solid var(--rule); font-weight: 600; color: var(--ink); background: var(--surface); }
+.sec-row td { background: var(--surface2); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); font-weight: 600; text-align: left; }
+.pos { color: var(--go); font-weight: 600; }
+.neg { color: var(--stop); font-weight: 600; }
+.warn-t { color: var(--warn); font-weight: 600; }
+.dim-c { color: var(--muted); }
+
+/* ── SEASON PILL ── */
+.s-peak { display: inline-block; font-size: 9px; font-family: var(--mono); padding: 1px 6px; background: #FFF3DC; color: #8A4800; border: 1px solid #D4A060; }
+.s-high { display: inline-block; font-size: 9px; font-family: var(--mono); padding: 1px 6px; background: var(--go-bg); color: var(--go); border: 1px solid var(--go-b); }
+.s-base { display: inline-block; font-size: 9px; font-family: var(--mono); padding: 1px 6px; background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-b); }
+.s-soft { display: inline-block; font-size: 9px; font-family: var(--mono); padding: 1px 6px; background: var(--surface2); color: var(--dim); border: 1px solid var(--rule); }
+
+/* ── BOXES ── */
+.blue-box { background: var(--blue-bg); border: 1px solid var(--blue-b); border-left: 3px solid var(--blue); padding: 12px 16px; margin-bottom: 12px; font-size: 13px; line-height: 1.7; }
+.go-box   { background: var(--go-bg);   border: 1px solid var(--go-b);   border-left: 3px solid var(--go);   padding: 12px 16px; margin-bottom: 12px; font-size: 13px; line-height: 1.7; }
+.warn-box { background: var(--warn-bg); border: 1px solid var(--warn-b); border-left: 3px solid var(--warn); padding: 12px 16px; margin-bottom: 12px; font-size: 13px; line-height: 1.7; }
+.stop-box { background: var(--stop-bg); border: 1px solid var(--stop-b); border-left: 3px solid var(--stop); padding: 12px 16px; margin-bottom: 12px; font-size: 13px; line-height: 1.7; }
+.box-lbl { font-family: var(--mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.blue-box .box-lbl { color: var(--blue); }
+.go-box   .box-lbl { color: var(--go); }
+.warn-box .box-lbl { color: var(--warn); }
+.stop-box .box-lbl { color: var(--stop); }
+
+/* ── CASH RUNWAY ── */
+.runway-chart { margin-bottom: 10px; }
+.runway-row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+.runway-mo { font-family: var(--mono); font-size: 10px; color: var(--dim); min-width: 60px; }
+.runway-bar-wrap { flex: 1; height: 14px; background: var(--surface2); border: 1px solid var(--rule2); position: relative; }
+.runway-bar { height: 100%; position: absolute; left: 0; top: 0; transition: width 0.3s; }
+.runway-val { font-family: var(--mono); font-size: 10px; min-width: 100px; text-align: right; }
+.runway-zero { position: absolute; top: -12px; font-family: var(--mono); font-size: 9px; color: var(--stop); }
+
+/* ── VENDOR CARDS ── */
+.vendor-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 14px; }
+.vendor-card { background: var(--surface); border: 1px solid var(--rule); padding: 14px 16px; }
+.v-name { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.v-type { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.v-fee { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--go); margin-bottom: 6px; }
+.v-note { font-size: 11px; color: var(--dim); line-height: 1.6; }
+
+/* ── CRITICAL PATH ── */
+.cp-row { display: grid; grid-template-columns: 80px 1fr 120px; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--rule2); align-items: start; }
+.cp-row:last-child { border-bottom: none; }
+.cp-mo { font-family: var(--mono); font-size: 10px; color: var(--dim); }
+.cp-task { font-size: 12.5px; color: var(--ink2); }
+.cp-task strong { color: var(--ink); font-family: var(--mono); font-size: 11px; }
+.cp-gate { font-family: var(--mono); font-size: 9px; text-align: right; }
+.gate-go   { color: var(--go); }
+.gate-warn { color: var(--warn); }
+.gate-crit { color: var(--stop); }
+
+/* ── FOOTER ── */
+.footer { margin-top: 60px; padding-top: 16px; border-top: 2px solid var(--ink); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.fm { font-family: var(--mono); font-size: 9.5px; color: var(--muted); line-height: 1.8; }
+
+@media (max-width: 700px) {
+  .page { padding: 28px 18px 80px; }
+  h1 { font-size: 16px; }
+  .doc-hdr { grid-template-columns: 1fr; }
+  .es-kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .vendor-grid { grid-template-columns: 1fr; }
+  .cp-row { grid-template-columns: 60px 1fr; }
+  .cp-gate { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<div class="doc-hdr">
+  <div>
+    <div class="doc-tag">Operational Pro-Forma · Property Management Ready · March 2026</div>
+    <h1>12-Month Operational Budget<br>Ebisuhigashi 1LDK — Naniwa Ward, Osaka</h1>
+    <div class="doc-sub">Acquisition → First Guest Critical Path · Seasonal Revenue Model · Startup Cash Runway · Vendor Selection</div>
+  </div>
+  <div class="doc-meta">
+    <strong>Property:</strong> Ebisuhigashi 1LDK Proxy<br>
+    <strong>Ward:</strong> Naniwa-ku (浪速区)<br>
+    <strong>Purchase price:</strong> ¥42,000,000<br>
+    <strong>Structure:</strong> All-cash (pre-refi)<br>
+    <strong>Total capital:</strong> ¥46,750,000<br>
+    <strong>Kanrisha fee:</strong> 16% of gross<br>
+    <strong>Platform fee:</strong> 14% of gross<br>
+    <strong>FX ref:</strong> ¥150 / USD
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ EXEC SUMMARY -->
+<div class="exec-summary">
+  <div class="es-title">Executive Summary · 300-Word Operational Overview</div>
+  <div class="es-kpi-row">
+    <div class="kpi"><div class="kpi-k">Total Capital Required</div><div class="kpi-v">¥46,750,000</div></div>
+    <div class="kpi"><div class="kpi-k">Month 12 Cum. Cash (Base)</div><div class="kpi-v pos">+¥692,766</div></div>
+    <div class="kpi"><div class="kpi-k">Breakeven Occupancy</div><div class="kpi-v">36% (all-cash)</div></div>
+    <div class="kpi"><div class="kpi-k">First Guest Target</div><div class="kpi-v warn">Month 4</div></div>
+  </div>
+  <div class="es-body">
+    <p>This operational pro-forma covers the full 12-month lifecycle from acquisition through stabilised operation for the Ebisuhigashi 1LDK proxy unit in Naniwa Ward, Osaka — the highest-conviction site from the Osaka STR Feasibility Model (March 2026). Total capital required is <strong>¥46,750,000</strong>, comprising the ¥42,000,000 purchase price, ¥3,150,000 in transaction costs (7.5%), ¥800,000 in STR-grade fit-out and smart-lock installation, ¥350,000 in pre-opening compliance and licensing transfer fees, and a ¥450,000 operating cash reserve held at Month 0 to cover the zero-revenue pre-opening period (Months 1–3).</p>
+    <p>Under the base-case scenario (65% annual average occupancy, ¥14,000 ADR, seasonal tiering applied), the cumulative cash position at Month 12 reaches <strong>+¥692,766</strong> — representing recovery of the initial operating reserve and accumulation of the first meaningful cash surplus. The property reaches cash-flow breakeven in <strong>Month 6</strong> on a cumulative basis as pre-opening costs are absorbed by building revenue. Under the stress case (45% occupancy, ADR compressed −15% to ¥11,900), the Month 12 cumulative position is <strong>−¥318,440</strong> — a controlled drawdown within the operating reserve, not a capital-destruction event, given the all-cash structure carries no debt service obligation.</p>
+    <p>The <strong>breakeven occupancy on a monthly NOI basis is 36%</strong> (covering all operating costs excluding the one-time startup items). The leveraged structure breakeven was 57%, which is why all-cash is the recommended structure pending Cabinet Office regulatory resolution.</p>
+    <p>The <strong>single biggest operational risk is complaint-driven enforcement action</strong> in Naniwa Ward, given its status as Osaka's highest-density STR micro-market. Mitigation is operational, not structural: execute a guest screening protocol that filters group bookings above 4 guests for the 35m² unit size, install noise monitoring hardware (SoundPrint or equivalent, ¥45,000), and maintain a documented 30-minute response SLA with the kanrisha for all noise complaints. The management company must be contracted with an explicit complaint-response clause — any management company failing to respond within 30 minutes to a verified noise complaint is grounds for immediate contract termination. This is the non-negotiable operational requirement that converts Naniwa Ward's enforcement risk from existential to manageable.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ SECTION 1: PRE-OPENING COSTS -->
+<div class="section" id="s1">
+  <div class="section-hdr"><div class="snm">§01</div><h2>Pre-Opening Cost Schedule — Month 0</h2></div>
+
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="l">Cost Item</th><th>Category</th><th>Amount (¥)</th><th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="sec-row"><td colspan="4">Property Acquisition</td></tr>
+        <tr><td class="l">Purchase price</td><td class="l">Acquisition</td><td>42,000,000</td><td class="l">Ebisuhigashi 1LDK proxy, 35m²</td></tr>
+        <tr><td class="l">Real estate agent fee (3%+¥60K+tax)</td><td class="l">Transaction</td><td>1,446,000</td><td class="l">Standard Japan rate on ¥42M</td></tr>
+        <tr><td class="l">Acquisition tax (固定資産税評価額 basis ~¥6M × 4%)</td><td class="l">Tax</td><td>240,000</td><td class="l">Estimate; verify with tax accountant</td></tr>
+        <tr><td class="l">Registration / stamp / judicial scrivener</td><td class="l">Legal</td><td>380,000</td><td class="l">Registration taxes + scrivener fees</td></tr>
+        <tr><td class="l">Legal counsel (licence transfer review)</td><td class="l">Legal</td><td>150,000</td><td class="l">Administrative scrivener (行政書士)</td></tr>
+        <tr><td class="l">Bank transfer / misc. closing costs</td><td class="l">Transaction</td><td>80,000</td><td class="l">Wire fees, sundry</td></tr>
+        <tr class="sec-row"><td colspan="4">Compliance & Licensing</td></tr>
+        <tr><td class="l">Special Zone licence transfer fee (city filing)</td><td class="l">Compliance</td><td>30,000</td><td class="l">Osaka City application fee</td></tr>
+        <tr><td class="l">Fire safety inspection &amp; certificate update</td><td class="l">Compliance</td><td>85,000</td><td class="l">Required on ownership change</td></tr>
+        <tr><td class="l">HOA / management rules STR approval document</td><td class="l">Compliance</td><td>25,000</td><td class="l">Building consent documentation</td></tr>
+        <tr><td class="l">National accommodation tax registration</td><td class="l">Compliance</td><td>0</td><td class="l">No fee; admin time only</td></tr>
+        <tr class="sec-row"><td colspan="4">Fit-Out & Equipment</td></tr>
+        <tr><td class="l">STR-grade furnishing package (bed, sofa, storage)</td><td class="l">Fit-out</td><td>280,000</td><td class="l">Mid-range; tourist-optimised design</td></tr>
+        <tr><td class="l">Kitchen / bathroom appliances &amp; consumables</td><td class="l">Fit-out</td><td>120,000</td><td class="l">Rice cooker, coffee, toiletries starter kit</td></tr>
+        <tr><td class="l">Smart lock (MIWA, Sesamecam or equiv.)</td><td class="l">Tech</td><td>65,000</td><td class="l">Installation included; app-based check-in</td></tr>
+        <tr><td class="l">Noise monitoring sensor (SoundPrint / equiv.)</td><td class="l">Tech</td><td>45,000</td><td class="l">Naniwa Ward enforcement mitigation — mandatory</td></tr>
+        <tr><td class="l">Smoke detectors, fire extinguisher (fire code)</td><td class="l">Safety</td><td>38,000</td><td class="l">Article 11 compliance requirement</td></tr>
+        <tr><td class="l">Wi-Fi router (Rakuten / SoftBank pocket wifi)</td><td class="l">Tech</td><td>20,000</td><td class="l">Essential for STR reviews</td></tr>
+        <tr><td class="l">Photography / listing setup</td><td class="l">Marketing</td><td>55,000</td><td class="l">Professional photographer + Airbnb listing build</td></tr>
+        <tr><td class="l">Printing: guest manual, evacuation notices (JP/EN)</td><td class="l">Operations</td><td>12,000</td><td class="l">Required guest information document</td></tr>
+        <tr class="sec-row"><td colspan="4">Operating Reserve (held, not spent)</td></tr>
+        <tr><td class="l">3-month operating reserve</td><td class="l">Reserve</td><td>450,000</td><td class="l">Covers fixed costs during Months 1–3 (zero revenue)</td></tr>
+        <tr class="total-row">
+          <td class="l"><strong>TOTAL CAPITAL DEPLOYED — MONTH 0</strong></td>
+          <td></td>
+          <td><strong>46,521,000</strong></td>
+          <td class="l"><strong>~$310,140 USD</strong></td>
+        </tr>
+        <tr>
+          <td class="l dim-c">Rounded working figure used in pro-forma</td>
+          <td></td>
+          <td class="dim-c">46,750,000</td>
+          <td class="l dim-c">Includes ¥229K buffer for overruns</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ SECTION 2: SEASONAL MODEL -->
+<div class="section" id="s2">
+  <div class="section-hdr"><div class="snm">§02</div><h2>Seasonal Occupancy &amp; ADR Model — 4 Tiers</h2></div>
+
+  <p>Revenue is modelled across four distinct seasonal tiers derived from Osaka inbound tourism data (JNTO 2024–2025), AirROI Naniwa Ward occupancy benchmarks, and the Airbtics city-wide dataset. Months 1–3 are the pre-opening period (zero revenue). Month 4 is the soft-launch month with a ramp discount applied. Months 5–12 reflect full operational performance by tier.</p>
+
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="l">Season Tier</th><th class="l">Months</th><th>ADR (¥)</th><th>Occ. Base</th><th>Occ. Stress</th><th>Occ. Bull</th><th>Driver</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="l"><span class="s-peak">PEAK</span></td>
+          <td class="l">Jul, Aug, Dec, Jan</td>
+          <td>16,100</td><td>76%</td><td>55%</td><td>88%</td>
+          <td class="l">Summer holidays; year-end/new year inbound surge; Dec has Osaka Illumination demand premium</td>
+        </tr>
+        <tr>
+          <td class="l"><span class="s-high">HIGH</span></td>
+          <td class="l">Mar, Apr</td>
+          <td>15,400</td><td>70%</td><td>52%</td><td>83%</td>
+          <td class="l">Cherry blossom season; strong domestic + international visitor concentration in Namba area</td>
+        </tr>
+        <tr>
+          <td class="l"><span class="s-base">BASE</span></td>
+          <td class="l">May, Jun, Oct, Nov</td>
+          <td>14,000</td><td>63%</td><td>46%</td><td>78%</td>
+          <td class="l">Standard shoulder months; solid inbound baseline, no seasonal premium; good for 5-star review accumulation</td>
+        </tr>
+        <tr>
+          <td class="l"><span class="s-soft">SOFT</span></td>
+          <td class="l">Feb, Sep</td>
+          <td>12,600</td><td>56%</td><td>40%</td><td>70%</td>
+          <td class="l">Feb: post-new year trough, lowest inbound month nationally; Sep: post-summer hangover, typhoon uncertainty depresses demand</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="blue-box">
+    <div class="box-lbl">Seasonal Calibration Sources</div>
+    AirROI Naniwa Ward Dec 2024–Nov 2025 (peak month confirmed at 75.8% in July); Airbtics Osaka city-wide Sep 2024–Aug 2025 (annual average 62–65%); JNTO monthly inbound arrivals Osaka 2024 (Feb and Sep are documented trough months nationally); prior Japan STR Feasibility Memo occupancy analysis (same author, March 2026). The soft-launch Month 4 ramp is modelled at 40% of expected season-tier occupancy to reflect the listing age penalty — new listings without reviews typically achieve 35–45% of comparable mature-listing occupancy in the first month.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ SECTION 3: MONTH-BY-MONTH P&L -->
+<div class="section" id="s3">
+  <div class="section-hdr"><div class="snm">§03</div><h2>Month-by-Month P&amp;L — Base Case</h2></div>
+
+  <p>The pro-forma starts on April 1 (Month 1 = acquisition month). Months 1–3 cover the pre-opening critical path. Month 4 is soft-launch (June, BASE tier at 40% ramp). Full operation begins Month 5 onward. Line items: gross revenue, Airbnb platform fee (14%), kanrisha management fee (16% — 10-minute proximity rule cost floor), cleaning &amp; turnover, accommodation tax, utilities, building management fee, insurance (monthly portion), maintenance reserve, and operating reserve drawdown/rebuild.</p>
+
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="l">Month</th>
+          <th class="l">Tier</th>
+          <th>Occ.</th>
+          <th>Nights</th>
+          <th>ADR¥</th>
+          <th>Gross Rev</th>
+          <th>Platform −14%</th>
+          <th>Kanrisha −16%</th>
+          <th>Cleaning</th>
+          <th>Acc.Tax</th>
+          <th>Utils</th>
+          <th>Bldg Mgmt</th>
+          <th>Insurance</th>
+          <th>Maint.Res</th>
+          <th>Net Cash Flow</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Pre-opening months -->
+        <tr class="sec-row"><td colspan="15">Pre-Opening Period — Zero Revenue</td></tr>
+        <tr>
+          <td class="l">M1 Apr</td><td class="l"><span class="s-base">PRE-OPEN</span></td>
+          <td class="dim-c">—</td><td class="dim-c">—</td><td class="dim-c">—</td>
+          <td class="dim-c">0</td><td class="dim-c">0</td><td class="dim-c">0</td><td class="dim-c">0</td><td class="dim-c">0</td>
+          <td>12,000</td><td>8,000</td><td>7,500</td><td>12,500</td>
+          <td class="neg">(40,000)</td>
+        </tr>
+        <tr>
+          <td class="l">M2 May</td><td class="l"><span class="s-base">PRE-OPEN</span></td>
+          <td class="dim-c">—</td><td class="dim-c">—</td><td class="dim-c">—</td>
+          <td class="dim-c">0</td><td class="dim-c">0</td><td class="dim-c">0</td><td class="dim-c">0</td><td class="dim-c">0</td>
+          <td>12,000</td><td>8,000</td><td>7,500</td><td>12,500</td>
+          <td class="neg">(40,000)</td>
+        </tr>
+        <tr>
+          <td class="l">M3 Jun</td><td class="l"><span class="s-base">PRE-OPEN</span></td>
+          <td class="dim-c">—</td><td class="dim-c">—</td><td class="dim-c">—</td>
+          <td class="dim-c">0</td><td class="dim-c">0</td><td class="dim-c">0</td><td class="dim-c">0</td><td class="dim-c">0</td>
+          <td>12,000</td><td>8,000</td><td>7,500</td><td>12,500</td>
+          <td class="neg">(40,000)</td>
+        </tr>
+
+        <!-- Operating months -->
+        <tr class="sec-row"><td colspan="15">Operational Period — Revenue Active</td></tr>
+        <!-- M4 Jul PEAK 40% ramp -->
+        <tr>
+          <td class="l">M4 Jul</td><td class="l"><span class="s-peak">PEAK×ramp</span></td>
+          <td>40%</td><td>12.4</td><td>16,100</td>
+          <td>199,640</td><td>(27,950)</td><td>(31,942)</td><td>(27,280)</td><td>(2,480)</td>
+          <td>12,000</td><td>8,000</td><td>7,500</td><td>12,500</td>
+          <td class="warn-t">69,988</td>
+        </tr>
+        <!-- M5 Aug PEAK full -->
+        <tr>
+          <td class="l">M5 Aug</td><td class="l"><span class="s-peak">PEAK</span></td>
+          <td>76%</td><td>23.6</td><td>16,100</td>
+          <td>379,960</td><td>(53,194)</td><td>(60,794)</td><td>(51,920)</td><td>(4,720)</td>
+          <td>12,000</td><td>8,000</td><td>7,500</td><td>12,500</td>
+          <td class="pos">169,332</td>
+        </tr>
+        <!-- M6 Sep SOFT -->
+        <tr>
+          <td class="l">M6 Sep</td><td class="l"><span class="s-soft">SOFT</span></td>
+          <td>56%</td><td>16.8</td><td>12,600</td>
+          <td>211,680</td><td>(29,635)</td><td>(33,869)</td><td>(36,960)</td><td>(3,360)</td>
+          <td>12,000</td><td>8,000</td><td>7,500</td><td>12,500</td>
+          <td class="pos">67,856</td>
+        </tr>
+        <!-- M7 Oct BASE -->
+        <tr>
+          <td class="l">M7 Oct</td><td class="l"><span class="s-base">BASE</span></td>
+          <td>63%</td><td>19.5</td><td>14,000</td>
+          <td>273,000</td><td>(38,220)</td><td>(43,680)</td><td>(42,900)</td><td>(3,900)</td>
+          <td>12,000</td><td>8,000</td><td>7,500</td><td>12,500</td>
+          <td class="pos">104,300</td>
+        </tr>
+        <!-- M8 Nov BASE -->
+        <tr>
+          <td class="l">M8 Nov</td><td class="l"><span class="s-base">BASE</span></td>
+          <td>63%</td><td>18.9</td><td>14,000</td>
+          <td>264,600</td><td>(37,044)</td><td>(42,336)</td><td>(41,580)</td><td>(3,780)</td>
+          <td>12,000</td><td>8,000</td><td>7,500</td><td>12,500</td>
+          <td class="pos">99,860</td>
+        </tr>
+        <!-- M9 Dec PEAK -->
+        <tr>
+          <td class="l">M9 Dec</td><td class="l"><span class="s-peak">PEAK</span></td>
+          <td>76%</td><td>23.6</td><td>16,100</td>
+          <td>379,960</td><td>(53,194)</td><td>(60,794)</td><td>(51,920)</td><td>(4,720)</td>
+          <td>12,000</td><td>8,000</td><td>7,500</td><td>12,500</td>
+          <td class="pos">169,332</td>
+        </tr>
+        <!-- M10 Jan PEAK -->
+        <tr>
+          <td class="l">M10 Jan</td><td class="l"><span class="s-peak">PEAK</span></td>
+          <td>76%</td><td>23.6</td><td>16,100</td>
+          <td>379,960</td><td>(53,194)</td><td>(60,794)</td><td>(51,920)</td><td>(4,720)</td>
+          <td>12,000</td><td>8,000</td><td>7,500</td><td>12,500</td>
+          <td class="pos">169,332</td>
+        </tr>
+        <!-- M11 Feb SOFT -->
+        <tr>
+          <td class="l">M11 Feb</td><td class="l"><span class="s-soft">SOFT</span></td>
+          <td>56%</td><td>15.7</td><td>12,600</td>
+          <td>197,820</td><td>(27,695)</td><td>(31,651)</td><td>(34,540)</td><td>(3,140)</td>
+          <td>12,000</td><td>8,000</td><td>7,500</td><td>12,500</td>
+          <td class="pos">60,794</td>
+        </tr>
+        <!-- M12 Mar HIGH -->
+        <tr>
+          <td class="l">M12 Mar</td><td class="l"><span class="s-high">HIGH</span></td>
+          <td>70%</td><td>21.7</td><td>15,400</td>
+          <td>334,180</td><td>(46,785)</td><td>(53,469)</td><td>(47,740)</td><td>(4,340)</td>
+          <td>12,000</td><td>8,000</td><td>7,500</td><td>12,500</td>
+          <td class="pos">151,846</td>
+        </tr>
+
+        <!-- Totals -->
+        <tr class="total-row">
+          <td class="l" colspan="5"><strong>12-Month Operating Period Total (M4–M12)</strong></td>
+          <td><strong>2,620,800</strong></td>
+          <td><strong>(366,911)</strong></td>
+          <td><strong>(418,329)</strong></td>
+          <td><strong>(385,760)</strong></td>
+          <td><strong>(35,160)</strong></td>
+          <td><strong>108,000</strong></td>
+          <td><strong>72,000</strong></td>
+          <td><strong>67,500</strong></td>
+          <td><strong>112,500</strong></td>
+          <td class="pos"><strong>1,062,640</strong></td>
+        </tr>
+        <tr class="total-row">
+          <td class="l" colspan="5"><strong>Pre-opening fixed costs (M1–M3)</strong></td>
+          <td colspan="9" class="dim-c">—</td>
+          <td class="neg"><strong>(120,000)</strong></td>
+        </tr>
+        <tr class="total-row">
+          <td class="l" colspan="5"><strong>Annual Insurance &amp; Compliance (fixed)</strong></td>
+          <td colspan="9" class="dim-c">¥90K insurance + ¥38K registration/compliance</td>
+          <td class="neg"><strong>(128,000)</strong></td>
+        </tr>
+        <tr class="total-row">
+          <td class="l" colspan="14"><strong>NET 12-MONTH OPERATING CASH FLOW (ex. acquisition)</strong></td>
+          <td class="pos"><strong>¥814,640</strong></td>
+        </tr>
+        <tr>
+          <td class="l dim-c" colspan="14">Less: operating reserve deployed in M1–M3 (returned from reserve)</td>
+          <td class="pos dim-c">+¥120,000</td>
+        </tr>
+        <tr class="total-row">
+          <td class="l" colspan="14"><strong>CUMULATIVE CASH POSITION vs. OPERATING RESERVE — MONTH 12 (BASE)</strong></td>
+          <td class="pos"><strong>+¥692,766</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:11px;color:var(--muted);margin-top:6px">Cleaning: ¥5,500/turnover × (occupied nights ÷ 2.3 avg stay). Utilities: ¥12,000/month (water, electricity; ramp during pre-opening). Building management fee: ¥8,000/month (condominium common area fees). Insurance: ¥7,500/month (¥90,000/yr total). Maintenance reserve: ¥12,500/month (¥150,000/yr). Accommodation tax: ¥200/guest/night average.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════ SECTION 4: STRESS CASE -->
+<div class="section" id="s4">
+  <div class="section-hdr"><div class="snm">§04</div><h2>Stress Case P&amp;L &amp; Scenario Comparison</h2></div>
+
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="l">Month</th><th class="l">Tier</th>
+          <th>Stress Occ.</th><th>Stress Nights</th><th>ADR −15%</th>
+          <th>Stress Gross Rev</th><th>Stress Net Cash Flow</th>
+          <th>Base Net Cash Flow</th><th>Variance</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="l">M1–M3</td><td class="l">Pre-open</td><td>—</td><td>—</td><td>—</td><td>0</td><td class="neg">(40,000)</td><td class="neg">(40,000)</td><td>—</td></tr>
+        <tr><td class="l">M4 Jul</td><td class="l">PEAK×ramp</td><td>28%</td><td>8.7</td><td>13,685</td><td>119,060</td><td class="neg">(4,088)</td><td class="warn-t">69,988</td><td class="neg">(74,076)</td></tr>
+        <tr><td class="l">M5 Aug</td><td class="l">PEAK</td><td>55%</td><td>17.1</td><td>13,685</td><td>233,813</td><td class="warn-t">69,285</td><td class="pos">169,332</td><td class="neg">(100,047)</td></tr>
+        <tr><td class="l">M6 Sep</td><td class="l">SOFT</td><td>40%</td><td>12.0</td><td>10,710</td><td>128,520</td><td class="neg">(13,288)</td><td class="pos">67,856</td><td class="neg">(81,144)</td></tr>
+        <tr><td class="l">M7 Oct</td><td class="l">BASE</td><td>46%</td><td>13.8</td><td>11,900</td><td>164,220</td><td class="neg">(1,908)</td><td class="pos">104,300</td><td class="neg">(106,208)</td></tr>
+        <tr><td class="l">M8 Nov</td><td class="l">BASE</td><td>46%</td><td>13.8</td><td>11,900</td><td>164,220</td><td class="neg">(1,908)</td><td class="pos">99,860</td><td class="neg">(101,768)</td></tr>
+        <tr><td class="l">M9 Dec</td><td class="l">PEAK</td><td>55%</td><td>17.1</td><td>13,685</td><td>233,813</td><td class="warn-t">69,285</td><td class="pos">169,332</td><td class="neg">(100,047)</td></tr>
+        <tr><td class="l">M10 Jan</td><td class="l">PEAK</td><td>55%</td><td>17.1</td><td>13,685</td><td>233,813</td><td class="warn-t">69,285</td><td class="pos">169,332</td><td class="neg">(100,047)</td></tr>
+        <tr><td class="l">M11 Feb</td><td class="l">SOFT</td><td>40%</td><td>11.2</td><td>10,710</td><td>119,952</td><td class="neg">(18,256)</td><td class="pos">60,794</td><td class="neg">(79,050)</td></tr>
+        <tr><td class="l">M12 Mar</td><td class="l">HIGH</td><td>52%</td><td>16.1</td><td>13,090</td><td>210,749</td><td class="warn-t">55,881</td><td class="pos">151,846</td><td class="neg">(95,965)</td></tr>
+        <tr class="total-row">
+          <td class="l" colspan="5"><strong>12-Month Total (Stress)</strong></td>
+          <td><strong>1,608,160</strong></td>
+          <td class="neg"><strong>¥294,288 (ops only)</strong></td>
+          <td class="pos"><strong>¥814,640</strong></td>
+          <td class="neg"><strong>−¥520,352</strong></td>
+        </tr>
+        <tr class="total-row">
+          <td class="l" colspan="8"><strong>Stress Month 12 Cumulative Position (vs. ¥450K reserve)</strong></td>
+          <td class="neg"><strong>−¥318,440</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="warn-box">
+    <div class="box-lbl">Stress Case Interpretation</div>
+    The stress case (45% average occupancy, ADR −15%) produces a Month 12 cumulative position of −¥318,440 against the ¥450,000 operating reserve — meaning the reserve is partially depleted but not fully consumed. The property does not produce a capital-destruction event under all-cash structure; it produces a controlled first-year cash loss of approximately ¥318K that is absorbed by the pre-funded reserve. The critical implication: the all-cash structure turns a stress scenario into a manageable working capital event. The same scenario under the leveraged structure would produce −¥1.6M in cumulative cash (stress NOI of ¥294K minus ¥1.28M debt service), requiring a capital injection that would exceed the initial operating reserve.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ SECTION 5: CASH RUNWAY -->
+<div class="section" id="s5">
+  <div class="section-hdr"><div class="snm">§05</div><h2>Startup Cash Runway — Cumulative Position</h2></div>
+
+  <p>Cumulative cash position tracking from Month 0 (acquisition) through Month 12, measured against the ¥450,000 operating reserve. The zero line represents reserve depletion. The base case crosses into surplus (positive cumulative operating cash flow net of reserve) in <strong>Month 8 (November)</strong>. The stress case remains in reserve-drawdown territory through Month 12 but does not exhaust the reserve.</p>
+
+  <div class="runway-chart">
+    <!-- Base case bars — scaled to ±500K range, midpoint at 50% -->
+    <div class="runway-row">
+      <div class="runway-mo">M0 (Acq.)</div>
+      <div class="runway-bar-wrap">
+        <div class="runway-bar" style="width:50%;background:#C8C0A8;"></div>
+        <div class="runway-zero" style="left:50%">▲ reserve baseline</div>
+      </div>
+      <div class="runway-val" style="color:var(--dim)">¥450,000 reserve</div>
+    </div>
+    <div class="runway-row"><div class="runway-mo">M1 Apr</div><div class="runway-bar-wrap"><div class="runway-bar" style="width:46%;background:#C8906060;"></div></div><div class="runway-val neg">¥410,000</div></div>
+    <div class="runway-row"><div class="runway-mo">M2 May</div><div class="runway-bar-wrap"><div class="runway-bar" style="width:42%;background:#C8906060;"></div></div><div class="runway-val neg">¥370,000</div></div>
+    <div class="runway-row"><div class="runway-mo">M3 Jun</div><div class="runway-bar-wrap"><div class="runway-bar" style="width:38%;background:#C8906060;"></div></div><div class="runway-val neg">¥330,000</div></div>
+    <div class="runway-row"><div class="runway-mo">M4 Jul <span style="font-size:9px;color:var(--warn)">(launch)</span></div><div class="runway-bar-wrap"><div class="runway-bar" style="width:45%;background:#C8A06060;"></div></div><div class="runway-val warn-t">¥399,988</div></div>
+    <div class="runway-row">
+      <div class="runway-mo">M5 Aug <span style="font-size:8px;color:var(--blue)">(base)</span></div>
+      <div class="runway-bar-wrap">
+        <div class="runway-bar" style="width:67%;background:rgba(26,96,48,0.5);"></div>
+      </div>
+      <div class="runway-val pos">¥569,320</div>
+    </div>
+    <div class="runway-row"><div class="runway-mo">  + stress</div><div class="runway-bar-wrap"><div class="runway-bar" style="width:43%;background:rgba(128,24,24,0.25);"></div></div><div class="runway-val neg">¥259,285</div></div>
+    <div class="runway-row"><div class="runway-mo">M6 Sep</div><div class="runway-bar-wrap"><div class="runway-bar" style="width:63%;background:rgba(26,96,48,0.5);"></div></div><div class="runway-val pos">¥637,176 ▶</div></div>
+    <div class="runway-row"><div class="runway-mo">  + stress</div><div class="runway-bar-wrap"><div class="runway-bar" style="width:34%;background:rgba(128,24,24,0.25);"></div></div><div class="runway-val neg">¥195,997</div></div>
+    <div class="runway-row"><div class="runway-mo">M7–M8</div><div class="runway-bar-wrap"><div class="runway-bar" style="width:73%;background:rgba(26,96,48,0.6);"></div></div><div class="runway-val pos">+¥841K base</div></div>
+    <div class="runway-row">
+      <div class="runway-mo">M8 <span style="font-size:9px;color:var(--go)">⭑ breakeven</span></div>
+      <div class="runway-bar-wrap">
+        <div class="runway-bar" style="width:62%;background:rgba(26,96,48,0.7);"></div>
+      </div>
+      <div class="runway-val pos">¥449,000+ base surplus</div>
+    </div>
+    <div class="runway-row"><div class="runway-mo">M9–M11</div><div class="runway-bar-wrap"><div class="runway-bar" style="width:86%;background:rgba(26,96,48,0.7);"></div></div><div class="runway-val pos">Growing base surplus</div></div>
+    <div class="runway-row">
+      <div class="runway-mo">M12 Mar <span style="font-size:9px;color:var(--go)">◆ base</span></div>
+      <div class="runway-bar-wrap"><div class="runway-bar" style="width:89%;background:rgba(26,96,48,0.8);"></div></div>
+      <div class="runway-val pos">+¥692,766</div>
+    </div>
+    <div class="runway-row">
+      <div class="runway-mo">M12 Mar <span style="font-size:9px;color:var(--stop)">◆ stress</span></div>
+      <div class="runway-bar-wrap"><div class="runway-bar" style="width:26%;background:rgba(128,24,24,0.4);"></div></div>
+      <div class="runway-val neg">−¥318,440</div>
+    </div>
+  </div>
+
+  <div class="go-box" style="margin-top:12px">
+    <div class="box-lbl">Breakeven Month Determination</div>
+    <strong>Base case:</strong> Cumulative operating cash flow (net of pre-opening fixed costs) turns positive in Month 8 (November), when the accumulated surplus from Aug–Oct operations absorbs the M1–M3 pre-opening cost drag of ¥120,000 and the soft-launch M4 shortfall. <strong>Stress case:</strong> Does not reach cumulative breakeven within the 12-month window under all-cash structure — the Month 12 position of −¥318,440 represents a partial reserve drawdown. The stress breakeven would be reached in approximately Month 16 at stress-case revenue rates, assuming no regulatory event. The ¥450,000 reserve is sized specifically to cover this scenario without requiring a capital top-up.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ SECTION 6: VENDOR SELECTION -->
+<div class="section" id="s6">
+  <div class="section-hdr"><div class="snm">§06</div><h2>Osaka Kanrisha Vendor Selection — 3 Candidates</h2></div>
+
+  <p>The kanrisha must be a licensed residential lodging business manager (住宅宿泊管理業者) registered with the Ministry of Land, Infrastructure, Transport and Tourism. Selection criteria for this property: (1) demonstrated Naniwa/Namba Ward operating presence to satisfy the 10-minute proximity rule, (2) documented complaint-response SLA, (3) English or multilingual capability for the predominantly international guest base (88.8% non-Japanese), (4) fee at or below 16% of gross. The three candidates below represent the credible field as of early 2026.</p>
+
+  <div class="vendor-grid">
+    <div class="vendor-card">
+      <div class="v-name">MasterHost Japan</div>
+      <div class="v-type">Full-Service STR Management · MLIT Licensed</div>
+      <div class="v-fee">From 8% — Full-service up to 16%</div>
+      <div class="v-note">International operator with Osaka presence. Fee structure: entry-level 8% for basic channel management only; full-service (kanrisha compliance + guest communication + cleaning coordination) at 14–16%. Confirmed Namba/Naniwa Ward service radius. English-language owner portal. Key ask at contract: confirm physical office within 10-minute radius of Ebisucho Station. Source: masterhost.ca/airbnb-management-osaka (verified fee range). <strong>Recommended for initial quote.</strong></div>
+    </div>
+    <div class="vendor-card">
+      <div class="v-name">Nippon Tradings International (NTI)</div>
+      <div class="v-type">Minpaku Management · Osaka Licensed</div>
+      <div class="v-fee">15–18% full-service</div>
+      <div class="v-note">Japan-specialist STR management with explicit Osaka compliance expertise. NTI offers end-to-end services: licensing guidance, kanrisha registration, property management, and ongoing compliance monitoring. Described as particularly strong for foreign owners navigating the 10-minute proximity rule and Special Zone transfer requirements. Fee at upper end of Namba market range but includes compliance advisory. Source: nippontradings.com. <strong>Recommended for licence transfer support.</strong></div>
+    </div>
+    <div class="vendor-card">
+      <div class="v-name">INA &amp; Associates</div>
+      <div class="v-type">Osaka Property Management · Naniwa Ward Specialist</div>
+      <div class="v-fee">~15% (STR full-service estimated)</div>
+      <div class="v-note">Community-based Osaka management firm with documented Naniwa Ward operational focus. INA explicitly notes Naniwa-ku requires "strong on-site capabilities" for rapid complaint response — aligning directly with the Naniwa Ward noise enforcement risk. Local-ties advantage for ward-level relationships. Primarily serves investment property owners; bilingual capability confirmed. Source: INA&Associates management report (July 2025). <strong>Recommended for compliance-focused operations.</strong></div>
+    </div>
+  </div>
+
+  <div class="stop-box">
+    <div class="box-lbl">Non-Negotiable Contract Clauses — All Vendors</div>
+    (1) Documented physical office or staff base within 10 minutes of Ebisucho Station — required for Article 11(1)(iii) compliance; obtain written confirmation. (2) 30-minute response SLA for all noise complaints — failure triggers penalty clause. (3) Monthly reporting: occupied nights, ADR achieved, complaint log, any enforcement interactions. (4) 3-year fixed fee term with 30-day termination-for-cause clause. (5) Guest screening protocol: maximum 4 guests for this 35m² unit; no groups flagged as party bookings. (6) Noise monitoring sensor access: vendor must acknowledge and respond to SoundPrint alerts within 30 minutes.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ SECTION 7: CRITICAL PATH -->
+<div class="section" id="s7">
+  <div class="section-hdr"><div class="snm">§07</div><h2>Critical-Path Timeline — Acquisition to First Guest</h2></div>
+
+  <p>The critical path runs approximately 90 days from purchase agreement execution to first guest check-in. The binding constraint is the Special Zone licence transfer process, which requires a city filing, site inspection, and approximately 30–45 days for approval. Fire safety recertification after ownership change is a parallel track. The listing optimisation period (4–6 weeks of being live without reviews before the algorithm begins promoting the listing) means Month 4 launch is the realistic earliest date for approaching full-tier occupancy rates.</p>
+
+  <div style="padding:4px 0">
+    <div class="cp-row">
+      <div class="cp-mo">Week 1–2<br><span style="font-size:9px;color:var(--muted)">Pre-commit</span></div>
+      <div class="cp-task"><strong>LICENCE DILIGENCE</strong> — Verify Special Zone licence exists, is in good standing (no complaints on record), and is legally transferable to new owner. Engage administrative scrivener (行政書士). This is the single binary go/no-go gate — do not exchange purchase contracts until confirmed.</div>
+      <div class="cp-gate gate-crit">CRITICAL PATH GATE</div>
+    </div>
+    <div class="cp-row">
+      <div class="cp-mo">Week 2–4<br><span style="font-size:9px;color:var(--muted)">Pre-commit</span></div>
+      <div class="cp-task"><strong>KANRISHA SHORTLIST</strong> — Request formal quotes from all 3 vendor candidates with specific 10-minute radius confirmation for Ebisucho address. Execute provisional agreement with preferred vendor contingent on acquisition completion.</div>
+      <div class="cp-gate gate-warn">HIGH PRIORITY</div>
+    </div>
+    <div class="cp-row">
+      <div class="cp-mo">Week 3–5<br><span style="font-size:9px;color:var(--muted)">Pre-commit</span></div>
+      <div class="cp-task"><strong>PURCHASE AGREEMENT</strong> — Exchange contracts with 10% deposit. Confirm HOA rules permit STR operation — obtain written board approval if required. Review building management rules for subletting provisions.</div>
+      <div class="cp-gate gate-warn">LEGAL GATE</div>
+    </div>
+    <div class="cp-row">
+      <div class="cp-mo">Week 5–7<br><span style="font-size:9px;color:var(--muted)">Month 1</span></div>
+      <div class="cp-task"><strong>COMPLETION &amp; TITLE TRANSFER</strong> — Full payment, judicial scrivener registration of ownership change, title deed issuance. Notify Osaka City of ownership change for licence transfer initiation simultaneously. Trigger: day of completion.</div>
+      <div class="cp-gate gate-crit">COMPLETION</div>
+    </div>
+    <div class="cp-row">
+      <div class="cp-mo">Week 7–11<br><span style="font-size:9px;color:var(--muted)">Month 2</span></div>
+      <div class="cp-task"><strong>LICENCE TRANSFER PROCESSING</strong> — Osaka City reviews the Special Zone licence transfer application. Standard timeline: 30–45 calendar days. Submit immediately on completion. Request expedited processing if available — the July PEAK season start is the revenue target. Parallel track: fire safety inspection (schedule within first week of ownership).</div>
+      <div class="cp-gate gate-crit">LICENCE GATE</div>
+    </div>
+    <div class="cp-row">
+      <div class="cp-mo">Week 8–10<br><span style="font-size:9px;color:var(--muted)">Month 2</span></div>
+      <div class="cp-task"><strong>FIT-OUT EXECUTION</strong> — Smart lock installation (1 day), furnishing delivery and setup (2–3 days), noise sensor calibration, smoke detector installation, photography session. Target: all physical work complete before licence transfer approval so listing can go live same week as licence confirmed.</div>
+      <div class="cp-gate gate-warn">PARALLEL TRACK</div>
+    </div>
+    <div class="cp-row">
+      <div class="cp-mo">Week 10–12<br><span style="font-size:9px;color:var(--muted)">Month 3</span></div>
+      <div class="cp-task"><strong>KANRISHA CONTRACT EXECUTION</strong> — Sign 3-year contract with selected vendor. Confirm 10-minute proximity in writing. Establish complaint response protocol, SoundPrint alert access, guest screening criteria. Register vendor with Osaka City as official kanrisha for this licence.</div>
+      <div class="cp-gate gate-warn">CONTRACT GATE</div>
+    </div>
+    <div class="cp-row">
+      <div class="cp-mo">Week 12<br><span style="font-size:9px;color:var(--muted)">End Month 3</span></div>
+      <div class="cp-task"><strong>LISTING LAUNCH</strong> — Airbnb listing published immediately on licence transfer confirmation. Booking.com secondary listing activated. PriceLabs dynamic pricing configured with Osaka Naniwa seasonality parameters. Accept first bookings for Month 4 (July) onward. Initial 40% ramp occupancy expected during listing age period.</div>
+      <div class="cp-gate gate-go">TARGET LAUNCH</div>
+    </div>
+    <div class="cp-row">
+      <div class="cp-mo">Month 4<br><span style="font-size:9px;color:var(--muted)">First guests</span></div>
+      <div class="cp-task"><strong>FIRST GUEST CHECK-IN</strong> — July target aligned with PEAK season tier entry. Kanrisha on-call. Noise sensor active. Guest manual in unit. Revenue begins. Target: 5 initial reviews within first 2 weeks — critical for Airbnb algorithm placement before August peak.</div>
+      <div class="cp-gate gate-go">REVENUE START</div>
+    </div>
+    <div class="cp-row">
+      <div class="cp-mo">Month 7<br><span style="font-size:9px;color:var(--muted)">Review gate</span></div>
+      <div class="cp-task"><strong>FIRST QUARTERLY REVIEW</strong> — Verify occupancy vs. base case (target ≥55% for M4–M6). Assess complaint log. Confirm kanrisha SLA compliance. Evaluate ADR vs. seasonal benchmarks. If occupancy &lt;45% for 2 consecutive months: trigger pricing audit and listing content review.</div>
+      <div class="cp-gate gate-warn">OPS REVIEW</div>
+    </div>
+    <div class="cp-row">
+      <div class="cp-mo">Month 12<br><span style="font-size:9px;color:var(--muted)">Annual review</span></div>
+      <div class="cp-task"><strong>ANNUAL PERFORMANCE REVIEW</strong> — Full P&amp;L reconciliation vs. pro-forma. Cabinet Office regulatory ruling status assessment. Refinancing eligibility check (target: if base case achieved, initiate 60% LTV refinancing to extract equity). Year 2 budget preparation.</div>
+      <div class="cp-gate gate-go">ANNUAL GATE</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="fm">12-Month Operational Pro-Forma · Ebisuhigashi 1LDK · Naniwa Ward, Osaka · March 2026<br>Secondary synthesis only · Not financial or legal advice · Validate with local counsel before commitment</div>
+  <div class="fm" style="text-align:right">Sources: AirROI Naniwa Ward · Airbtics Osaka · JNTO 2024–2025 · MasterHost.ca · NTI · INA &amp; Associates<br>Regulatory basis: Osaka STR Regulatory Dossier · Site Feasibility Model · Acquisition Memo (same author)<br>Exchange rate ¥150/USD · Building management fee ¥8,000/month assumed</div>
+</div>
+
+</div>
+</body>
+</html>
