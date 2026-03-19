@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Hive Mind · Consensus Telemetry Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #080C10;
+  --panel:   #0D1520;
+  --panel2:  #111D2E;
+  --border:  #1A2D46;
+  --border2: #243A58;
+  --text:    #A8C0D8;
+  --dim:     #445566;
+  --bright:  #DCE8F4;
+  --teal:    #14B8A6;
+  --tealD:   #0D9488;
+  --gold:    #F59E0B;
+  --red:     #EF4444;
+  --green:   #22C55E;
+  --purple:  #A855F7;
+  --blue:    #3B82F6;
+  --mono: 'Space Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13px;line-height:1.6;min-height:100vh;}
+
+/* noise overlay */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity:0.4;
+}
+
+.page{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:24px 20px;}
+
+/* ── HEADER ── */
+.header{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:24px;
+}
+.header-left h1{
+  font-family:var(--sans);font-size:22px;font-weight:800;
+  letter-spacing:-0.02em;color:var(--bright);
+  display:flex;align-items:center;gap:10px;
+}
+.header-left h1 .dot{
+  width:9px;height:9px;border-radius:50%;background:var(--teal);
+  box-shadow:0 0 8px var(--teal);animation:blink 2s infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+.header-left .sub{font-size:11px;color:var(--dim);letter-spacing:0.12em;margin-top:4px;}
+.header-right{text-align:right;font-size:11px;color:var(--dim);line-height:1.8;}
+.header-right span{color:var(--text);}
+
+/* ── KPI ROW ── */
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px;}
+.kpi{
+  background:var(--panel);border:1px solid var(--border);padding:14px 14px 12px;
+  position:relative;overflow:hidden;
+}
+.kpi::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+}
+.kpi.teal::after{background:var(--teal);}
+.kpi.gold::after{background:var(--gold);}
+.kpi.red::after{background:var(--red);}
+.kpi.green::after{background:var(--green);}
+.kpi.purple::after{background:var(--purple);}
+.kpi.blue::after{background:var(--blue);}
+.kpi-label{font-size:9px;letter-spacing:0.18em;color:var(--dim);margin-bottom:6px;}
+.kpi-val{font-family:var(--sans);font-size:28px;font-weight:800;color:var(--bright);line-height:1;}
+.kpi-sub{font-size:9.5px;color:var(--dim);margin-top:4px;}
+
+/* ── GRID ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-32{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+
+.panel{background:var(--panel);border:1px solid var(--border);padding:18px;}
+.panel-title{
+  font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:0.14em;
+  color:var(--teal);margin-bottom:14px;text-transform:uppercase;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.panel-title .badge{
+  font-family:var(--mono);font-size:9px;font-weight:400;
+  background:var(--panel2);border:1px solid var(--border2);
+  padding:2px 8px;color:var(--dim);letter-spacing:0.1em;
+}
+.chart-wrap{position:relative;}
+
+/* ── STRATEGY PILLS ── */
+.strategy-pills{display:flex;gap:10px;margin-bottom:16px;}
+.spill{
+  flex:1;padding:10px 14px;border:1px solid;text-align:center;
+  font-size:10px;font-weight:700;letter-spacing:0.12em;
+}
+.spill.mv{color:#22C55E;border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.05);}
+.spill.cw{color:#3B82F6;border-color:rgba(59,130,246,0.3);background:rgba(59,130,246,0.05);}
+.spill.es{color:#EF4444;border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.05);}
+.spill-val{font-family:var(--sans);font-size:22px;font-weight:800;display:block;margin-bottom:2px;}
+.spill-pct{font-size:9px;opacity:0.7;}
+
+/* ── EVENT TABLE ── */
+.evt-table{width:100%;border-collapse:collapse;font-size:10.5px;}
+.evt-table th{
+  text-align:left;font-size:9px;letter-spacing:0.14em;color:var(--dim);
+  padding:6px 10px;border-bottom:1px solid var(--border2);font-weight:400;
+}
+.evt-table td{padding:5px 10px;border-bottom:1px solid rgba(26,45,70,0.5);}
+.evt-table tr:hover td{background:var(--panel2);}
+.tag{
+  display:inline-block;padding:1px 7px;font-size:9px;font-weight:700;
+  letter-spacing:0.1em;border:1px solid;
+}
+.tag.mv{color:#22C55E;border-color:rgba(34,197,94,0.4);}
+.tag.cw{color:#3B82F6;border-color:rgba(59,130,246,0.4);}
+.tag.es{color:#EF4444;border-color:rgba(239,68,68,0.4);}
+.tag.res{color:#22C55E;border-color:rgba(34,197,94,0.3);}
+.tag.esc{color:#EF4444;border-color:rgba(239,68,68,0.3);}
+.score-bar{
+  display:inline-block;width:50px;height:4px;background:var(--border);
+  vertical-align:middle;margin-right:6px;position:relative;
+}
+.score-fill{position:absolute;top:0;left:0;height:100%;background:var(--teal);}
+
+/* ── CONF BARS ── */
+.conf-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.conf-bar-label{width:60px;font-size:10px;color:var(--text);}
+.conf-bar-track{flex:1;height:6px;background:var(--border);position:relative;}
+.conf-bar-fill{position:absolute;top:0;left:0;height:100%;}
+.conf-bar-val{width:32px;text-align:right;font-size:10px;color:var(--dim);}
+
+/* ── DISSENT HEATMAP ── */
+.heatmap{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin-top:4px;}
+.hm-cell{
+  aspect-ratio:1;border:1px solid var(--border);position:relative;
+  cursor:default;transition:transform 0.1s;
+}
+.hm-cell:hover{transform:scale(1.15);z-index:10;}
+.hm-label{
+  font-size:8px;color:var(--dim);text-align:center;margin-top:6px;
+  letter-spacing:0.1em;
+}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);}
+
+@media(max-width:1000px){
+  .kpi-row{grid-template-columns:repeat(3,1fr);}
+  .grid-2,.grid-3,.grid-32{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1><span class="dot"></span>Consensus Resolution Telemetry</h1>
+    <div class="sub">HM-CONSENSUS-001  ·  HMSPEC-L1-001  ·  Synthetic Workload Monitor</div>
+  </div>
+  <div class="header-right">
+    Module: <span>HM-CONSENSUS-001</span><br>
+    Spec: <span>l1-envelope-v1.0</span><br>
+    Events: <span id="hdr-total">—</span><br>
+    Run: <span id="hdr-ts">—</span>
+  </div>
+</div>
+
+<!-- KPI ROW -->
+<div class="kpi-row">
+  <div class="kpi teal">
+    <div class="kpi-label">TOTAL EVENTS</div>
+    <div class="kpi-val" id="kpi-total">—</div>
+    <div class="kpi-sub">synthetic workload</div>
+  </div>
+  <div class="kpi gold">
+    <div class="kpi-label">MEAN LATENCY</div>
+    <div class="kpi-val" id="kpi-latency">—</div>
+    <div class="kpi-sub">p95: <span id="kpi-p95">—</span>ms</div>
+  </div>
+  <div class="kpi red">
+    <div class="kpi-label">ESCALATION RATE</div>
+    <div class="kpi-val" id="kpi-esc-rate">—</div>
+    <div class="kpi-sub"><span id="kpi-esc-count">—</span> of <span id="kpi-esc-denom">—</span> events</div>
+  </div>
+  <div class="kpi green">
+    <div class="kpi-label">MEAN SCORE</div>
+    <div class="kpi-val" id="kpi-score">—</div>
+    <div class="kpi-sub">consensus agreement</div>
+  </div>
+  <div class="kpi purple">
+    <div class="kpi-label">MEAN DISSENT</div>
+    <div class="kpi-val" id="kpi-dissent">—</div>
+    <div class="kpi-sub">fields per event</div>
+  </div>
+  <div class="kpi blue">
+    <div class="kpi-label">RESOLVED</div>
+    <div class="kpi-val" id="kpi-resolved">—</div>
+    <div class="kpi-sub">no human review needed</div>
+  </div>
+</div>
+
+<!-- STRATEGY PILLS -->
+<div class="strategy-pills" id="strategy-pills">
+  <div class="spill mv">
+    <span class="spill-val" id="s-mv">—</span>
+    MAJORITY_VOTE<br><span class="spill-pct" id="sp-mv">—</span>
+  </div>
+  <div class="spill cw">
+    <span class="spill-val" id="s-cw">—</span>
+    CONFIDENCE_WEIGHTED<br><span class="spill-pct" id="sp-cw">—</span>
+  </div>
+  <div class="spill es">
+    <span class="spill-val" id="s-es">—</span>
+    ESCALATE<br><span class="spill-pct" id="sp-es">—</span>
+  </div>
+</div>
+
+<!-- ROW 1: Latency + Dissent over time -->
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel-title">Latency Over Time (ms) <span class="badge">PER EVENT</span></div>
+    <div class="chart-wrap" style="height:180px;">
+      <canvas id="latencyChart"></canvas>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Dissent Count Over Time <span class="badge">FIELDS / EVENT</span></div>
+    <div class="chart-wrap" style="height:180px;">
+      <canvas id="dissentChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ROW 2: Strategy dist + Conf histogram + Escalation trend -->
+<div class="grid-3">
+  <div class="panel">
+    <div class="panel-title">Strategy Distribution <span class="badge">60 EVENTS</span></div>
+    <div class="chart-wrap" style="height:200px;">
+      <canvas id="strategyChart"></canvas>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Confidence Distribution</div>
+    <div id="conf-bars" style="margin-top:8px;"></div>
+    <div style="margin-top:16px;">
+      <div class="panel-title" style="margin-bottom:8px;">Constraint Type Mix</div>
+      <div id="type-bars"></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Escalation & Score by Window <span class="badge">6-EVENT WINDOWS</span></div>
+    <div class="chart-wrap" style="height:200px;">
+      <canvas id="windowChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ROW 3: Consensus score series + Dissent heatmap -->
+<div class="grid-32">
+  <div class="panel">
+    <div class="panel-title">Consensus Score Series <span class="badge">0.0 – 1.0</span></div>
+    <div class="chart-wrap" style="height:140px;">
+      <canvas id="scoreChart"></canvas>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Dissent Intensity Heatmap</div>
+    <div class="heatmap" id="heatmap"></div>
+    <div class="hm-label">Each cell = 1 event · darker = more dissent fields</div>
+  </div>
+</div>
+
+<!-- EVENT TABLE -->
+<div class="panel" style="margin-bottom:0;">
+  <div class="panel-title">Resolution Event Log <span class="badge">LAST 30 EVENTS</span></div>
+  <div style="overflow-x:auto;">
+    <table class="evt-table">
+      <thead>
+        <tr>
+          <th>#</th><th>TOPIC</th><th>SCENARIO</th><th>AGENTS</th>
+          <th>STRATEGY</th><th>STATUS</th><th>SCORE</th>
+          <th>DISSENT</th><th>LATENCY</th>
+        </tr>
+      </thead>
+      <tbody id="evt-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const EVENTS = [{"event_id": 0, "timestamp": "2026-03-19T11:08:01.911572+00:00", "topic_id": "TOPIC-000", "scenario": "three_way_split", "agent_count": 3, "valid_agents": 3, "strategy": "MAJORITY_VOTE", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 3, "escalated": false, "latency_ms": 13.42, "canonical_type": "LICENSING_CEILING", "canonical_conf": "LOW", "dissent_fields": ["confidence", "constraint_type"], "escalation_fields": []}, {"event_id": 1, "timestamp": "2026-03-19T11:11:01.911762+00:00", "topic_id": "TOPIC-001", "scenario": "severity_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 3, "escalated": false, "latency_ms": 9.24, "canonical_type": "TECHNOLOGY_BLOCK", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "threshold_value"], "escalation_fields": []}, {"event_id": 2, "timestamp": "2026-03-19T11:14:01.911824+00:00", "topic_id": "TOPIC-002", "scenario": "malformed_agent", "agent_count": 2, "valid_agents": 1, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.0, "dissent_count": 0, "escalated": true, "latency_ms": 111.88, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "HIGH", "dissent_fields": [], "escalation_fields": ["Only 1 valid agent(s) \u2014 below min_agents=2. Escalating."]}, {"event_id": 3, "timestamp": "2026-03-19T11:17:01.911886+00:00", "topic_id": "TOPIC-003", "scenario": "malformed_agent", "agent_count": 2, "valid_agents": 1, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.0, "dissent_count": 0, "escalated": true, "latency_ms": 107.34, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "HIGH", "dissent_fields": [], "escalation_fields": ["Only 1 valid agent(s) \u2014 below min_agents=2. Escalating."]}, {"event_id": 4, "timestamp": "2026-03-19T11:20:01.912004+00:00", "topic_id": "TOPIC-004", "scenario": "equal_weights", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 2, "escalated": false, "latency_ms": 70.84, "canonical_type": "GEOGRAPHIC_EXCLUSION", "canonical_conf": "MEDIUM", "dissent_fields": ["threshold_value"], "escalation_fields": []}, {"event_id": 5, "timestamp": "2026-03-19T11:23:01.912139+00:00", "topic_id": "TOPIC-005", "scenario": "classification_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.5556, "dissent_count": 3, "escalated": true, "latency_ms": 73.37, "canonical_type": "CAPTIVE_VENDOR", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.56."]}, {"event_id": 6, "timestamp": "2026-03-19T11:26:01.912270+00:00", "topic_id": "TOPIC-006", "scenario": "escalation", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.2222, "dissent_count": 4, "escalated": true, "latency_ms": 54.15, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "HIGH", "dissent_fields": ["technology_substitution_permitted", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.22."]}, {"event_id": 7, "timestamp": "2026-03-19T11:29:01.912390+00:00", "topic_id": "TOPIC-007", "scenario": "severity_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 3, "escalated": false, "latency_ms": 50.51, "canonical_type": "CAPTIVE_VENDOR", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "threshold_value"], "escalation_fields": []}, {"event_id": 8, "timestamp": "2026-03-19T11:32:01.912553+00:00", "topic_id": "TOPIC-008", "scenario": "three_way_split", "agent_count": 3, "valid_agents": 3, "strategy": "MAJORITY_VOTE", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 3, "escalated": false, "latency_ms": 16.24, "canonical_type": "TECHNOLOGY_BLOCK", "canonical_conf": "LOW", "dissent_fields": ["confidence", "constraint_type"], "escalation_fields": []}, {"event_id": 9, "timestamp": "2026-03-19T11:35:01.912660+00:00", "topic_id": "TOPIC-009", "scenario": "full_agree", "agent_count": 2, "valid_agents": 2, "strategy": "MAJORITY_VOTE", "status": "RESOLVED", "consensus_score": 1.0, "dissent_count": 0, "escalated": false, "latency_ms": 156.13, "canonical_type": "LICENSING_CEILING", "canonical_conf": "HIGH", "dissent_fields": [], "escalation_fields": []}, {"event_id": 10, "timestamp": "2026-03-19T11:38:01.912756+00:00", "topic_id": "TOPIC-010", "scenario": "full_agree", "agent_count": 2, "valid_agents": 2, "strategy": "MAJORITY_VOTE", "status": "RESOLVED", "consensus_score": 1.0, "dissent_count": 0, "escalated": false, "latency_ms": 172.13, "canonical_type": "GEOGRAPHIC_EXCLUSION", "canonical_conf": "HIGH", "dissent_fields": [], "escalation_fields": []}, {"event_id": 11, "timestamp": "2026-03-19T11:41:01.912882+00:00", "topic_id": "TOPIC-011", "scenario": "escalation", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.2222, "dissent_count": 4, "escalated": true, "latency_ms": 34.39, "canonical_type": "FEE_FLOOR", "canonical_conf": "HIGH", "dissent_fields": ["technology_substitution_permitted", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.22."]}, {"event_id": 12, "timestamp": "2026-03-19T11:44:01.913003+00:00", "topic_id": "TOPIC-012", "scenario": "equal_weights", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 2, "escalated": false, "latency_ms": 151.14, "canonical_type": "FEE_FLOOR", "canonical_conf": "MEDIUM", "dissent_fields": ["threshold_value"], "escalation_fields": []}, {"event_id": 13, "timestamp": "2026-03-19T11:47:01.913135+00:00", "topic_id": "TOPIC-013", "scenario": "severity_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 3, "escalated": false, "latency_ms": 30.18, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "threshold_value"], "escalation_fields": []}, {"event_id": 14, "timestamp": "2026-03-19T11:50:01.913267+00:00", "topic_id": "TOPIC-014", "scenario": "classification_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.5556, "dissent_count": 3, "escalated": true, "latency_ms": 61.72, "canonical_type": "FEE_FLOOR", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.56."]}, {"event_id": 15, "timestamp": "2026-03-19T11:53:01.913413+00:00", "topic_id": "TOPIC-015", "scenario": "escalation", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.2222, "dissent_count": 4, "escalated": true, "latency_ms": 46.0, "canonical_type": "TECHNOLOGY_BLOCK", "canonical_conf": "HIGH", "dissent_fields": ["technology_substitution_permitted", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.22."]}, {"event_id": 16, "timestamp": "2026-03-19T11:56:01.913699+00:00", "topic_id": "TOPIC-016", "scenario": "full_agree", "agent_count": 2, "valid_agents": 2, "strategy": "MAJORITY_VOTE", "status": "RESOLVED", "consensus_score": 1.0, "dissent_count": 1, "escalated": false, "latency_ms": 31.0, "canonical_type": "FEE_FLOOR", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence"], "escalation_fields": []}, {"event_id": 17, "timestamp": "2026-03-19T11:59:01.913883+00:00", "topic_id": "TOPIC-017", "scenario": "escalation", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.2222, "dissent_count": 4, "escalated": true, "latency_ms": 88.47, "canonical_type": "GEOGRAPHIC_EXCLUSION", "canonical_conf": "HIGH", "dissent_fields": ["technology_substitution_permitted", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.22."]}, {"event_id": 18, "timestamp": "2026-03-19T12:02:01.914046+00:00", "topic_id": "TOPIC-018", "scenario": "equal_weights", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 2, "escalated": false, "latency_ms": 85.29, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "MEDIUM", "dissent_fields": ["threshold_value"], "escalation_fields": []}, {"event_id": 19, "timestamp": "2026-03-19T12:05:01.914213+00:00", "topic_id": "TOPIC-019", "scenario": "classification_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.5556, "dissent_count": 3, "escalated": true, "latency_ms": 151.93, "canonical_type": "FEE_FLOOR", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.56."]}, {"event_id": 20, "timestamp": "2026-03-19T12:08:01.914344+00:00", "topic_id": "TOPIC-020", "scenario": "escalation", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.2222, "dissent_count": 4, "escalated": true, "latency_ms": 177.57, "canonical_type": "GEOGRAPHIC_EXCLUSION", "canonical_conf": "HIGH", "dissent_fields": ["technology_substitution_permitted", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.22."]}, {"event_id": 21, "timestamp": "2026-03-19T12:11:01.914455+00:00", "topic_id": "TOPIC-021", "scenario": "severity_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 3, "escalated": false, "latency_ms": 59.12, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "threshold_value"], "escalation_fields": []}, {"event_id": 22, "timestamp": "2026-03-19T12:14:01.914600+00:00", "topic_id": "TOPIC-022", "scenario": "escalation", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.2222, "dissent_count": 4, "escalated": true, "latency_ms": 173.36, "canonical_type": "FEE_FLOOR", "canonical_conf": "HIGH", "dissent_fields": ["technology_substitution_permitted", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.22."]}, {"event_id": 23, "timestamp": "2026-03-19T12:17:01.914703+00:00", "topic_id": "TOPIC-023", "scenario": "full_agree", "agent_count": 2, "valid_agents": 2, "strategy": "MAJORITY_VOTE", "status": "RESOLVED", "consensus_score": 1.0, "dissent_count": 0, "escalated": false, "latency_ms": 114.61, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "HIGH", "dissent_fields": [], "escalation_fields": []}, {"event_id": 24, "timestamp": "2026-03-19T12:20:01.914819+00:00", "topic_id": "TOPIC-024", "scenario": "classification_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.5556, "dissent_count": 3, "escalated": true, "latency_ms": 59.69, "canonical_type": "CAPTIVE_VENDOR", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.56."]}, {"event_id": 25, "timestamp": "2026-03-19T12:23:01.914949+00:00", "topic_id": "TOPIC-025", "scenario": "severity_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 3, "escalated": false, "latency_ms": 168.61, "canonical_type": "TECHNOLOGY_BLOCK", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "threshold_value"], "escalation_fields": []}, {"event_id": 26, "timestamp": "2026-03-19T12:26:01.915076+00:00", "topic_id": "TOPIC-026", "scenario": "escalation", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.2222, "dissent_count": 4, "escalated": true, "latency_ms": 9.45, "canonical_type": "CAPTIVE_VENDOR", "canonical_conf": "HIGH", "dissent_fields": ["technology_substitution_permitted", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.22."]}, {"event_id": 27, "timestamp": "2026-03-19T12:29:01.915132+00:00", "topic_id": "TOPIC-027", "scenario": "malformed_agent", "agent_count": 2, "valid_agents": 1, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.0, "dissent_count": 0, "escalated": true, "latency_ms": 112.06, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "HIGH", "dissent_fields": [], "escalation_fields": ["Only 1 valid agent(s) \u2014 below min_agents=2. Escalating."]}, {"event_id": 28, "timestamp": "2026-03-19T12:32:01.915234+00:00", "topic_id": "TOPIC-028", "scenario": "equal_weights", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 2, "escalated": false, "latency_ms": 55.67, "canonical_type": "CAPTIVE_VENDOR", "canonical_conf": "MEDIUM", "dissent_fields": ["threshold_value"], "escalation_fields": []}, {"event_id": 29, "timestamp": "2026-03-19T12:35:01.915353+00:00", "topic_id": "TOPIC-029", "scenario": "full_agree", "agent_count": 2, "valid_agents": 2, "strategy": "MAJORITY_VOTE", "status": "RESOLVED", "consensus_score": 1.0, "dissent_count": 1, "escalated": false, "latency_ms": 159.98, "canonical_type": "FEE_FLOOR", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence"], "escalation_fields": []}, {"event_id": 30, "timestamp": "2026-03-19T12:38:01.915470+00:00", "topic_id": "TOPIC-030", "scenario": "escalation", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.2222, "dissent_count": 4, "escalated": true, "latency_ms": 156.13, "canonical_type": "LICENSING_CEILING", "canonical_conf": "HIGH", "dissent_fields": ["technology_substitution_permitted", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.22."]}, {"event_id": 31, "timestamp": "2026-03-19T12:41:01.915614+00:00", "topic_id": "TOPIC-031", "scenario": "escalation", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.2222, "dissent_count": 4, "escalated": true, "latency_ms": 168.04, "canonical_type": "TECHNOLOGY_BLOCK", "canonical_conf": "HIGH", "dissent_fields": ["technology_substitution_permitted", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.22."]}, {"event_id": 32, "timestamp": "2026-03-19T12:44:01.915666+00:00", "topic_id": "TOPIC-032", "scenario": "malformed_agent", "agent_count": 2, "valid_agents": 1, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.0, "dissent_count": 0, "escalated": true, "latency_ms": 156.65, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "HIGH", "dissent_fields": [], "escalation_fields": ["Only 1 valid agent(s) \u2014 below min_agents=2. Escalating."]}, {"event_id": 33, "timestamp": "2026-03-19T12:47:01.915709+00:00", "topic_id": "TOPIC-033", "scenario": "malformed_agent", "agent_count": 2, "valid_agents": 1, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.0, "dissent_count": 0, "escalated": true, "latency_ms": 60.52, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "HIGH", "dissent_fields": [], "escalation_fields": ["Only 1 valid agent(s) \u2014 below min_agents=2. Escalating."]}, {"event_id": 34, "timestamp": "2026-03-19T12:50:01.915750+00:00", "topic_id": "TOPIC-034", "scenario": "malformed_agent", "agent_count": 2, "valid_agents": 1, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.0, "dissent_count": 0, "escalated": true, "latency_ms": 76.77, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "HIGH", "dissent_fields": [], "escalation_fields": ["Only 1 valid agent(s) \u2014 below min_agents=2. Escalating."]}, {"event_id": 35, "timestamp": "2026-03-19T12:53:01.915867+00:00", "topic_id": "TOPIC-035", "scenario": "escalation", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.2222, "dissent_count": 4, "escalated": true, "latency_ms": 82.84, "canonical_type": "TECHNOLOGY_BLOCK", "canonical_conf": "HIGH", "dissent_fields": ["technology_substitution_permitted", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.22."]}, {"event_id": 36, "timestamp": "2026-03-19T12:56:01.915980+00:00", "topic_id": "TOPIC-036", "scenario": "equal_weights", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 2, "escalated": false, "latency_ms": 167.29, "canonical_type": "GEOGRAPHIC_EXCLUSION", "canonical_conf": "MEDIUM", "dissent_fields": ["threshold_value"], "escalation_fields": []}, {"event_id": 37, "timestamp": "2026-03-19T12:59:01.916112+00:00", "topic_id": "TOPIC-037", "scenario": "three_way_split", "agent_count": 3, "valid_agents": 3, "strategy": "MAJORITY_VOTE", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 3, "escalated": false, "latency_ms": 153.97, "canonical_type": "GEOGRAPHIC_EXCLUSION", "canonical_conf": "LOW", "dissent_fields": ["confidence", "constraint_type"], "escalation_fields": []}, {"event_id": 38, "timestamp": "2026-03-19T13:02:01.916215+00:00", "topic_id": "TOPIC-038", "scenario": "equal_weights", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 2, "escalated": false, "latency_ms": 124.58, "canonical_type": "GEOGRAPHIC_EXCLUSION", "canonical_conf": "MEDIUM", "dissent_fields": ["threshold_value"], "escalation_fields": []}, {"event_id": 39, "timestamp": "2026-03-19T13:05:01.916338+00:00", "topic_id": "TOPIC-039", "scenario": "escalation", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.2222, "dissent_count": 4, "escalated": true, "latency_ms": 88.08, "canonical_type": "GEOGRAPHIC_EXCLUSION", "canonical_conf": "HIGH", "dissent_fields": ["technology_substitution_permitted", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.22."]}, {"event_id": 40, "timestamp": "2026-03-19T13:08:01.916456+00:00", "topic_id": "TOPIC-040", "scenario": "classification_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.5556, "dissent_count": 3, "escalated": true, "latency_ms": 65.74, "canonical_type": "GEOGRAPHIC_EXCLUSION", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.56."]}, {"event_id": 41, "timestamp": "2026-03-19T13:11:01.916534+00:00", "topic_id": "TOPIC-041", "scenario": "malformed_agent", "agent_count": 2, "valid_agents": 1, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.0, "dissent_count": 0, "escalated": true, "latency_ms": 20.57, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "HIGH", "dissent_fields": [], "escalation_fields": ["Only 1 valid agent(s) \u2014 below min_agents=2. Escalating."]}, {"event_id": 42, "timestamp": "2026-03-19T13:14:01.916648+00:00", "topic_id": "TOPIC-042", "scenario": "classification_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.5556, "dissent_count": 3, "escalated": true, "latency_ms": 140.54, "canonical_type": "TECHNOLOGY_BLOCK", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.56."]}, {"event_id": 43, "timestamp": "2026-03-19T13:17:01.916749+00:00", "topic_id": "TOPIC-043", "scenario": "full_agree", "agent_count": 2, "valid_agents": 2, "strategy": "MAJORITY_VOTE", "status": "RESOLVED", "consensus_score": 1.0, "dissent_count": 0, "escalated": false, "latency_ms": 145.92, "canonical_type": "FEE_FLOOR", "canonical_conf": "HIGH", "dissent_fields": [], "escalation_fields": []}, {"event_id": 44, "timestamp": "2026-03-19T13:20:01.916869+00:00", "topic_id": "TOPIC-044", "scenario": "three_way_split", "agent_count": 3, "valid_agents": 3, "strategy": "MAJORITY_VOTE", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 3, "escalated": false, "latency_ms": 102.33, "canonical_type": "LICENSING_CEILING", "canonical_conf": "LOW", "dissent_fields": ["confidence", "constraint_type"], "escalation_fields": []}, {"event_id": 45, "timestamp": "2026-03-19T13:23:01.916987+00:00", "topic_id": "TOPIC-045", "scenario": "escalation", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.2222, "dissent_count": 4, "escalated": true, "latency_ms": 55.32, "canonical_type": "TECHNOLOGY_BLOCK", "canonical_conf": "HIGH", "dissent_fields": ["technology_substitution_permitted", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.22."]}, {"event_id": 46, "timestamp": "2026-03-19T13:26:01.917101+00:00", "topic_id": "TOPIC-046", "scenario": "full_agree", "agent_count": 2, "valid_agents": 2, "strategy": "MAJORITY_VOTE", "status": "RESOLVED", "consensus_score": 1.0, "dissent_count": 1, "escalated": false, "latency_ms": 19.13, "canonical_type": "FEE_FLOOR", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence"], "escalation_fields": []}, {"event_id": 47, "timestamp": "2026-03-19T13:29:01.917210+00:00", "topic_id": "TOPIC-047", "scenario": "classification_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.5556, "dissent_count": 3, "escalated": true, "latency_ms": 139.77, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.56."]}, {"event_id": 48, "timestamp": "2026-03-19T13:32:01.917317+00:00", "topic_id": "TOPIC-048", "scenario": "classification_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.5556, "dissent_count": 3, "escalated": true, "latency_ms": 111.84, "canonical_type": "GEOGRAPHIC_EXCLUSION", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.56."]}, {"event_id": 49, "timestamp": "2026-03-19T13:35:01.917435+00:00", "topic_id": "TOPIC-049", "scenario": "severity_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 3, "escalated": false, "latency_ms": 30.05, "canonical_type": "TECHNOLOGY_BLOCK", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "threshold_value"], "escalation_fields": []}, {"event_id": 50, "timestamp": "2026-03-19T13:38:01.917582+00:00", "topic_id": "TOPIC-050", "scenario": "three_way_split", "agent_count": 3, "valid_agents": 3, "strategy": "MAJORITY_VOTE", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 3, "escalated": false, "latency_ms": 73.33, "canonical_type": "FEE_FLOOR", "canonical_conf": "LOW", "dissent_fields": ["confidence", "constraint_type"], "escalation_fields": []}, {"event_id": 51, "timestamp": "2026-03-19T13:41:01.917688+00:00", "topic_id": "TOPIC-051", "scenario": "severity_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 3, "escalated": false, "latency_ms": 100.86, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "threshold_value"], "escalation_fields": []}, {"event_id": 52, "timestamp": "2026-03-19T13:44:01.917803+00:00", "topic_id": "TOPIC-052", "scenario": "escalation", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.2222, "dissent_count": 4, "escalated": true, "latency_ms": 34.3, "canonical_type": "FEE_FLOOR", "canonical_conf": "HIGH", "dissent_fields": ["technology_substitution_permitted", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.22."]}, {"event_id": 53, "timestamp": "2026-03-19T13:47:01.917912+00:00", "topic_id": "TOPIC-053", "scenario": "severity_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 3, "escalated": false, "latency_ms": 27.78, "canonical_type": "TECHNOLOGY_BLOCK", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "threshold_value"], "escalation_fields": []}, {"event_id": 54, "timestamp": "2026-03-19T13:50:01.917959+00:00", "topic_id": "TOPIC-054", "scenario": "malformed_agent", "agent_count": 2, "valid_agents": 1, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.0, "dissent_count": 0, "escalated": true, "latency_ms": 21.1, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "HIGH", "dissent_fields": [], "escalation_fields": ["Only 1 valid agent(s) \u2014 below min_agents=2. Escalating."]}, {"event_id": 55, "timestamp": "2026-03-19T13:53:01.918071+00:00", "topic_id": "TOPIC-055", "scenario": "equal_weights", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 2, "escalated": false, "latency_ms": 67.81, "canonical_type": "GEOGRAPHIC_EXCLUSION", "canonical_conf": "MEDIUM", "dissent_fields": ["threshold_value"], "escalation_fields": []}, {"event_id": 56, "timestamp": "2026-03-19T13:56:01.918186+00:00", "topic_id": "TOPIC-056", "scenario": "classification_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.5556, "dissent_count": 3, "escalated": true, "latency_ms": 150.62, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "constraint_type"], "escalation_fields": ["Resolved 2/2 valid agents. Strategy: ESCALATE. Score: 0.56."]}, {"event_id": 57, "timestamp": "2026-03-19T13:59:01.918293+00:00", "topic_id": "TOPIC-057", "scenario": "equal_weights", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 2, "escalated": false, "latency_ms": 133.82, "canonical_type": "LICENSING_CEILING", "canonical_conf": "MEDIUM", "dissent_fields": ["threshold_value"], "escalation_fields": []}, {"event_id": 58, "timestamp": "2026-03-19T14:02:01.918395+00:00", "topic_id": "TOPIC-058", "scenario": "severity_conflict", "agent_count": 2, "valid_agents": 2, "strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "consensus_score": 0.8333, "dissent_count": 3, "escalated": false, "latency_ms": 13.02, "canonical_type": "CAPTIVE_VENDOR", "canonical_conf": "MEDIUM", "dissent_fields": ["confidence", "threshold_value"], "escalation_fields": []}, {"event_id": 59, "timestamp": "2026-03-19T14:05:01.918442+00:00", "topic_id": "TOPIC-059", "scenario": "malformed_agent", "agent_count": 2, "valid_agents": 1, "strategy": "ESCALATE", "status": "REQUIRES_HUMAN_REVIEW", "consensus_score": 0.0, "dissent_count": 0, "escalated": true, "latency_ms": 171.09, "canonical_type": "PHYSICAL_PRESENCE", "canonical_conf": "HIGH", "dissent_fields": [], "escalation_fields": ["Only 1 valid agent(s) \u2014 below min_agents=2. Escalating."]}];
+const DATA   = {"total": 60, "escalated": 31, "mean_latency": 91.1, "p95_latency": 172.1, "mean_score": 0.554, "mean_dissent": 2.33, "strategies": {"MAJORITY_VOTE": 12, "CONFIDENCE_WEIGHTED": 17, "ESCALATE": 31}, "statuses": {"RESOLVED": 29, "REQUIRES_HUMAN_REVIEW": 31}, "confidence_dist": {"LOW": 5, "MEDIUM": 29, "HIGH": 26}, "type_dist": {"LICENSING_CEILING": 5, "TECHNOLOGY_BLOCK": 10, "PHYSICAL_PRESENCE": 17, "GEOGRAPHIC_EXCLUSION": 11, "CAPTIVE_VENDOR": 6, "FEE_FLOOR": 11}, "scenario_dist": {"three_way_split": 5, "severity_conflict": 9, "malformed_agent": 9, "equal_weights": 8, "classification_conflict": 9, "escalation": 13, "full_agree": 7}, "windows": [{"window": 0, "escalation_rate": 0.5, "mean_score": 0.50925, "mean_latency": 64.34833333333333, "mean_dissent": 1.8333333333333333}, {"window": 1, "escalation_rate": 0.3333333333333333, "mean_score": 0.6851666666666667, "mean_latency": 80.59166666666667, "mean_dissent": 2.3333333333333335}, {"window": 2, "escalation_rate": 0.5, "mean_score": 0.6111, "mean_latency": 68.085, "mean_dissent": 2.8333333333333335}, {"window": 3, "escalation_rate": 0.5, "mean_score": 0.6111, "mean_latency": 126.98, "mean_dissent": 2.6666666666666665}, {"window": 4, "escalation_rate": 0.5, "mean_score": 0.5740666666666667, "mean_latency": 94.24333333333334, "mean_dissent": 2.1666666666666665}, {"window": 5, "escalation_rate": 1.0, "mean_score": 0.1111, "mean_latency": 116.825, "mean_dissent": 2}, {"window": 6, "escalation_rate": 0.5, "mean_score": 0.5462833333333333, "mean_latency": 103.37166666666667, "mean_dissent": 2.3333333333333335}, {"window": 7, "escalation_rate": 0.5, "mean_score": 0.69445, "mean_latency": 100.50166666666667, "mean_dissent": 2.3333333333333335}, {"window": 8, "escalation_rate": 0.3333333333333333, "mean_score": 0.6851666666666667, "mean_latency": 63.026666666666664, "mean_dissent": 3.1666666666666665}, {"window": 9, "escalation_rate": 0.5, "mean_score": 0.50925, "mean_latency": 92.91, "mean_dissent": 1.6666666666666667}], "latency_series": [13.4, 9.2, 111.9, 107.3, 70.8, 73.4, 54.1, 50.5, 16.2, 156.1, 172.1, 34.4, 151.1, 30.2, 61.7, 46.0, 31.0, 88.5, 85.3, 151.9, 177.6, 59.1, 173.4, 114.6, 59.7, 168.6, 9.4, 112.1, 55.7, 160.0, 156.1, 168.0, 156.7, 60.5, 76.8, 82.8, 167.3, 154.0, 124.6, 88.1, 65.7, 20.6, 140.5, 145.9, 102.3, 55.3, 19.1, 139.8, 111.8, 30.1, 73.3, 100.9, 34.3, 27.8, 21.1, 67.8, 150.6, 133.8, 13.0, 171.1], "score_series": [0.8333, 0.8333, 0.0, 0.0, 0.8333, 0.5556, 0.2222, 0.8333, 0.8333, 1.0, 1.0, 0.2222, 0.8333, 0.8333, 0.5556, 0.2222, 1.0, 0.2222, 0.8333, 0.5556, 0.2222, 0.8333, 0.2222, 1.0, 0.5556, 0.8333, 0.2222, 0.0, 0.8333, 1.0, 0.2222, 0.2222, 0.0, 0.0, 0.0, 0.2222, 0.8333, 0.8333, 0.8333, 0.2222, 0.5556, 0.0, 0.5556, 1.0, 0.8333, 0.2222, 1.0, 0.5556, 0.5556, 0.8333, 0.8333, 0.8333, 0.2222, 0.8333, 0.0, 0.8333, 0.5556, 0.8333, 0.8333, 0.0], "dissent_series": [3, 3, 0, 0, 2, 3, 4, 3, 3, 0, 0, 4, 2, 3, 3, 4, 1, 4, 2, 3, 4, 3, 4, 0, 3, 3, 4, 0, 2, 1, 4, 4, 0, 0, 0, 4, 2, 3, 2, 4, 3, 0, 3, 0, 3, 4, 1, 3, 3, 3, 3, 3, 4, 3, 0, 2, 3, 2, 3, 0], "escalation_series": [0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1], "timestamps": ["2026-03-19 11:08", "2026-03-19 11:11", "2026-03-19 11:14", "2026-03-19 11:17", "2026-03-19 11:20", "2026-03-19 11:23", "2026-03-19 11:26", "2026-03-19 11:29", "2026-03-19 11:32", "2026-03-19 11:35", "2026-03-19 11:38", "2026-03-19 11:41", "2026-03-19 11:44", "2026-03-19 11:47", "2026-03-19 11:50", "2026-03-19 11:53", "2026-03-19 11:56", "2026-03-19 11:59", "2026-03-19 12:02", "2026-03-19 12:05", "2026-03-19 12:08", "2026-03-19 12:11", "2026-03-19 12:14", "2026-03-19 12:17", "2026-03-19 12:20", "2026-03-19 12:23", "2026-03-19 12:26", "2026-03-19 12:29", "2026-03-19 12:32", "2026-03-19 12:35", "2026-03-19 12:38", "2026-03-19 12:41", "2026-03-19 12:44", "2026-03-19 12:47", "2026-03-19 12:50", "2026-03-19 12:53", "2026-03-19 12:56", "2026-03-19 12:59", "2026-03-19 13:02", "2026-03-19 13:05", "2026-03-19 13:08", "2026-03-19 13:11", "2026-03-19 13:14", "2026-03-19 13:17", "2026-03-19 13:20", "2026-03-19 13:23", "2026-03-19 13:26", "2026-03-19 13:29", "2026-03-19 13:32", "2026-03-19 13:35", "2026-03-19 13:38", "2026-03-19 13:41", "2026-03-19 13:44", "2026-03-19 13:47", "2026-03-19 13:50", "2026-03-19 13:53", "2026-03-19 13:56", "2026-03-19 13:59", "2026-03-19 14:02", "2026-03-19 14:05"]};
+
+// ─── CHART DEFAULTS ───────────────────────────────────────────────────────────
+const CD = {
+  responsive:true, maintainAspectRatio:false,
+  animation:{duration:600},
+  plugins:{legend:{display:false},tooltip:{
+    backgroundColor:'#0D1520',borderColor:'#1A2D46',borderWidth:1,
+    titleFont:{family:'Space Mono',size:10},bodyFont:{family:'Space Mono',size:10},
+    titleColor:'#DCE8F4',bodyColor:'#A8C0D8',padding:8,
+  }},
+  scales:{
+    x:{ticks:{color:'#445566',font:{family:'Space Mono',size:9},maxTicksLimit:10},
+       grid:{color:'rgba(26,45,70,0.5)'}},
+    y:{ticks:{color:'#445566',font:{family:'Space Mono',size:9}},
+       grid:{color:'rgba(26,45,70,0.5)'}},
+  },
+};
+
+// ─── POPULATE KPIs ────────────────────────────────────────────────────────────
+document.getElementById('hdr-total').textContent   = DATA.total;
+document.getElementById('hdr-ts').textContent      = new Date().toISOString().slice(0,16).replace('T',' ')+' UTC';
+document.getElementById('kpi-total').textContent   = DATA.total;
+document.getElementById('kpi-latency').textContent = DATA.mean_latency+'ms';
+document.getElementById('kpi-p95').textContent     = DATA.p95_latency;
+const escRate = (DATA.escalated/DATA.total*100).toFixed(0)+'%';
+document.getElementById('kpi-esc-rate').textContent  = escRate;
+document.getElementById('kpi-esc-count').textContent = DATA.escalated;
+document.getElementById('kpi-esc-denom').textContent = DATA.total;
+document.getElementById('kpi-score').textContent    = DATA.mean_score.toFixed(3);
+document.getElementById('kpi-dissent').textContent  = DATA.mean_dissent.toFixed(2);
+document.getElementById('kpi-resolved').textContent = (DATA.statuses.RESOLVED||0);
+
+// Strategy pills
+const mv = DATA.strategies.MAJORITY_VOTE||0;
+const cw = DATA.strategies.CONFIDENCE_WEIGHTED||0;
+const es = DATA.strategies.ESCALATE||0;
+const tot = DATA.total;
+document.getElementById('s-mv').textContent  = mv;
+document.getElementById('sp-mv').textContent = (mv/tot*100).toFixed(0)+'% of events';
+document.getElementById('s-cw').textContent  = cw;
+document.getElementById('sp-cw').textContent = (cw/tot*100).toFixed(0)+'% of events';
+document.getElementById('s-es').textContent  = es;
+document.getElementById('sp-es').textContent = (es/tot*100).toFixed(0)+'% of events';
+
+// ─── LATENCY CHART ────────────────────────────────────────────────────────────
+(function(){
+  const ctx = document.getElementById('latencyChart').getContext('2d');
+  new Chart(ctx, {type:'line', data:{
+    labels: DATA.timestamps,
+    datasets:[{
+      label:'Latency ms', data:DATA.latency_series,
+      borderColor:'#F59E0B', backgroundColor:'rgba(245,158,11,0.08)',
+      borderWidth:1.5, pointRadius:2, pointHoverRadius:4, fill:true, tension:0.3,
+    },{
+      label:'P95', data:Array(DATA.latency_series.length).fill(DATA.p95_latency),
+      borderColor:'rgba(239,68,68,0.5)', borderWidth:1, borderDash:[4,4],
+      pointRadius:0, fill:false,
+    }]
+  }, options:{...CD, scales:{...CD.scales,
+    y:{...CD.scales.y, ticks:{...CD.scales.y.ticks, callback:v=>v+'ms'}},
+  }}});
+})();
+
+// ─── DISSENT CHART ────────────────────────────────────────────────────────────
+(function(){
+  const ctx = document.getElementById('dissentChart').getContext('2d');
+  const colors = DATA.dissent_series.map(v => v > 3 ? '#EF4444' : v > 1 ? '#F59E0B' : '#14B8A6');
+  new Chart(ctx, {type:'bar', data:{
+    labels: DATA.timestamps,
+    datasets:[{
+      label:'Dissent fields', data:DATA.dissent_series,
+      backgroundColor:colors, borderWidth:0,
+    }]
+  }, options:{...CD, plugins:{...CD.plugins}}});
+})();
+
+// ─── STRATEGY DOUGHNUT ────────────────────────────────────────────────────────
+(function(){
+  const ctx = document.getElementById('strategyChart').getContext('2d');
+  new Chart(ctx, {type:'doughnut', data:{
+    labels:['MAJORITY_VOTE','CONFIDENCE_WEIGHTED','ESCALATE'],
+    datasets:[{
+      data:[mv, cw, es],
+      backgroundColor:['rgba(34,197,94,0.7)','rgba(59,130,246,0.7)','rgba(239,68,68,0.7)'],
+      borderColor:['#22C55E','#3B82F6','#EF4444'],
+      borderWidth:1,
+    }]
+  }, options:{
+    responsive:true, maintainAspectRatio:false,
+    animation:{duration:600},
+    cutout:'65%',
+    plugins:{
+      legend:{display:true,position:'bottom',labels:{
+        color:'#A8C0D8',font:{family:'Space Mono',size:9},boxWidth:12,padding:12,
+      }},
+      tooltip:{
+        backgroundColor:'#0D1520',borderColor:'#1A2D46',borderWidth:1,
+        titleFont:{family:'Space Mono',size:10},bodyFont:{family:'Space Mono',size:10},
+        titleColor:'#DCE8F4',bodyColor:'#A8C0D8',padding:8,
+      }
+    }
+  }});
+})();
+
+// ─── CONFIDENCE BARS ──────────────────────────────────────────────────────────
+(function(){
+  const cd = DATA.confidence_dist;
+  const typeD = DATA.type_dist;
+  const totalC = Object.values(cd).reduce((a,b)=>a+b,0);
+  const totalT = Object.values(typeD).reduce((a,b)=>a+b,0);
+  const confColors = {HIGH:'#22C55E',MEDIUM:'#F59E0B',LOW:'#EF4444'};
+  const typeColors = ['#14B8A6','#3B82F6','#A855F7','#F59E0B','#22C55E','#EF4444'];
+
+  let confHTML = '';
+  for (const [k,v] of Object.entries(cd)) {
+    const pct = (v/totalC*100).toFixed(0);
+    confHTML += `<div class="conf-bar-row">
+      <div class="conf-bar-label">${k}</div>
+      <div class="conf-bar-track">
+        <div class="conf-bar-fill" style="width:${pct}%;background:${confColors[k]||'#14B8A6'};"></div>
+      </div>
+      <div class="conf-bar-val">${v}</div>
+    </div>`;
+  }
+  document.getElementById('conf-bars').innerHTML = confHTML;
+
+  let typeHTML = '';
+  let i = 0;
+  for (const [k,v] of Object.entries(typeD).sort((a,b)=>b[1]-a[1])) {
+    const pct = (v/totalT*100).toFixed(0);
+    typeHTML += `<div class="conf-bar-row">
+      <div class="conf-bar-label" style="width:80px;font-size:9px;">${k.slice(0,12)}</div>
+      <div class="conf-bar-track">
+        <div class="conf-bar-fill" style="width:${pct}%;background:${typeColors[i++%typeColors.length]};opacity:0.7;"></div>
+      </div>
+      <div class="conf-bar-val">${v}</div>
+    </div>`;
+  }
+  document.getElementById('type-bars').innerHTML = typeHTML;
+})();
+
+// ─── WINDOW CHART (escalation rate + mean score) ──────────────────────────────
+(function(){
+  const ctx = document.getElementById('windowChart').getContext('2d');
+  const wins = DATA.windows;
+  const labels = wins.map(w=>`W${w.window+1}`);
+  new Chart(ctx, {type:'bar', data:{
+    labels,
+    datasets:[{
+      label:'Escalation rate',
+      data: wins.map(w=>+(w.escalation_rate*100).toFixed(0)),
+      backgroundColor:'rgba(239,68,68,0.5)',
+      borderColor:'#EF4444', borderWidth:1, yAxisID:'y',
+    },{
+      label:'Mean score',
+      data: wins.map(w=>+(w.mean_score*100).toFixed(1)),
+      type:'line',
+      borderColor:'#14B8A6', backgroundColor:'rgba(20,184,166,0.1)',
+      borderWidth:2, pointRadius:3, fill:false, tension:0.3, yAxisID:'y',
+    }]
+  }, options:{...CD,
+    plugins:{...CD.plugins,
+      legend:{display:true,position:'bottom',labels:{color:'#A8C0D8',font:{family:'Space Mono',size:9},boxWidth:10,padding:8}}
+    },
+    scales:{
+      x:{ticks:{color:'#445566',font:{family:'Space Mono',size:9}},grid:{color:'rgba(26,45,70,0.5)'}},
+      y:{ticks:{color:'#445566',font:{family:'Space Mono',size:9},callback:v=>v+'%'},
+         grid:{color:'rgba(26,45,70,0.5)'},min:0,max:100},
+    }
+  }});
+})();
+
+// ─── SCORE CHART ─────────────────────────────────────────────────────────────
+(function(){
+  const ctx = document.getElementById('scoreChart').getContext('2d');
+  const colors = DATA.score_series.map(v =>
+    v >= 0.8 ? 'rgba(34,197,94,0.7)' : v >= 0.5 ? 'rgba(20,184,166,0.7)' : 'rgba(239,68,68,0.7)'
+  );
+  new Chart(ctx, {type:'bar', data:{
+    labels: DATA.timestamps,
+    datasets:[{
+      label:'Consensus score', data:DATA.score_series,
+      backgroundColor:colors, borderWidth:0,
+    },{
+      label:'Mean', data:Array(DATA.score_series.length).fill(DATA.mean_score),
+      type:'line', borderColor:'rgba(245,158,11,0.6)', borderWidth:1.5,
+      borderDash:[5,4], pointRadius:0, fill:false,
+    }]
+  }, options:{...CD, scales:{...CD.scales,
+    y:{...CD.scales.y, min:0, max:1.05,
+       ticks:{...CD.scales.y.ticks, callback:v=>v.toFixed(1)}},
+  }}});
+})();
+
+// ─── HEATMAP ─────────────────────────────────────────────────────────────────
+(function(){
+  const container = document.getElementById('heatmap');
+  const max = Math.max(...DATA.dissent_series);
+  EVENTS.forEach((ev,i) => {
+    const cell = document.createElement('div');
+    cell.className = 'hm-cell';
+    const intensity = ev.dissent_count / max;
+    const r = ev.escalated ? 239 : 20;
+    const g = ev.escalated ? 68  : 184;
+    const b = ev.escalated ? 68  : 166;
+    cell.style.background = `rgba(${r},${g},${b},${0.08 + intensity*0.65})`;
+    cell.title = `${ev.topic_id} | ${ev.scenario} | dissent:${ev.dissent_count} | ${ev.strategy}`;
+    container.appendChild(cell);
+  });
+})();
+
+// ─── EVENT TABLE ─────────────────────────────────────────────────────────────
+(function(){
+  const tbody = document.getElementById('evt-tbody');
+  const tagClass = {MAJORITY_VOTE:'mv',CONFIDENCE_WEIGHTED:'cw',ESCALATE:'es'};
+  const stClass  = {RESOLVED:'res',REQUIRES_HUMAN_REVIEW:'esc'};
+  const stLabel  = {RESOLVED:'RESOLVED',REQUIRES_HUMAN_REVIEW:'ESCALATE'};
+
+  EVENTS.slice(-30).reverse().forEach(ev => {
+    const scorePct = (ev.consensus_score * 50).toFixed(0);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="color:var(--dim)">${ev.event_id}</td>
+      <td style="color:var(--bright);font-size:10px;">${ev.topic_id}</td>
+      <td style="color:var(--dim);font-size:10px;">${ev.scenario}</td>
+      <td style="color:var(--text)">${ev.valid_agents}/${ev.agent_count}</td>
+      <td><span class="tag ${tagClass[ev.strategy]||''}">${ev.strategy.replace('_',' ').replace('CONFIDENCE ','CW ')}</span></td>
+      <td><span class="tag ${stClass[ev.status]||''}">${stLabel[ev.status]||ev.status}</span></td>
+      <td>
+        <span class="score-bar"><span class="score-fill" style="width:${scorePct}px;"></span></span>
+        ${ev.consensus_score.toFixed(3)}
+      </td>
+      <td style="color:${ev.dissent_count>3?'#EF4444':ev.dissent_count>1?'#F59E0B':'#22C55E'}">${ev.dissent_count}</td>
+      <td style="color:var(--dim)">${ev.latency_ms}ms</td>
+    `;
+    tbody.appendChild(tr);
+  });
+})();
+</script>
+</body>
+</html>
