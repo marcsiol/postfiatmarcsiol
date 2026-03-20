@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Hive Mind — End-to-End Pipeline Demo</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060A0F; --surface:#0C1520; --surface2:#111D2E;
+  --border:#1A2D46; --border2:#243A58;
+  --text:#B0C8E0; --dim:#445566; --bright:#E0EEFA;
+  --teal:#14B8A6; --tealD:#0D9488; --tealBg:rgba(20,184,166,0.08);
+  --gold:#F59E0B; --goldBg:rgba(245,158,11,0.08);
+  --red:#EF4444; --redBg:rgba(239,68,68,0.08);
+  --green:#22C55E; --greenBg:rgba(34,197,94,0.08);
+  --purple:#A855F7; --blue:#3B82F6;
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'IBM Plex Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13px;line-height:1.6;min-height:100vh;}
+
+/* ── LAYOUT ── */
+.page{max-width:1200px;margin:0 auto;padding:28px 20px 60px;}
+
+/* ── TOPBAR ── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);padding-bottom:18px;margin-bottom:28px;
+}
+.brand{font-family:var(--sans);font-weight:700;font-size:16px;color:var(--bright);
+  display:flex;align-items:center;gap:10px;letter-spacing:-0.01em;}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);
+  box-shadow:0 0 10px var(--teal);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.2;}}
+.brand-sub{font-size:10px;color:var(--dim);letter-spacing:0.14em;font-family:var(--mono);}
+.topbar-right{font-size:10px;color:var(--dim);text-align:right;line-height:1.9;}
+.topbar-right span{color:var(--text);}
+
+/* ── PIPELINE PROGRESS ── */
+.pipeline-steps{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:0;
+  border:1px solid var(--border);margin-bottom:28px;overflow:hidden;
+}
+.ps{
+  padding:12px 14px;cursor:pointer;transition:background 0.2s;
+  border-right:1px solid var(--border);position:relative;
+}
+.ps:last-child{border-right:none;}
+.ps.active{background:var(--surface2);}
+.ps.done{background:rgba(20,184,166,0.06);}
+.ps-num{font-size:9px;color:var(--dim);letter-spacing:0.14em;margin-bottom:3px;}
+.ps-label{font-family:var(--sans);font-size:11px;font-weight:600;color:var(--dim);}
+.ps.active .ps-label{color:var(--teal);}
+.ps.done .ps-label{color:var(--greenD,#16A34A);}
+.ps-bar{position:absolute;bottom:0;left:0;right:0;height:2px;background:transparent;}
+.ps.active .ps-bar{background:var(--teal);}
+.ps.done .ps-bar{background:var(--green);}
+.ps-status{font-size:9px;color:var(--dim);margin-top:2px;}
+.ps.active .ps-status{color:var(--teal);}
+.ps.done .ps-status{color:var(--green);}
+
+/* ── PLAY CONTROLS ── */
+.controls{
+  display:flex;align-items:center;gap:12px;margin-bottom:24px;
+}
+.btn{
+  background:var(--surface);border:1px solid var(--border2);
+  color:var(--text);font-family:var(--mono);font-size:11px;
+  padding:7px 18px;cursor:pointer;letter-spacing:0.1em;transition:all 0.15s;
+}
+.btn:hover{border-color:var(--teal);color:var(--teal);}
+.btn.primary{background:var(--teal);border-color:var(--teal);color:#000;font-weight:600;}
+.btn.primary:hover{background:var(--tealD);}
+.btn:disabled{opacity:0.35;cursor:not-allowed;}
+.speed-label{font-size:10px;color:var(--dim);}
+.speed-label span{color:var(--text);}
+
+/* ── STAGE PANELS ── */
+.stage-container{display:none;}
+.stage-container.active{display:block;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+.stage-header{
+  display:flex;align-items:center;gap:14px;margin-bottom:18px;
+}
+.stage-badge{
+  font-size:10px;font-weight:700;letter-spacing:0.16em;
+  padding:4px 12px;border:1px solid;
+}
+.badge-blue{color:var(--blue);border-color:rgba(59,130,246,0.4);background:rgba(59,130,246,0.05);}
+.badge-teal{color:var(--teal);border-color:rgba(20,184,166,0.4);background:var(--tealBg);}
+.badge-gold{color:var(--gold);border-color:rgba(245,158,11,0.4);background:var(--goldBg);}
+.badge-green{color:var(--green);border-color:rgba(34,197,94,0.4);background:var(--greenBg);}
+.badge-purple{color:var(--purple);border-color:rgba(168,85,247,0.4);background:rgba(168,85,247,0.05);}
+.stage-title{font-family:var(--sans);font-size:18px;font-weight:700;color:var(--bright);}
+.stage-desc{font-size:11px;color:var(--dim);margin-top:2px;}
+
+/* ── PANELS ── */
+.panel{background:var(--surface);border:1px solid var(--border);padding:18px;margin-bottom:16px;}
+.panel-title{font-size:9.5px;font-weight:700;letter-spacing:0.18em;color:var(--teal);
+  margin-bottom:12px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;}
+.panel-badge{font-size:9px;padding:2px 8px;background:var(--surface2);
+  border:1px solid var(--border2);color:var(--dim);letter-spacing:0.1em;}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+
+/* ── AGENT CARDS ── */
+.agent-card{background:var(--surface2);border:1px solid var(--border2);padding:14px;position:relative;}
+.agent-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;}
+.agent-alpha::before{background:var(--teal);}
+.agent-beta::before{background:var(--gold);}
+.agent-id{font-size:9px;letter-spacing:0.16em;color:var(--dim);margin-bottom:6px;}
+.field-row{display:flex;justify-content:space-between;padding:3px 0;
+  border-bottom:1px solid rgba(26,45,70,0.5);font-size:11px;}
+.field-row:last-child{border-bottom:none;}
+.field-name{color:var(--dim);}
+.field-val{color:var(--bright);font-weight:600;}
+.field-val.disagree{color:var(--gold);}
+.field-val.agree{color:var(--green);}
+
+/* ── SCREENING RESULT ── */
+.screen-result{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;
+  border:1px solid;margin-bottom:10px;
+}
+.screen-result.accept{border-color:rgba(34,197,94,0.4);background:var(--greenBg);}
+.screen-result.flag{border-color:rgba(245,158,11,0.4);background:var(--goldBg);}
+.screen-result.reject{border-color:rgba(239,68,68,0.4);background:var(--redBg);}
+.screen-icon{font-size:16px;}
+.screen-details{flex:1;}
+.screen-decision{font-size:12px;font-weight:700;letter-spacing:0.1em;}
+.screen-result.accept .screen-decision{color:var(--green);}
+.screen-result.flag .screen-decision{color:var(--gold);}
+.screen-result.reject .screen-decision{color:var(--red);}
+.screen-reason{font-size:10px;color:var(--dim);margin-top:2px;}
+.screen-hash{font-size:9px;color:var(--dim);margin-top:3px;font-family:var(--mono);}
+.screen-ms{font-size:10px;color:var(--dim);white-space:nowrap;}
+
+/* ── ADV TABLE ── */
+.adv-table{width:100%;border-collapse:collapse;font-size:11px;}
+.adv-table th{font-size:9px;letter-spacing:0.12em;color:var(--dim);
+  padding:5px 8px;border-bottom:1px solid var(--border2);text-align:left;}
+.adv-table td{padding:5px 8px;border-bottom:1px solid rgba(26,45,70,0.4);}
+.adv-table tr:hover td{background:var(--surface2);}
+.tag{display:inline-block;padding:1px 7px;font-size:9px;font-weight:700;
+  letter-spacing:0.1em;border:1px solid;}
+.tag-pass{color:var(--green);border-color:rgba(34,197,94,0.4);}
+.tag-fail{color:var(--red);border-color:rgba(239,68,68,0.4);}
+.tag-reject{color:var(--red);border-color:rgba(239,68,68,0.3);}
+.tag-review{color:var(--gold);border-color:rgba(245,158,11,0.3);}
+.tag-ingest{color:var(--green);border-color:rgba(34,197,94,0.3);}
+.tag-cat{color:var(--blue);border-color:rgba(59,130,246,0.3);}
+
+/* ── CONSENSUS ── */
+.merge-visual{
+  display:grid;grid-template-columns:1fr 40px 1fr;gap:0;
+  align-items:center;margin-bottom:16px;
+}
+.mv-agent{background:var(--surface2);border:1px solid var(--border2);padding:12px 14px;}
+.mv-arrow{text-align:center;font-size:18px;color:var(--teal);}
+.mv-label{font-size:9px;letter-spacing:0.14em;color:var(--dim);margin-bottom:8px;}
+.mv-field{display:flex;justify-content:space-between;font-size:11px;
+  padding:3px 0;border-bottom:1px solid rgba(26,45,70,0.4);}
+.mv-field:last-child{border-bottom:none;}
+.mv-field .fname{color:var(--dim);}
+.mv-field .fval{color:var(--bright);font-weight:600;}
+.mv-field.diff .fval{color:var(--gold);}
+.merge-canonical{background:rgba(20,184,166,0.06);border:1px solid rgba(20,184,166,0.3);
+  padding:12px 14px;}
+.merge-canonical .mv-label{color:var(--teal);}
+.merge-canonical .fval{color:var(--teal)!important;}
+
+.dissent-entry{
+  display:flex;align-items:center;gap:10px;padding:6px 10px;
+  border-bottom:1px solid rgba(26,45,70,0.4);font-size:11px;
+}
+.dissent-entry:last-child{border-bottom:none;}
+.de-agent{width:90px;color:var(--dim);font-size:10px;}
+.de-field{flex:1;color:var(--text);}
+.de-arrow{color:var(--dim);}
+.de-delta{
+  padding:1px 7px;font-size:9px;border:1px solid;
+}
+.de-minor{color:var(--dim);border-color:var(--border2);}
+.de-moderate{color:var(--gold);border-color:rgba(245,158,11,0.4);}
+.de-critical{color:var(--red);border-color:rgba(239,68,68,0.4);}
+
+.strategy-banner{
+  display:flex;align-items:center;gap:14px;padding:14px 16px;
+  border:1px solid;margin-bottom:16px;
+}
+.strategy-banner.resolved{border-color:rgba(34,197,94,0.4);background:var(--greenBg);}
+.strategy-banner.escalate{border-color:rgba(239,68,68,0.4);background:var(--redBg);}
+.sb-strategy{font-size:13px;font-weight:700;letter-spacing:0.1em;}
+.strategy-banner.resolved .sb-strategy{color:var(--green);}
+.strategy-banner.escalate .sb-strategy{color:var(--red);}
+.sb-detail{font-size:10px;color:var(--dim);margin-top:2px;}
+.sb-score{font-size:22px;font-weight:700;color:var(--bright);margin-left:auto;
+  font-family:var(--sans);}
+.sb-score-label{font-size:9px;color:var(--dim);text-align:right;}
+
+/* ── TELEMETRY DASHBOARD ── */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px;}
+.kpi{background:var(--surface);border:1px solid var(--border);padding:14px;position:relative;overflow:hidden;}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.kpi.teal::after{background:var(--teal);}
+.kpi.gold::after{background:var(--gold);}
+.kpi.red::after{background:var(--red);}
+.kpi.green::after{background:var(--green);}
+.kpi.purple::after{background:var(--purple);}
+.kpi-label{font-size:9px;letter-spacing:0.16em;color:var(--dim);margin-bottom:5px;}
+.kpi-val{font-family:var(--sans);font-size:26px;font-weight:700;color:var(--bright);line-height:1;}
+.kpi-sub{font-size:9.5px;color:var(--dim);margin-top:4px;}
+
+.chart-wrap{position:relative;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);}
+
+/* ── HANDOFF BOX ── */
+.handoff{
+  display:flex;align-items:center;gap:0;margin:20px 0;
+  border:1px solid var(--border2);background:var(--surface2);overflow:hidden;
+}
+.hf-from,.hf-to{padding:10px 14px;flex:1;}
+.hf-label{font-size:9px;letter-spacing:0.14em;color:var(--dim);margin-bottom:3px;}
+.hf-val{font-size:11px;color:var(--bright);}
+.hf-arrow{padding:0 16px;font-size:20px;color:var(--teal);border-left:1px solid var(--border);
+  border-right:1px solid var(--border);background:rgba(20,184,166,0.05);}
+.hf-payload{padding:10px 14px;}
+.hf-payload code{font-size:10px;color:var(--teal);background:rgba(20,184,166,0.08);
+  padding:2px 6px;border:1px solid rgba(20,184,166,0.2);}
+
+/* ── README ── */
+.readme{background:var(--surface);border:1px solid var(--border);padding:22px;margin-top:28px;}
+.readme h2{font-family:var(--sans);font-size:15px;font-weight:700;color:var(--bright);margin-bottom:14px;}
+.readme p{font-size:11px;color:var(--dim);line-height:1.8;margin-bottom:10px;}
+.readme code{font-family:var(--mono);font-size:10px;color:var(--teal);background:rgba(20,184,166,0.08);
+  padding:1px 5px;border:1px solid rgba(20,184,166,0.2);}
+.readme pre{background:var(--surface2);border:1px solid var(--border);padding:14px;margin:10px 0;
+  font-size:10px;color:var(--text);overflow-x:auto;line-height:1.8;}
+
+@media(max-width:800px){
+  .grid2,.grid3,.kpi-row,.pipeline-steps{grid-template-columns:1fr;}
+  .merge-visual{grid-template-columns:1fr;}.mv-arrow{display:none;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div>
+    <div class="brand"><span class="live-dot"></span>Hive Mind · End-to-End Pipeline Demo</div>
+    <div class="brand-sub">HM-INTAKE-001 → HM-ADVERSARIAL-001 → HM-CONSENSUS-001 → HM-TELEMETRY-001</div>
+  </div>
+  <div class="topbar-right">
+    Spec: <span>HMSPEC-L1-001</span> · Schema: <span>l1-envelope-v1.0</span><br>
+    Input: <span>Japan STR Test Vectors (Art. 11(1)(iii))</span><br>
+    Run: <span id="run-ts">—</span>
+  </div>
+</div>
+
+<!-- PIPELINE PROGRESS -->
+<div class="pipeline-steps">
+  <div class="ps active" id="step-0" onclick="goTo(0)">
+    <div class="ps-num">STAGE 01</div>
+    <div class="ps-label">Agent Extraction</div>
+    <div class="ps-status" id="st-0">● RUNNING</div>
+    <div class="ps-bar"></div>
+  </div>
+  <div class="ps" id="step-1" onclick="goTo(1)">
+    <div class="ps-num">STAGE 02</div>
+    <div class="ps-label">Intake Screening</div>
+    <div class="ps-status" id="st-1">○ PENDING</div>
+    <div class="ps-bar"></div>
+  </div>
+  <div class="ps" id="step-2" onclick="goTo(2)">
+    <div class="ps-num">STAGE 03</div>
+    <div class="ps-label">Adversarial Validation</div>
+    <div class="ps-status" id="st-2">○ PENDING</div>
+    <div class="ps-bar"></div>
+  </div>
+  <div class="ps" id="step-3" onclick="goTo(3)">
+    <div class="ps-num">STAGE 04</div>
+    <div class="ps-label">Consensus Resolution</div>
+    <div class="ps-status" id="st-3">○ PENDING</div>
+    <div class="ps-bar"></div>
+  </div>
+  <div class="ps" id="step-4" onclick="goTo(4)">
+    <div class="ps-num">STAGE 05</div>
+    <div class="ps-label">Telemetry Dashboard</div>
+    <div class="ps-status" id="st-4">○ PENDING</div>
+    <div class="ps-bar"></div>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <button class="btn primary" id="btn-auto" onclick="startAuto()">▶ AUTO-RUN DEMO</button>
+  <button class="btn" id="btn-prev" onclick="prevStep()" disabled>← PREV</button>
+  <button class="btn" id="btn-next" onclick="nextStep()">NEXT →</button>
+  <span class="speed-label">Speed: <span id="speed-label">1×</span></span>
+  <button class="btn" onclick="cycleSpeed()">⏩ SPEED</button>
+  <button class="btn" onclick="resetDemo()">↺ RESET</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- STAGE 0: AGENT EXTRACTION -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="stage-container active" id="stage-0">
+  <div class="stage-header">
+    <div class="stage-badge badge-blue">STAGE 01</div>
+    <div>
+      <div class="stage-title">Agent Extraction — Japan STR Proximity Rule</div>
+      <div class="stage-desc">Two board-agents independently extract Art. 11(1)(iii) constraints from source text · Deliberate disagreement on threshold_value and opacity</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">RAW INPUT — Regulatory Source Text <span class="panel-badge">PRIMARY SOURCE</span></div>
+    <div style="background:var(--surface2);border:1px solid var(--border2);padding:14px;font-size:11px;line-height:1.9;color:var(--text);">
+      <span style="color:var(--dim);">Article 11(1)(iii), Private Lodging Business Act (民泊新法, effective June 15 2018)</span><br><br>
+      A licensed management company (kanrisha) must be <strong style="color:var(--bright);">physically reachable within a specified time</strong> of the registered property during all guest stay periods, by foot or vehicle. Failure constitutes grounds for registration cancellation under <em>Article 33(1)(iv)</em>. Technology-based remote monitoring systems <strong style="color:var(--red);">do not satisfy</strong> the proximity requirement.
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">AGENT EXTRACTIONS — Two Independent Reads</div>
+    <div class="grid2">
+      <div class="agent-card agent-alpha">
+        <div class="agent-id">AGENT-ALPHA · PRIMARY SOURCE · HIGH CONFIDENCE</div>
+        <div class="field-row"><span class="field-name">constraint_type</span><span class="field-val agree">PHYSICAL_PRESENCE</span></div>
+        <div class="field-row"><span class="field-name">confidence</span><span class="field-val agree">HIGH</span></div>
+        <div class="field-row"><span class="field-name">threshold_value</span><span class="field-val disagree" id="a1-thresh">10 minutes ⚡</span></div>
+        <div class="field-row"><span class="field-name">opacity</span><span class="field-val disagree">1 (most reliable) ⚡</span></div>
+        <div class="field-row"><span class="field-name">tech_substitution</span><span class="field-val agree">FALSE</span></div>
+        <div class="field-row"><span class="field-name">sourcing_type</span><span class="field-val agree">PRIMARY</span></div>
+      </div>
+      <div class="agent-card agent-beta">
+        <div class="agent-id">AGENT-BETA · PRIMARY SOURCE · MEDIUM CONFIDENCE</div>
+        <div class="field-row"><span class="field-name">constraint_type</span><span class="field-val agree">PHYSICAL_PRESENCE</span></div>
+        <div class="field-row"><span class="field-name">confidence</span><span class="field-val disagree">MEDIUM ⚡</span></div>
+        <div class="field-row"><span class="field-name">threshold_value</span><span class="field-val disagree">15 minutes ⚡</span></div>
+        <div class="field-row"><span class="field-name">opacity</span><span class="field-val disagree">3 (secondary) ⚡</span></div>
+        <div class="field-row"><span class="field-name">tech_substitution</span><span class="field-val agree">FALSE</span></div>
+        <div class="field-row"><span class="field-name">sourcing_type</span><span class="field-val agree">PRIMARY</span></div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:10px;color:var(--dim);padding:8px 12px;background:var(--surface2);border:1px solid var(--border2);">
+      ⚡ <strong style="color:var(--gold);">Disagreements detected:</strong> threshold_value (10 vs 15 min), opacity (1 vs 3), confidence (HIGH vs MEDIUM) — 3 fields require consensus resolution
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- STAGE 1: INTAKE SCREENING -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="stage-container" id="stage-1">
+  <div class="stage-header">
+    <div class="stage-badge badge-teal">STAGE 02</div>
+    <div>
+      <div class="stage-title">Intake Screening — HM-SCREEN-001</div>
+      <div class="stage-desc">Each agent envelope passes through 5 gates: Parse → Schema → Dedup → Injection scan → Confidence threshold</div>
+    </div>
+  </div>
+
+  <div class="handoff">
+    <div class="hf-from"><div class="hf-label">FROM</div><div class="hf-val">Agent Extraction (Stage 01)</div></div>
+    <div class="hf-arrow">→</div>
+    <div class="hf-payload"><div class="hf-label">PAYLOAD</div><div class="hf-val">
+      <code>l1-envelope-v1.0</code> · <code>CONSTRAINT_EXTRACTION</code>
+    </div></div>
+    <div class="hf-arrow">→</div>
+    <div class="hf-to"><div class="hf-label">TO</div><div class="hf-val">HM-SCREEN-001 (5 gates)</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">SCREENING RESULTS — conf_threshold=MEDIUM</div>
+    <div id="screen-a1-result"></div>
+    <div id="screen-a2-result"></div>
+    <div style="margin-top:12px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;font-size:9.5px;text-align:center;">
+      <div style="padding:6px;border:1px solid rgba(34,197,94,0.3);color:var(--green);">GATE 1<br>PARSE ✓</div>
+      <div style="padding:6px;border:1px solid rgba(34,197,94,0.3);color:var(--green);">GATE 2<br>SCHEMA ✓</div>
+      <div style="padding:6px;border:1px solid rgba(34,197,94,0.3);color:var(--green);">GATE 3<br>DEDUP ✓</div>
+      <div style="padding:6px;border:1px solid rgba(34,197,94,0.3);color:var(--green);">GATE 4<br>INJECTION ✓</div>
+      <div style="padding:6px;border:1px solid rgba(34,197,94,0.3);color:var(--green);">GATE 5<br>CONFIDENCE ✓</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- STAGE 2: ADVERSARIAL VALIDATION -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="stage-container" id="stage-2">
+  <div class="stage-header">
+    <div class="stage-badge badge-gold">STAGE 03</div>
+    <div>
+      <div class="stage-title">Adversarial Validation — HM-ADVERSARIAL-001</div>
+      <div class="stage-desc">5 adversarial test vectors confirm the pipeline's error-handling is intact before consensus runs</div>
+    </div>
+  </div>
+
+  <div class="handoff">
+    <div class="hf-from"><div class="hf-label">FROM</div><div class="hf-val">Screened envelopes (ACCEPT ×2)</div></div>
+    <div class="hf-arrow">→</div>
+    <div class="hf-payload"><div class="hf-label">VALIDATES</div><div class="hf-val">
+      <code>schema_violation</code> · <code>replay_attack</code> · <code>positive_control</code>
+    </div></div>
+    <div class="hf-arrow">→</div>
+    <div class="hf-to"><div class="hf-label">RESULT</div><div class="hf-val" id="adv-header-result">5/5 PASS</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">ADVERSARIAL TEST RESULTS <span class="panel-badge" id="adv-summary-badge">5/5 PASS</span></div>
+    <table class="adv-table" id="adv-table">
+      <thead><tr><th>ID</th><th>NAME</th><th>CATEGORY</th><th>EXPECTED</th><th>ACTUAL</th><th>STATUS</th></tr></thead>
+      <tbody id="adv-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- STAGE 3: CONSENSUS RESOLUTION -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="stage-container" id="stage-3">
+  <div class="stage-header">
+    <div class="stage-badge badge-purple">STAGE 04</div>
+    <div>
+      <div class="stage-title">Consensus Resolution — HM-CONSENSUS-001</div>
+      <div class="stage-desc">Confidence-weighted merge resolves threshold_value and opacity disagreement into a single canonical constraint</div>
+    </div>
+  </div>
+
+  <div class="handoff">
+    <div class="hf-from"><div class="hf-label">FROM</div><div class="hf-val">2 validated agent extractions</div></div>
+    <div class="hf-arrow">→</div>
+    <div class="hf-payload"><div class="hf-label">RESOLVES</div><div class="hf-val">
+      <code>threshold_value</code> · <code>opacity</code> · <code>confidence</code>
+    </div></div>
+    <div class="hf-arrow">→</div>
+    <div class="hf-to"><div class="hf-label">OUTPUT</div><div class="hf-val">Canonical constraint + dissent log</div></div>
+  </div>
+
+  <div id="strategy-banner-container"></div>
+
+  <div class="merge-visual">
+    <div class="mv-agent">
+      <div class="mv-label">AGENT-ALPHA INPUT</div>
+      <div class="mv-field"><span class="fname">threshold_value</span><span class="fval diff">10 min</span></div>
+      <div class="mv-field"><span class="fname">opacity</span><span class="fval diff">1</span></div>
+      <div class="mv-field"><span class="fname">confidence</span><span class="fval diff">HIGH</span></div>
+      <div class="mv-field"><span class="fname">weight</span><span class="fval">1.0×</span></div>
+    </div>
+    <div class="mv-arrow">⊕</div>
+    <div class="merge-canonical">
+      <div class="mv-label">CANONICAL MERGE OUTPUT</div>
+      <div class="mv-field" id="can-thresh"><span class="fname">threshold_value</span><span class="fval">—</span></div>
+      <div class="mv-field" id="can-opac"><span class="fname">opacity</span><span class="fval">—</span></div>
+      <div class="mv-field" id="can-conf"><span class="fname">confidence</span><span class="fval">—</span></div>
+      <div class="mv-field" id="can-type"><span class="fname">constraint_type</span><span class="fval">—</span></div>
+    </div>
+    <div class="mv-arrow">←</div>
+    <div class="mv-agent" style="border-left:3px solid var(--gold);">
+      <div class="mv-label">AGENT-BETA INPUT</div>
+      <div class="mv-field"><span class="fname">threshold_value</span><span class="fval diff">15 min</span></div>
+      <div class="mv-field"><span class="fname">opacity</span><span class="fval diff">3</span></div>
+      <div class="mv-field"><span class="fname">confidence</span><span class="fval diff">MEDIUM</span></div>
+      <div class="mv-field"><span class="fname">weight</span><span class="fval">0.6×</span></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">DISSENT LOG</div>
+    <div id="dissent-log-container"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">RESOLUTION NOTES (from hm_consensus.resolve())</div>
+    <div id="resolution-notes" style="font-size:10.5px;line-height:1.9;"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- STAGE 4: TELEMETRY DASHBOARD -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="stage-container" id="stage-4">
+  <div class="stage-header">
+    <div class="stage-badge badge-green">STAGE 05</div>
+    <div>
+      <div class="stage-title">Telemetry Dashboard — HM-TELEMETRY-001</div>
+      <div class="stage-desc">30 resolution events (1 real STR run + 29 synthetic) · All metrics live from instrumented module</div>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi teal"><div class="kpi-label">TOTAL EVENTS</div>
+      <div class="kpi-val" id="t-total">—</div><div class="kpi-sub">1 real + synthetic</div></div>
+    <div class="kpi gold"><div class="kpi-label">MEAN LATENCY</div>
+      <div class="kpi-val" id="t-lat">—</div><div class="kpi-sub">p95: <span id="t-p95">—</span>ms</div></div>
+    <div class="kpi red"><div class="kpi-label">ESCALATION RATE</div>
+      <div class="kpi-val" id="t-esc">—</div><div class="kpi-sub"><span id="t-esc-n">—</span> events escalated</div></div>
+    <div class="kpi green"><div class="kpi-label">MEAN SCORE</div>
+      <div class="kpi-val" id="t-score">—</div><div class="kpi-sub">consensus agreement</div></div>
+    <div class="kpi purple"><div class="kpi-label">MEAN DISSENT</div>
+      <div class="kpi-val" id="t-dissent">—</div><div class="kpi-sub">fields / event</div></div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:16px;">
+    <div class="panel">
+      <div class="panel-title">Strategy Distribution <span class="panel-badge">30 EVENTS</span></div>
+      <div class="chart-wrap" style="height:180px;"><canvas id="stratChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Latency Series (ms) <span class="panel-badge">PER EVENT</span></div>
+      <div class="chart-wrap" style="height:180px;"><canvas id="latChart"></canvas></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-title">Consensus Score Series <span class="panel-badge">0.0 – 1.0</span></div>
+      <div class="chart-wrap" style="height:150px;"><canvas id="scoreChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Confidence Distribution</div>
+      <div id="conf-dist-bars" style="margin-top:4px;"></div>
+      <div class="panel-title" style="margin-top:14px;margin-bottom:8px;">Strategy Split</div>
+      <div id="strat-dist-bars"></div>
+    </div>
+  </div>
+</div>
+
+<!-- README -->
+<div class="readme">
+  <h2>README — Reproducing This Run</h2>
+  <p>This demo chains four production modules into a single observable pipeline. All data shown was generated by running the modules against the Japan STR Art. 11(1)(iii) test vector with a deliberate two-agent disagreement on threshold_value (10 vs 15 minutes).</p>
+  <p><strong style="color:var(--bright);">Prerequisites:</strong> Python 3.8+ · All five module files in the same directory.</p>
+  <pre>pip install nothing  # zero external dependencies
+
+# Files required in same directory:
+hm_intake_screener.py
+hm_consensus.py
+hm_telemetry.py
+hm_adversarial_suite.py  (optional — for Stage 03)</pre>
+  <p><strong style="color:var(--bright);">Run end-to-end:</strong></p>
+  <pre>python hm_pipeline_demo.py</pre>
+  <p><strong style="color:var(--bright);">Modules:</strong></p>
+  <p><code>HM-SCREEN-001</code> — Intake Screening · <code>HM-ADVERSARIAL-001</code> — Adversarial Suite · <code>HM-CONSENSUS-001</code> — Consensus Resolution · <code>HM-TELEMETRY-001</code> — Telemetry</p>
+  <p><strong style="color:var(--bright);">Spec reference:</strong> <code>HMSPEC-L1-001</code> · <code>l1-envelope-v1.0</code> · March 2026</p>
+</div>
+
+</div><!-- /page -->
+<script>
+// ─── EMBEDDED PIPELINE DATA ────────────────────────────────────────────────
+const D = {"agents": {"A1": {"agent_id": "AGENT-ALPHA", "constraint_type": "PHYSICAL_PRESENCE", "confidence": "HIGH", "opacity": 1, "threshold_value": 10, "threshold_unit": "minutes", "sourcing_type": "PRIMARY", "technology_substitution_permitted": false, "captive_vendor_required": true, "rule_description": "Kanrisha must be reachable within 10 minutes by foot or vehicle during all guest stays", "raw_text_excerpt": "physically reachable within 10 minutes...remote monitoring does not satisfy the requirement", "legal_citation": "Article 11(1)(iii), Private Lodging Business Act", "enforcement_citation": "Article 33(1)(iv)", "effective_date": "2018-06-15", "captive_vendor_type": "licensed_kanrisha", "constraint_id": "JP-PHYS-NATL-001", "jurisdiction": {"country": "JP", "region": null, "municipality": null, "scope": "NATIONAL"}}, "A2": {"agent_id": "AGENT-BETA", "constraint_type": "PHYSICAL_PRESENCE", "confidence": "MEDIUM", "opacity": 3, "threshold_value": 15, "threshold_unit": "minutes", "sourcing_type": "PRIMARY", "technology_substitution_permitted": false, "captive_vendor_required": true, "rule_description": "Management company within 15 minutes for any guest issue during stay period", "raw_text_excerpt": "management company within 15 minutes...IoT monitoring may partially satisfy requirement", "legal_citation": "Article 11(1)(iii), Private Lodging Business Act", "enforcement_citation": "Article 33(1)(iv)", "effective_date": "2018-06-15", "captive_vendor_type": "licensed_kanrisha", "constraint_id": "JP-PHYS-NATL-001", "jurisdiction": {"country": "JP", "region": null, "municipality": null, "scope": "NATIONAL"}}}, "pids": {"a1": "HM-RUN-20260320T100031Z-OHGI1J", "a2": "HM-RUN-20260320T100031Z-NYT7RP"}, "screen": {"a1": {"decision": "ACCEPT", "code": "ACCEPTED", "reasoning": "Payload cleared \u2014 all screening gates passed", "hash": "sha256:c4e35dfbac0111818053414fd85fc66d7", "latency_ms": 25.3}, "a2": {"decision": "ACCEPT", "code": "ACCEPTED", "reasoning": "Payload cleared \u2014 all screening gates passed", "hash": "sha256:aff422f86900852540a5b9e063f779c31", "latency_ms": 18.2}}, "adv": {"pass": 5, "total": 5}, "consensus": {"strategy": "CONFIDENCE_WEIGHTED", "status": "RESOLVED", "score": 0.6667, "latency_ms": 53.5, "canonical": {"constraint_type": "PHYSICAL_PRESENCE", "confidence": "MEDIUM", "opacity": 2, "threshold_value": 12, "threshold_unit": "minutes", "sourcing_type": "PRIMARY"}, "dissent_log": [{"agent_id": "AGENT-ALPHA", "field_name": "confidence", "agent_value": "HIGH", "canonical_value": "MEDIUM", "delta": "CONSERVATIVE_MERGE", "severity": "MINOR"}, {"agent_id": "AGENT-ALPHA", "field_name": "threshold_value", "agent_value": 10, "canonical_value": 12, "delta": 2.0, "severity": "MODERATE"}, {"agent_id": "AGENT-BETA", "field_name": "threshold_value", "agent_value": 15, "canonical_value": 12, "delta": 3.0, "severity": "MODERATE"}, {"agent_id": "AGENT-ALPHA", "field_name": "opacity", "agent_value": 1, "canonical_value": 2, "delta": 1.0, "severity": "MINOR"}, {"agent_id": "AGENT-BETA", "field_name": "opacity", "agent_value": 3, "canonical_value": 2, "delta": 1.0, "severity": "MINOR"}], "notes": ["Resolved 2/2 valid agents. Strategy: CONFIDENCE_WEIGHTED. Score: 0.67.", "constraint_type: majority='PHYSICAL_PRESENCE' (2/2 votes)", "technology_substitution_permitted: majority=False (2/2 votes)", "captive_vendor_required: majority=True (2/2 votes)", "sourcing_type: majority='PRIMARY' (2/2 votes)", "confidence: conservative_merge='MEDIUM' (inputs=['HIGH', 'MEDIUM'])", "threshold_value: weighted_merge=12 (inputs=[10.0, 15.0], weights=[1.0, 0.6])", "opacity: weighted_merge=2 (inputs=[1.0, 3.0], weights=[1.0, 0.6])"]}, "telemetry": {"total": 30, "escalated": 12, "mean_latency": 99.96, "p95_latency": 172.9, "mean_score": 0.5963, "mean_dissent": 2.167, "strategies": {"CONFIDENCE_WEIGHTED": 9, "ESCALATE": 12, "MAJORITY_VOTE": 9}, "conf_dist": {"MEDIUM": 13, "HIGH": 13, "LOW": 4}, "dash": {"total": 30, "escalated": 12, "mean_latency": 99.96, "p50_latency": 103.76, "p95_latency": 172.9, "p99_latency": 175.72, "mean_score": 0.5963, "stdev_score": 0.3702, "mean_dissent": 2.167, "strategies": {"CONFIDENCE_WEIGHTED": 9, "ESCALATE": 12, "MAJORITY_VOTE": 9}, "statuses": {"RESOLVED": 18, "REQUIRES_HUMAN_REVIEW": 12}, "confidence_dist": {"MEDIUM": 13, "HIGH": 13, "LOW": 4}, "type_dist": {"PHYSICAL_PRESENCE": 14, "FEE_FLOOR": 4, "CAPTIVE_VENDOR": 6, "GEOGRAPHIC_EXCLUSION": 4, "TECHNOLOGY_BLOCK": 1, "LICENSING_CEILING": 1}, "scenario_dist": {"japan_str_proximity_rule": 1, "malformed_agent": 5, "severity_conflict": 4, "escalation": 5, "three_way_split": 4, "full_agree": 5, "equal_weights": 4, "classification_conflict": 2}, "windows": [{"window": 0, "escalation_rate": 0.5, "mean_score": 0.46295000000000003, "mean_latency": 86.62333333333333, "mean_dissent": 3.1666666666666665}, {"window": 1, "escalation_rate": 0.3333333333333333, "mean_score": 0.5833166666666667, "mean_latency": 86.585, "mean_dissent": 1.5}, {"window": 2, "escalation_rate": 0.3333333333333333, "mean_score": 0.7407333333333334, "mean_latency": 115.70833333333333, "mean_dissent": 2.1666666666666665}, {"window": 3, "escalation_rate": 0.5, "mean_score": 0.4907166666666667, "mean_latency": 103.32666666666667, "mean_dissent": 2.5}, {"window": 4, "escalation_rate": 0.3333333333333333, "mean_score": 0.7037, "mean_latency": 107.54, "mean_dissent": 1.5}], "latency_series": [93.5, 41.99, 172.11, 103.76, 13.0, 95.38, 65.05, 43.36, 163.1, 25.29, 135.26, 87.45, 115.94, 169.26, 89.32, 17.08, 138.86, 163.79, 120.67, 153.19, 8.25, 138.86, 23.27, 175.72, 140.86, 172.9, 130.58, 54.2, 89.12, 57.58], "score_series": [0.6667, 0.0, 0.8333, 0.2222, 0.8333, 0.2222, 0.0, 1.0, 0.8333, 0.8333, 0.0, 0.8333, 1.0, 0.2222, 1.0, 0.8333, 0.8333, 0.5556, 0.8333, 0.8333, 0.2222, 0.0, 0.8333, 0.2222, 1.0, 1.0, 0.8333, 0.8333, 0.0, 0.5556], "dissent_series": [5, 0, 3, 4, 3, 4, 0, 1, 3, 3, 0, 2, 0, 4, 1, 2, 3, 3, 2, 3, 4, 0, 2, 4, 0, 0, 3, 3, 0, 3], "escalation_series": [0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1], "timestamps": ["2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00", "2026-03-20 10:00"]}}};
+
+document.getElementById('run-ts').textContent =
+  new Date().toISOString().slice(0,19).replace('T',' ') + ' UTC';
+
+// ─── STEP CONTROL ──────────────────────────────────────────────────────────
+let currentStep = 0;
+let autoTimer   = null;
+let speed       = 1;
+const SPEEDS    = [1, 2, 4];
+const DELAYS    = [3000, 1800, 800];
+
+function goTo(n) {
+  document.querySelectorAll('.stage-container').forEach((el,i) => {
+    el.classList.toggle('active', i === n);
+  });
+  document.querySelectorAll('.ps').forEach((el,i) => {
+    el.classList.toggle('active', i === n);
+    el.classList.toggle('done',   i < n);
+  });
+  const statuses = ['● RUNNING','● RUNNING','● RUNNING','● RUNNING','● RUNNING'];
+  for (let i=0;i<5;i++) {
+    const st = document.getElementById('st-'+i);
+    if (i < n)       { st.textContent='✓ DONE';    st.style.color='var(--green)'; }
+    else if (i === n){ st.textContent='● RUNNING'; st.style.color='var(--teal)';  }
+    else             { st.textContent='○ PENDING'; st.style.color='var(--dim)';   }
+  }
+  document.getElementById('btn-prev').disabled = (n === 0);
+  document.getElementById('btn-next').disabled = (n === 4);
+  currentStep = n;
+  if (n === 1) renderScreening();
+  if (n === 2) renderAdversarial();
+  if (n === 3) renderConsensus();
+  if (n === 4) renderTelemetry();
+}
+
+function nextStep() { if (currentStep < 4) goTo(currentStep + 1); }
+function prevStep() { if (currentStep > 0) goTo(currentStep - 1); }
+
+function startAuto() {
+  if (autoTimer) { clearInterval(autoTimer); autoTimer=null;
+    document.getElementById('btn-auto').textContent='▶ AUTO-RUN DEMO'; return; }
+  document.getElementById('btn-auto').textContent='⏸ PAUSE';
+  if (currentStep === 4) goTo(0);
+  autoTimer = setInterval(() => {
+    if (currentStep < 4) { goTo(currentStep + 1); }
+    else { clearInterval(autoTimer); autoTimer=null;
+      document.getElementById('btn-auto').textContent='▶ AUTO-RUN DEMO'; }
+  }, DELAYS[speed]);
+}
+
+function cycleSpeed() {
+  speed = (speed + 1) % SPEEDS.length;
+  document.getElementById('speed-label').textContent = SPEEDS[speed] + '×';
+  if (autoTimer) { clearInterval(autoTimer); autoTimer=null; startAuto(); }
+}
+
+function resetDemo() {
+  if (autoTimer) { clearInterval(autoTimer); autoTimer=null; }
+  document.getElementById('btn-auto').textContent='▶ AUTO-RUN DEMO';
+  goTo(0);
+}
+
+// ─── STAGE 1: SCREENING ────────────────────────────────────────────────────
+function renderScreening() {
+  const s = D.screen;
+  function card(agent, label, data) {
+    const cls = data.decision === 'ACCEPT' ? 'accept' : data.decision === 'FLAG' ? 'flag' : 'reject';
+    const icon = data.decision === 'ACCEPT' ? '✓' : data.decision === 'FLAG' ? '⚑' : '✗';
+    return `<div class="screen-result ${cls}">
+      <div class="screen-icon">${icon}</div>
+      <div class="screen-details">
+        <div class="screen-decision">${label} — ${data.decision} · ${data.code}</div>
+        <div class="screen-reason">${data.reasoning}</div>
+        <div class="screen-hash">hash: ${data.hash || '—'}</div>
+      </div>
+      <div class="screen-ms">${data.latency_ms}ms</div>
+    </div>`;
+  }
+  document.getElementById('screen-a1-result').innerHTML =
+    card('a1','AGENT-ALPHA envelope',s.a1);
+  document.getElementById('screen-a2-result').innerHTML =
+    card('a2','AGENT-BETA envelope',s.a2);
+}
+
+// ─── STAGE 2: ADVERSARIAL ──────────────────────────────────────────────────
+function renderAdversarial() {
+  const advData = [
+    {id:'AV-002',name:'Missing required field',cat:'schema_violation',expected:'REJECT',actual:'REJECT',err:'SCHEMA_VIOLATION',pass:true},
+    {id:'AV-005',name:'INDETERMINATE constraint',cat:'schema_violation',expected:'REJECT',actual:'REJECT',err:'INDETERMINATE_CONSTRAINT',pass:true},
+    {id:'AV-007',name:'Fabricated HIGH conf opacity=5',cat:'adversarial_logic',expected:'QUEUE_REVIEW',actual:'QUEUE_REVIEW',err:null,pass:true},
+    {id:'AV-013',name:'Replay attack — duplicate pid',cat:'replay_attack',expected:'REJECT',actual:'REJECT',err:'ALREADY_INGESTED',pass:true},
+    {id:'AV-POS',name:'Canonical good payload',cat:'positive_control',expected:'INGEST',actual:'INGEST',err:null,pass:true},
+  ];
+  const catClsMap = {schema_violation:'cat',replay_attack:'cat',adversarial_logic:'cat',positive_control:'tag-ingest'};
+  const tbody = document.getElementById('adv-tbody');
+  tbody.innerHTML = '';
+  advData.forEach(r => {
+    const tr = document.createElement('tr');
+    const expCls = r.expected==='REJECT'?'tag-reject':r.expected==='QUEUE_REVIEW'?'tag-review':'tag-ingest';
+    const actCls = r.actual==='REJECT'?'tag-reject':r.actual==='QUEUE_REVIEW'?'tag-review':'tag-ingest';
+    tr.innerHTML = `
+      <td style="color:var(--dim)">${r.id}</td>
+      <td style="color:var(--text)">${r.name}</td>
+      <td><span class="tag tag-cat">${r.cat}</span></td>
+      <td><span class="tag ${expCls}">${r.expected}</span></td>
+      <td><span class="tag ${actCls}">${r.actual}</span>${r.err?`<span style="font-size:9px;color:var(--dim);margin-left:6px;">${r.err}</span>`:''}
+      </td>
+      <td><span class="tag ${r.pass?'tag-pass':'tag-fail'}">${r.pass?'PASS':'FAIL'}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ─── STAGE 3: CONSENSUS ────────────────────────────────────────────────────
+function renderConsensus() {
+  const c = D.consensus;
+  const canon = c.canonical;
+
+  // Strategy banner
+  const isEsc = c.status === 'REQUIRES_HUMAN_REVIEW';
+  document.getElementById('strategy-banner-container').innerHTML = `
+    <div class="strategy-banner ${isEsc?'escalate':'resolved'}">
+      <div>
+        <div class="sb-strategy">${c.strategy} — ${c.status}</div>
+        <div class="sb-detail">Latency: ${c.latency_ms}ms · Topic: JP-PHYS-NATL-001</div>
+      </div>
+      <div>
+        <div class="sb-score">${c.score.toFixed(4)}</div>
+        <div class="sb-score-label">consensus score</div>
+      </div>
+    </div>`;
+
+  // Canonical values
+  document.getElementById('can-thresh').innerHTML =
+    `<span class="fname">threshold_value</span><span class="fval">${canon.threshold_value} ${canon.threshold_unit||'min'}</span>`;
+  document.getElementById('can-opac').innerHTML =
+    `<span class="fname">opacity</span><span class="fval">${canon.opacity}</span>`;
+  document.getElementById('can-conf').innerHTML =
+    `<span class="fname">confidence</span><span class="fval">${canon.confidence}</span>`;
+  document.getElementById('can-type').innerHTML =
+    `<span class="fname">constraint_type</span><span class="fval">${canon.constraint_type}</span>`;
+
+  // Dissent log
+  const dlc = document.getElementById('dissent-log-container');
+  dlc.innerHTML = '';
+  c.dissent_log.forEach(d => {
+    const sev = d.severity.toLowerCase();
+    const cl = sev==='critical'?'de-critical':sev==='moderate'?'de-moderate':'de-minor';
+    dlc.innerHTML += `<div class="dissent-entry">
+      <div class="de-agent">${d.agent_id}</div>
+      <div class="de-field"><strong>${d.field_name}</strong></div>
+      <div style="color:var(--gold);font-size:11px;">${JSON.stringify(d.agent_value)}</div>
+      <div class="de-arrow">→</div>
+      <div style="color:var(--teal);font-size:11px;">${JSON.stringify(d.canonical_value)}</div>
+      <div class="de-delta ${cl}">${d.delta} [${d.severity}]</div>
+    </div>`;
+  });
+
+  // Resolution notes
+  const notes = document.getElementById('resolution-notes');
+  notes.innerHTML = c.notes.map(n =>
+    `<div style="padding:2px 0;color:${n.includes('Strategy')?'var(--teal)':n.includes('→')?'var(--gold)':'var(--dim)'}">${n}</div>`
+  ).join('');
+}
+
+// ─── STAGE 4: TELEMETRY ────────────────────────────────────────────────────
+let chartsBuilt = false;
+function renderTelemetry() {
+  const t = D.telemetry;
+  const dash = t.dash;
+
+  document.getElementById('t-total').textContent   = t.total;
+  document.getElementById('t-lat').textContent     = t.mean_latency.toFixed(1)+'ms';
+  document.getElementById('t-p95').textContent     = t.p95_latency.toFixed(1);
+  document.getElementById('t-esc').textContent     = (t.escalated/t.total*100).toFixed(0)+'%';
+  document.getElementById('t-esc-n').textContent   = t.escalated;
+  document.getElementById('t-score').textContent   = t.mean_score.toFixed(3);
+  document.getElementById('t-dissent').textContent = t.mean_dissent.toFixed(2);
+
+  // Confidence bars
+  const cd = t.conf_dist;
+  const cdTotal = Object.values(cd).reduce((a,b)=>a+b,0);
+  const confColors={HIGH:'#22C55E',MEDIUM:'#F59E0B',LOW:'#EF4444'};
+  let cbHTML = '';
+  for (const [k,v] of Object.entries(cd)) {
+    const pct = (v/cdTotal*100).toFixed(0);
+    cbHTML += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:10px;">
+      <div style="width:55px;color:var(--text);">${k}</div>
+      <div style="flex:1;height:5px;background:var(--border);position:relative;">
+        <div style="position:absolute;top:0;left:0;height:100%;width:${pct}%;background:${confColors[k]||'#14B8A6'};"></div>
+      </div>
+      <div style="width:28px;color:var(--dim);text-align:right;">${v}</div>
+    </div>`;
+  }
+  document.getElementById('conf-dist-bars').innerHTML = cbHTML;
+
+  // Strategy bars
+  const sd = t.strategies;
+  const sdTotal = Object.values(sd).reduce((a,b)=>a+b,0);
+  const stratColors={MAJORITY_VOTE:'#22C55E',CONFIDENCE_WEIGHTED:'#3B82F6',ESCALATE:'#EF4444'};
+  let sbHTML = '';
+  for (const [k,v] of Object.entries(sd)) {
+    const pct = (v/sdTotal*100).toFixed(0);
+    sbHTML += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:10px;">
+      <div style="width:90px;color:var(--text);font-size:9px;">${k.slice(0,14)}</div>
+      <div style="flex:1;height:5px;background:var(--border);position:relative;">
+        <div style="position:absolute;top:0;left:0;height:100%;width:${pct}%;background:${stratColors[k]||'#14B8A6'};opacity:0.8;"></div>
+      </div>
+      <div style="width:28px;color:var(--dim);text-align:right;">${v}</div>
+    </div>`;
+  }
+  document.getElementById('strat-dist-bars').innerHTML = sbHTML;
+
+  if (chartsBuilt) return;
+  chartsBuilt = true;
+
+  const CD = {
+    responsive:true,maintainAspectRatio:false,animation:{duration:500},
+    plugins:{legend:{display:false},tooltip:{
+      backgroundColor:'#0C1520',borderColor:'#1A2D46',borderWidth:1,
+      titleFont:{family:'IBM Plex Mono',size:10},bodyFont:{family:'IBM Plex Mono',size:10},
+      titleColor:'#E0EEFA',bodyColor:'#B0C8E0',padding:8,
+    }},
+    scales:{
+      x:{ticks:{color:'#445566',font:{family:'IBM Plex Mono',size:9},maxTicksLimit:8},
+         grid:{color:'rgba(26,45,70,0.5)'}},
+      y:{ticks:{color:'#445566',font:{family:'IBM Plex Mono',size:9}},
+         grid:{color:'rgba(26,45,70,0.5)'}},
+    },
+  };
+
+  // Strategy doughnut
+  new Chart(document.getElementById('stratChart').getContext('2d'), {
+    type:'doughnut',
+    data:{
+      labels:['MAJORITY_VOTE','CONF_WEIGHTED','ESCALATE'],
+      datasets:[{
+        data:[sd.MAJORITY_VOTE||0, sd.CONFIDENCE_WEIGHTED||0, sd.ESCALATE||0],
+        backgroundColor:['rgba(34,197,94,0.7)','rgba(59,130,246,0.7)','rgba(239,68,68,0.7)'],
+        borderColor:['#22C55E','#3B82F6','#EF4444'],borderWidth:1,
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:500},cutout:'60%',
+      plugins:{
+        legend:{display:true,position:'bottom',labels:{color:'#B0C8E0',font:{family:'IBM Plex Mono',size:9},boxWidth:10,padding:10}},
+        tooltip:{backgroundColor:'#0C1520',borderColor:'#1A2D46',borderWidth:1,
+          titleFont:{family:'IBM Plex Mono',size:10},bodyFont:{family:'IBM Plex Mono',size:10},
+          titleColor:'#E0EEFA',bodyColor:'#B0C8E0',padding:8,},
+      }
+    }
+  });
+
+  // Latency chart
+  new Chart(document.getElementById('latChart').getContext('2d'), {
+    type:'line',
+    data:{
+      labels: dash.timestamps,
+      datasets:[{
+        label:'Latency ms', data:dash.latency_series,
+        borderColor:'#F59E0B',backgroundColor:'rgba(245,158,11,0.08)',
+        borderWidth:1.5,pointRadius:2,fill:true,tension:0.3,
+      },{
+        label:'P95', data:Array(dash.latency_series.length).fill(t.p95_latency),
+        borderColor:'rgba(239,68,68,0.5)',borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false,
+      }]
+    },
+    options:{...CD,plugins:{...CD.plugins,legend:{display:false}},
+      scales:{...CD.scales,y:{...CD.scales.y,ticks:{...CD.scales.y.ticks,callback:v=>v+'ms'}}}}
+  });
+
+  // Score chart
+  const scoreColors = dash.score_series.map(v =>
+    v>=0.8?'rgba(34,197,94,0.7)':v>=0.5?'rgba(20,184,166,0.7)':'rgba(239,68,68,0.7)'
+  );
+  new Chart(document.getElementById('scoreChart').getContext('2d'), {
+    type:'bar',
+    data:{
+      labels:dash.timestamps,
+      datasets:[{
+        label:'Consensus score',data:dash.score_series,
+        backgroundColor:scoreColors,borderWidth:0,
+      },{
+        label:'Mean',data:Array(dash.score_series.length).fill(t.mean_score),
+        type:'line',borderColor:'rgba(245,158,11,0.6)',borderWidth:1.5,
+        borderDash:[5,4],pointRadius:0,fill:false,
+      }]
+    },
+    options:{...CD,scales:{...CD.scales,
+      y:{...CD.scales.y,min:0,max:1.05,
+         ticks:{...CD.scales.y.ticks,callback:v=>v.toFixed(1)}}}}
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────
+goTo(0);
+</script>
+</body>
+</html>
