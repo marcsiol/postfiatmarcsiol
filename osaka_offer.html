@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Osaka Minpaku Acquisition Screen — Decision-Support for Pre-LOI Due Diligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,300&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:     #F5F0E8;
+  --ink:    #1C1914;
+  --dim:    #6B6456;
+  --dimmer: #A09585;
+  --rule:   #D4CCBC;
+  --accent: #2B4C2E;
+  --amber:  #8A5C1A;
+  --red:    #7A2020;
+  --paper:  #FDFAF4;
+  --chip:   #E8E0D0;
+  --serif:  'Fraunces', Georgia, serif;
+  --mono:   'DM Mono', monospace;
+  --sans:   'DM Sans', sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.65;}
+body{max-width:760px;margin:0 auto;padding:0 20px 80px;}
+
+/* ── HEADER ── */
+.header{padding:52px 0 36px;border-bottom:1.5px solid var(--ink);}
+.header-kicker{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--dimmer);text-transform:uppercase;margin-bottom:18px;}
+.header h1{font-family:var(--serif);font-size:clamp(30px,5vw,46px);font-weight:300;line-height:1.15;margin-bottom:20px;letter-spacing:-.01em;}
+.header h1 em{font-style:italic;color:var(--accent);}
+.header-sub{font-size:15px;color:var(--dim);max-width:560px;line-height:1.7;}
+
+/* ── PERSONA BAND ── */
+.persona{display:flex;gap:12px;align-items:flex-start;padding:22px 0;border-bottom:1px solid var(--rule);margin:28px 0 0;}
+.persona-icon{flex-shrink:0;width:40px;height:40px;background:var(--accent);color:#fff;
+  font-family:var(--mono);font-size:12px;display:flex;align-items:center;justify-content:center;}
+.persona-text strong{display:block;font-size:13px;font-weight:600;margin-bottom:3px;}
+.persona-text span{font-size:13px;color:var(--dim);}
+
+/* ── SECTION ── */
+.section{padding:36px 0;border-bottom:1px solid var(--rule);}
+.section:last-of-type{border-bottom:none;}
+.label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--dimmer);text-transform:uppercase;margin-bottom:14px;}
+h2{font-family:var(--serif);font-size:22px;font-weight:500;margin-bottom:14px;line-height:1.25;}
+p{font-size:14.5px;color:var(--dim);margin-bottom:12px;line-height:1.72;}
+p:last-child{margin-bottom:0;}
+
+/* ── OFFER BOX ── */
+.offer-box{background:var(--paper);border:1.5px solid var(--ink);padding:26px 28px;margin:20px 0;}
+.offer-name{font-family:var(--serif);font-size:24px;font-weight:500;margin-bottom:6px;}
+.offer-tagline{font-size:13px;color:var(--dim);margin-bottom:22px;font-style:italic;}
+.offer-price{font-family:var(--mono);font-size:32px;font-weight:500;color:var(--accent);letter-spacing:-.02em;}
+.offer-price-note{font-family:var(--mono);font-size:11px;color:var(--dimmer);margin-top:4px;margin-bottom:22px;}
+.offer-row{display:flex;gap:8px;align-items:baseline;padding:8px 0;border-top:1px solid var(--rule);}
+.offer-row:last-child{border-bottom:1px solid var(--rule);}
+.offer-row .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--dimmer);width:130px;flex-shrink:0;}
+.offer-row .v{font-size:13.5px;color:var(--ink);}
+
+/* ── DELIVERABLES LIST ── */
+.del-list{list-style:none;margin:14px 0;}
+.del-list li{display:flex;gap:10px;padding:8px 0;border-bottom:1px dotted var(--rule);font-size:13.5px;color:var(--dim);}
+.del-list li:first-child{border-top:1px dotted var(--rule);}
+.del-list li::before{content:"→";font-family:var(--mono);color:var(--accent);flex-shrink:0;margin-top:1px;}
+
+/* ── EXCLUSIONS ── */
+.excl{background:var(--chip);padding:16px 18px;margin-top:16px;}
+.excl .label{margin-bottom:10px;}
+.excl ul{list-style:none;font-size:13px;color:var(--dim);}
+.excl ul li{padding:4px 0;display:flex;gap:8px;}
+.excl ul li::before{content:"×";font-family:var(--mono);color:var(--red);flex-shrink:0;}
+
+/* ── INPUTS ── */
+.inputs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.input-chip{background:var(--chip);padding:10px 14px;font-size:12.5px;color:var(--dim);}
+.input-chip strong{display:block;font-size:11px;font-family:var(--mono);letter-spacing:.07em;color:var(--dimmer);margin-bottom:3px;}
+
+/* ── SAMPLE SECTION ── */
+.sample{background:var(--paper);border-left:3px solid var(--accent);padding:22px 24px;margin:20px 0;}
+.sample .label{color:var(--accent);}
+.sample h3{font-family:var(--serif);font-size:17px;font-weight:500;margin-bottom:16px;}
+
+/* Scorecard table */
+.sc-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:16px;}
+.sc-table th{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--dimmer);padding:6px 10px;border-bottom:1.5px solid var(--rule);text-align:left;}
+.sc-table th.r{text-align:right;}
+.sc-table td{padding:7px 10px;border-bottom:1px solid var(--rule);color:var(--dim);}
+.sc-table td.r{text-align:right;font-family:var(--mono);}
+.sc-table td.mono{font-family:var(--mono);}
+.sc-table tr.go td{background:#F0F5F0;}
+.sc-table tr.warn td{background:#FBF6EE;}
+.sc-table tr.nogo td{background:#F5EEEE;}
+.badge{font-family:var(--mono);font-size:9px;letter-spacing:.08em;padding:2px 7px;font-weight:600;}
+.badge.go{color:var(--accent);background:#D6EAD8;border:1px solid var(--accent);}
+.badge.warn{color:var(--amber);background:#F5EBDA;border:1px solid var(--amber);}
+.badge.nogo{color:var(--red);background:#F0DADA;border:1px solid var(--red);}
+
+/* Red-flag checklist */
+.rfcheck{list-style:none;margin-top:12px;}
+.rfcheck li{display:flex;gap:10px;padding:7px 0;border-bottom:1px dotted var(--rule);font-size:13px;color:var(--dim);}
+.rfcheck li .flag{font-family:var(--mono);font-size:10px;width:38px;flex-shrink:0;padding:2px 4px;text-align:center;}
+.rfcheck li .flag.hard{background:#F0DADA;color:var(--red);}
+.rfcheck li .flag.soft{background:#F5EBDA;color:var(--amber);}
+
+/* ── CTA ── */
+.cta{background:var(--ink);color:var(--bg);padding:32px 30px;margin-top:36px;}
+.cta h2{font-family:var(--serif);font-size:22px;font-weight:300;margin-bottom:10px;color:#FFF;}
+.cta p{font-size:13.5px;color:#C0B9AC;margin-bottom:22px;line-height:1.7;}
+.cta .email-block{font-family:var(--mono);font-size:15px;letter-spacing:.02em;color:#FFF;
+  border:1px solid #5A5248;padding:12px 16px;display:inline-block;margin-bottom:14px;}
+.cta .cta-note{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:#6B6456;}
+.cta .cta-steps{list-style:none;margin-bottom:20px;}
+.cta .cta-steps li{font-size:13px;color:#A09585;padding:4px 0;display:flex;gap:8px;}
+.cta .cta-steps li::before{content:attr(data-n);font-family:var(--mono);color:#6B6456;flex-shrink:0;}
+
+/* ── FOOTER ── */
+footer{padding:24px 0 0;font-family:var(--mono);font-size:10.5px;color:var(--dimmer);line-height:1.9;}
+
+@media(max-width:560px){
+  .inputs-grid{grid-template-columns:1fr;}
+  .persona{flex-direction:column;}
+  .offer-box{padding:18px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-kicker">Osaka Hospitality Intelligence · April 2026</div>
+  <h1>Pre-LOI Minpaku<br><em>Acquisition Screen</em></h1>
+  <p class="header-sub">A structured go/no-go verdict on a specific Osaka property before you engage an agent, commission legal work, or make an offer — delivered as a scored PDF with base and stress cash flows, hard disqualifier flags, and a ranked recommendation.</p>
+</div>
+
+<!-- PERSONA -->
+<div class="persona">
+  <div class="persona-icon">FO</div>
+  <div class="persona-text">
+    <strong>Built for: family office principals, individual acquisition investors, and SE Asian HNW buyers</strong>
+    <span>actively sourcing 1–3 Osaka units in the ¥15–45M price range who need a fast, independent view before spending ¥300K+ on legal and agent fees on the wrong property.</span>
+  </div>
+</div>
+
+<!-- THE DECISION PROBLEM -->
+<div class="section">
+  <div class="label">The Problem</div>
+  <h2>You need a go/no-go before you spend real money</h2>
+  <p>The two most common deal-killers in Osaka minpaku — condominium management prohibition and ward-level operating restrictions — are not visible on property listings and are not checked by most buying agents until after you've engaged them and paid a deposit. A third of shortlisted properties fail on one of these two points.</p>
+  <p>The Standard Minpaku path (180-day cap) looks attractive on a price sheet. The unit economics only hold in specific wards, for specific building types, above specific ADR thresholds. Getting those numbers wrong by 15% on occupancy or 20% on management fees produces a negative-cash-flow asset dressed as a yield play.</p>
+  <p>This screen gives you a structured answer — scored, documented, and ready to show a partner or banker — before you move to LOI.</p>
+</div>
+
+<!-- OFFER BOX -->
+<div class="section">
+  <div class="label">The Offer</div>
+  <div class="offer-box">
+    <div class="offer-name">Osaka Minpaku Acquisition Screen</div>
+    <div class="offer-tagline">Per-property pre-LOI decision brief</div>
+    <div class="offer-price">¥85,000</div>
+    <div class="offer-price-note">per property · approx. USD 540 · SGD 720 at current rates</div>
+
+    <div class="offer-row">
+      <span class="k">TURNAROUND</span>
+      <span class="v">5 business days from receipt of full inputs</span>
+    </div>
+    <div class="offer-row">
+      <span class="k">DELIVERABLE</span>
+      <span class="v">One scored PDF (8–12 pages) + Excel cash flow model</span>
+    </div>
+    <div class="offer-row">
+      <span class="k">FORMAT</span>
+      <span class="v">English primary · Japanese property extracts quoted verbatim</span>
+    </div>
+    <div class="offer-row">
+      <span class="k">CURRENCY</span>
+      <span class="v">Invoiced in JPY via bank transfer · USD/SGD accepted at spot</span>
+    </div>
+    <div class="offer-row">
+      <span class="k">REVISIONS</span>
+      <span class="v">One round included · additional rounds at ¥15,000 each</span>
+    </div>
+  </div>
+</div>
+
+<!-- DELIVERABLES -->
+<div class="section">
+  <div class="label">What You Receive</div>
+  <h2>Eight sections, one verdict</h2>
+  <ul class="del-list">
+    <li>Hard disqualifier check — management rules (管理規約) and ward-level operating zone status confirmed against publicly available ordinance data</li>
+    <li>Operating path memo — Standard Minpaku vs Simple Lodging vs Tokku (if applicable), with licence pathway complexity rated Low / Medium / High</li>
+    <li>11-factor weighted scorecard (weights sum to 100) across Regulatory, Unit Economics, Location, and Asset Quality categories — scored 1–5 per factor</li>
+    <li>Base cash flow model at 65% occupancy × 180 nights — gross revenue, management fee, cleaning, utilities, platform fees, licence amortisation → monthly NOI</li>
+    <li>Stress cash flow model at 45% occupancy — same structure, with break-even annotation</li>
+    <li>LTR fallback yield — modelled long-term rental income for the same unit, as a floor and exit comparison</li>
+    <li>Comparable ADR benchmark — derived from Bamboo Routes / AirDNA Osaka ward-level data for the property's sub-market</li>
+    <li>Go / Conditional / No-Go verdict with stated rationale and two to three recommended next actions (e.g. "obtain written 管理組合 approval before proceeding")</li>
+  </ul>
+</div>
+
+<!-- INPUTS REQUIRED -->
+<div class="section">
+  <div class="label">What I Need From You</div>
+  <h2>Four inputs to start the clock</h2>
+  <div class="inputs-grid">
+    <div class="input-chip"><strong>PROPERTY LINK OR ADDRESS</strong>At-home.co.jp, SUUMO, or Rakuten Fudousan listing URL, or full property address + cadastral number if off-market</div>
+    <div class="input-chip"><strong>PRICE &amp; TERMS</strong>Asking price, any known management fee 管理費, repair reserve 修繕積立金, and whether you have access to the 重要事項説明書</div>
+    <div class="input-chip"><strong>INTENDED OPERATING MODEL</strong>Standard Minpaku (180d) or do you want Simple Lodging / Tokku feasibility included (+¥20,000)</div>
+    <div class="input-chip"><strong>DECISION TIMELINE</strong>When you need the verdict — if under 3 business days, express surcharge of ¥25,000 applies</div>
+  </div>
+
+  <div class="excl">
+    <div class="label">Not Included</div>
+    <ul>
+      <li>Physical property inspection or structural assessment</li>
+      <li>Legal advice, transaction facilitation, or agent introduction</li>
+      <li>Live 管理組合 enquiry on your behalf (I flag the need; you or your agent makes contact)</li>
+      <li>Tax structuring or repatriation planning</li>
+      <li>Non-Osaka prefectures (Kyoto, Tokyo, Fukuoka available at separate pricing)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SAMPLE ANALYTICAL EXCERPT -->
+<div class="section">
+  <div class="label">Sample Output — Analytical Excerpt</div>
+  <h2>What the scorecard and red-flag check look like</h2>
+  <p style="margin-bottom:20px;">The following is a representative excerpt from a completed screen across three proxy listings in Chuo, Tennoji, and Nishinari wards. Names and exact addresses are removed; all other figures are from the live model.</p>
+
+  <div class="sample">
+    <div class="label">Sample A — Acquisition Scorecard (excerpt)</div>
+    <h3>Three-Listing Comparative Score</h3>
+    <table class="sc-table">
+      <thead>
+        <tr>
+          <th>Factor</th>
+          <th class="r">Wt</th>
+          <th class="r">Chuo 1LDK</th>
+          <th class="r">Tennoji 1K</th>
+          <th class="r">Nishinari 2DK</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Licence pathway clarity</td><td class="r mono">15</td><td class="r mono">45</td><td class="r mono">60</td><td class="r mono">45</td></tr>
+        <tr><td>Condo rules / building approval</td><td class="r mono">12</td><td class="r mono">36</td><td class="r mono">60</td><td class="r mono">24</td></tr>
+        <tr><td>Ward restriction risk</td><td class="r mono">8</td><td class="r mono">40</td><td class="r mono">32</td><td class="r mono">16</td></tr>
+        <tr><td>Gross yield @ 65% occ</td><td class="r mono">12</td><td class="r mono">48</td><td class="r mono">48</td><td class="r mono">36</td></tr>
+        <tr><td>Net yield after opex</td><td class="r mono">10</td><td class="r mono">30</td><td class="r mono">40</td><td class="r mono">20</td></tr>
+        <tr><td>Stress cashflow (45% occ)</td><td class="r mono">8</td><td class="r mono">16</td><td class="r mono">32</td><td class="r mono">8</td></tr>
+        <tr><td>Station walk (mins)</td><td class="r mono">8</td><td class="r mono">40</td><td class="r mono">32</td><td class="r mono">24</td></tr>
+        <tr><td>Tourism anchor proximity</td><td class="r mono">7</td><td class="r mono">35</td><td class="r mono">28</td><td class="r mono">14</td></tr>
+        <tr><td>ADR achievable (¥/night)</td><td class="r mono">5</td><td class="r mono">20</td><td class="r mono">15</td><td class="r mono">10</td></tr>
+        <tr><td>Building age &amp; condition</td><td class="r mono">5</td><td class="r mono">20</td><td class="r mono">25</td><td class="r mono">15</td></tr>
+        <tr><td>Capex required</td><td class="r mono">5</td><td class="r mono">15</td><td class="r mono">20</td><td class="r mono">10</td></tr>
+        <tr><td>LTR fallback yield</td><td class="r mono">5</td><td class="r mono">20</td><td class="r mono">20</td><td class="r mono">15</td></tr>
+        <tr style="font-weight:600;border-top:2px solid var(--ink);">
+          <td><strong>TOTAL / 500</strong></td><td class="r mono"><strong>100</strong></td>
+          <td class="r mono"><strong>365</strong></td>
+          <td class="r mono"><strong>412</strong></td>
+          <td class="r mono"><strong>237</strong></td>
+        </tr>
+        <tr class="warn">
+          <td>Verdict</td><td></td>
+          <td class="r"><span class="badge warn">CONDITIONAL</span></td>
+          <td class="r"><span class="badge go">GO</span></td>
+          <td class="r"><span class="badge nogo">NO-GO</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="label" style="margin-top:20px;">Sample B — Red-Flag Checklist (per-property)</div>
+    <p style="font-size:12.5px;color:var(--dim);margin-bottom:10px;">Delivered for each screened property. Hard flags = automatic No-Go regardless of score.</p>
+    <ul class="rfcheck">
+      <li><span class="flag hard">HARD</span>Condominium management rules explicitly prohibit short-term rental (民泊禁止) — detected in building bylaws</li>
+      <li><span class="flag hard">HARD</span>Property located in ward-designated STR blackout zone with no Hotel Business Act pathway</li>
+      <li><span class="flag soft">SOFT</span>Building management approval status unknown — written confirmation from 管理組合 required before proceeding</li>
+      <li><span class="flag soft">SOFT</span>Property within 200m of elementary school — ward may impose additional operating hour restrictions</li>
+      <li><span class="flag soft">SOFT</span>Gross yield at 65% occupancy below 4% — stress scenario produces negative NOI before debt service</li>
+      <li><span class="flag soft">SOFT</span>Building pre-dates 1981 seismic standard — fire safety retrofit requirement may apply under Simple Lodging path</li>
+    </ul>
+
+    <div class="label" style="margin-top:20px;">Sample C — Cash Flow Summary (Tennoji 1K, ¥18.5M)</div>
+    <table class="sc-table">
+      <thead>
+        <tr><th>Line Item</th><th class="r">Base (65% occ)</th><th class="r">Stress (45% occ)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Gross revenue (117 / 81 nights × ¥10,000)</td><td class="r mono">¥1,170,000</td><td class="r mono">¥810,000</td></tr>
+        <tr><td>Management fee (18%)</td><td class="r mono">−¥210,600</td><td class="r mono">−¥145,800</td></tr>
+        <tr><td>Platform fees (3%)</td><td class="r mono">−¥35,100</td><td class="r mono">−¥24,300</td></tr>
+        <tr><td>Cleaning &amp; utilities</td><td class="r mono">−¥213,000</td><td class="r mono">−¥177,000</td></tr>
+        <tr><td>Insurance &amp; licence amort.</td><td class="r mono">−¥48,000</td><td class="r mono">−¥48,000</td></tr>
+        <tr style="font-weight:600;border-top:1.5px solid var(--rule);">
+          <td><strong>Annual NOI</strong></td>
+          <td class="r mono" style="color:var(--accent)"><strong>¥663,300</strong></td>
+          <td class="r mono" style="color:var(--accent)"><strong>¥414,900</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Monthly NOI</strong></td>
+          <td class="r mono" style="color:var(--accent)"><strong>¥55,275</strong></td>
+          <td class="r mono" style="color:var(--accent)"><strong>¥34,575</strong></td>
+        </tr>
+        <tr><td>Net yield on purchase price</td><td class="r mono">3.59%</td><td class="r mono">2.24%</td></tr>
+        <tr><td>LTR fallback yield (¥72,000/mo)</td><td class="r mono" colspan="2" style="text-align:right">4.67% — viable exit</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11.5px;color:var(--dimmer);margin-top:10px;font-style:italic;">Excludes acquisition costs (est. 6–8% of purchase), debt service, and income tax. Cleaning assumes avg 3-night stay; 2-night average compresses NOI by ~¥5,000/month.</p>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta">
+  <h2>Commission a screen</h2>
+  <p>Send the four inputs listed above and I will confirm scope, invoice, and start date within one business day. Payment due on invoice; work begins on receipt. Verdict delivered within five business days.</p>
+  <ol class="cta-steps">
+    <li data-n="1 ·">Email the property link or address with your timeline and operating model preference</li>
+    <li data-n="2 ·">Receive scope confirmation and ¥85,000 invoice (JPY bank transfer or equivalent)</li>
+    <li data-n="3 ·">Screen delivered as PDF + Excel within 5 business days</li>
+  </ol>
+  <div class="email-block">osaka.screen@proton.me</div><br>
+  <div class="cta-note">Response within 24 hours · Osaka time zone (JST) · English and Chinese enquiries welcome</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>This offer page was prepared by an independent analyst based in Osaka with direct research experience in Osaka minpaku regulatory compliance, unit economics modelling, and STR market data. This is not a licensed real estate agency, legal advisory, or investment advisory service. Outputs are analytical decision-support documents, not professional legal or financial advice. Verify all regulatory status with a licensed 行政書士 before committing capital.</p>
+  <p style="margin-top:10px;">Last updated April 2026 · Prices quoted in JPY · FX reference ¥157/USD</p>
+</footer>
+
+</body>
+</html>
